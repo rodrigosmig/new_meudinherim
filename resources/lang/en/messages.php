@@ -1,0 +1,51 @@
+<?php
+
+return [
+    'not_save'          => 'Could not be saved. Try again.',
+    'not_delete'        => 'Could not be deleted. Try again.',
+    'ajax_title'        => 'Are you sure?',
+    'not_found'         => 'No records found',
+
+    'categories' => [
+        'select_type'       => 'Select a category type',
+        'not_found'         => 'No Categories Found',
+        'create'            => 'Category successfully added.',
+        'update'            => 'Category successfully updated.',
+        'delete'            => 'Category successfully deleted',
+        'ajax_text'         => 'The category will be permanently deleted',
+    ],
+
+    'accounts' => [
+        'not_found'         => 'No Account Found',
+        'create'            => 'Account successfully added.',
+        'update'            => 'Account successfully updated.',
+        'delete'            => 'Account successfully deleted',
+        'ajax_text'         => 'The account will be permanently deleted',
+    ],
+
+    'cards' => [
+        'not_found'         => 'No Credit Cards Found',
+        'create'            => 'Credit Card successfully added.',
+        'update'            => 'Credit Card successfully updated.',
+        'delete'            => 'Credit Card successfully deleted',
+        'ajax_text'         => 'The credit card will be permanently deleted',
+    ],
+
+    'invoices' => [
+        'not_found'         => 'No Invoices Found',
+        'create'            => 'Invoices successfully added.',
+        'update'            => 'Invoices successfully updated.',
+        'delete'            => 'Invoices successfully deleted',
+        'ajax_text'         => 'The invoices will be permanently deleted',
+    ],
+
+    'entries' => [
+        'not_found'             => 'No EntryFound',
+        'create'                => 'Entry successfully added.',
+        'update'                => 'Entry successfully updated.',
+        'delete'                => 'Entry successfully deleted',
+        'ajax_text'             => 'The entry will be permanently deleted',
+        'no_open_invoice'       => 'There are no open invoices for this date',
+        'insufficient_limit'    => 'The card limit is insufficient'
+    ],
+];
