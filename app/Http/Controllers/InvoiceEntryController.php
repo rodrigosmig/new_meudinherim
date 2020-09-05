@@ -89,7 +89,7 @@ class InvoiceEntryController extends Controller
         $card = $this->cardService->findById($data['card_id']);
 
         try {
-            $entry = $this->cardService->addInvoiceEntry($card, $data);
+            $entry = $this->service->make($card, $data);
         } catch (InsufficientLimitException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->back();

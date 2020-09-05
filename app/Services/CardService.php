@@ -5,7 +5,6 @@ namespace App\Services;
 use DateTime;
 use App\Models\Card;
 use App\Models\Invoice;
-use App\Exceptions\InsufficientLimitException;
 
 class CardService
 {
@@ -207,86 +206,5 @@ class CardService
             'due_date'      => $due_date,
             'closing_date'  => $closing_date
         ];
-    }
-
-
-    /**
-     * Add the entries to the invoice
-     *
-     * @param Card $card
-     * @param array $data
-     * @return array
-     */ 
-    public function addInvoiceEntry(Card $card, $data)
-    {
-        if ($data['value'] > $card->balance) {
-            throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
-        }
-
-        if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
-            return $this->createInstallments($card, $data);
-        } else {
-            return $this->createEntry($card, $data);
-        }
-    }
-
-
-    /**
-     * Create the invoice entry
-     *
-     * @param Card $card
-     * @param array $data
-     * @return bool
-     */ 
-    public function createEntry(Card $card, $data): bool
-    {
-        $invoice = $this->getInvoiceByDate($card, $data['date']);
-
-        if (! $invoice) {
-            return false;
-        }
-
-        $entry = $invoice->entries()->create($data);
-
-        if (! $entry) {
-            return false;
-        }
-
-        $this->invoiceService->updateInvoiceAmount($invoice);
-
-        return true;
-    }
-
-    /**
-     * Create the installments
-     *
-     * @param Card $card
-     * @param array $data
-     * @return bool
-     */ 
-    public function createInstallments(Card $card, $data): bool
-    {
-        $date                   = new DateTime($data['date']);
-        $total                  = $data['value'];
-        $installments_number    = $data['installments_number'];
-        $installment_value      = number_format($total / $installments_number, 2);
-        $description_default    = $data['description'];
-
-        $data['value'] = $installment_value;
-
-        for ($i = 1; $i <= $installments_number; $i++) {
-            $data['date']           = $date->format('Y-m-d');
-            $data['description']    = $description_default . " {$i}/{$installments_number}" ;           
-
-            $entry = $this->createEntry($card, $data);
-
-            if (! $entry) {
-                return false;
-            }
-
-            $date = $date->modify('+1 month');
-        }
-
-        return true;
     }
 }
