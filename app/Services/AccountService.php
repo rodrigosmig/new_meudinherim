@@ -69,22 +69,10 @@ class AccountService
     {
         $types = [];
 
-        foreach ($this->account::TYPES as $key => $type) {
+        foreach ($this->account::ARRAY_TYPES as $key => $type) {
             $types[$key] = __('global.' . $type);
         }
 
         return $types;
-    }
-
-    /**
-     * Add the entries to the account
-     *
-     * @param Account $account
-     * @param array $data
-     * @return AccountEntry
-     */ 
-    public function addEntry(Account $account, $data): AccountEntry
-    {
-        return $account->entries()->create($data);
     }
 }

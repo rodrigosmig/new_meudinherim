@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Account;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUpdateAccountRequest extends FormRequest
@@ -26,7 +28,7 @@ class StoreUpdateAccountRequest extends FormRequest
         return [
             'type' => [
                 'required',
-                //Rule::in([1, 2])
+                Rule::in(Account::TYPES)
             ],
             'name' => 'required|min:3|max:191'
         ];

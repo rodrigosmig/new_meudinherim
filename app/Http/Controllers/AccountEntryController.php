@@ -62,7 +62,7 @@ class AccountEntryController extends Controller
 
         $account = $this->accountService->findById($data['account_id']);
 
-        $entry = $this->accountService->addEntry($account, $data);
+        $entry = $this->service->make($account, $data);
 
         //$this->cardService->updateCardBalance($card);
        

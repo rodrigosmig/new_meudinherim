@@ -15,6 +15,13 @@ class Account extends Model
     const INVESTMENT        = 'investment';
 
     const TYPES = [
+        self::MONEY,
+        self::SAVINGS,
+        self::CHECKING_ACCOUNT,
+        self::INVESTMENT,
+    ];
+
+    const ARRAY_TYPES = [
         self::MONEY             => self::MONEY,
         self::SAVINGS           => self::SAVINGS,
         self::CHECKING_ACCOUNT  => self::CHECKING_ACCOUNT,

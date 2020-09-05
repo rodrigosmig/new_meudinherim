@@ -15,11 +15,16 @@ class AccountEntryService
         $this->account_entry    = $account_entry;
     }
 
-    public function store(array $data)
+    /**
+     * Creates the entries to the account
+     *
+     * @param Account $account
+     * @param array $data
+     * @return AccountEntry
+     */ 
+    public function make(Account $account, array $data): AccountEntry
     {
-        $data['user_id'] = auth()->user()->id;
-
-        return $this->account_entry->create($data);
+        return $account->entries()->create($data);
     }
 
     public function update($id, array $data)

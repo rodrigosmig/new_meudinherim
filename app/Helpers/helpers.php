@@ -2,12 +2,11 @@
 
 use Carbon\Carbon;
 
-use function PHPSTORM_META\type;
-use App\Repositories\Core\Eloquent\AccountRepository;
+use App\Services\AccountService;
 
 function toCategoryType($type) :string
 {
-    $repository = new AccountRepository();
+    $repository = app(AccountService::class);
 
     $types = $repository->getTypeList();
 
