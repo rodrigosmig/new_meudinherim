@@ -59,7 +59,7 @@ class CategoryController extends Controller
      */
     public function store(StoreUpdateCategoryRequest $request)
     {
-        $this->service->store($request->all());
+        $this->service->make($request->all());
 
         Alert::success(__('global.success'), __('messages.categories.create'));
 

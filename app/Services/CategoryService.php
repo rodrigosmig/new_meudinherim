@@ -15,8 +15,6 @@ class CategoryService
 
     public function store(array $data)
     {
-        $data['user_id'] = auth()->user()->id;
-        //dd($data);
         return $this->category->create($data);
     }
 
@@ -47,7 +45,6 @@ class CategoryService
      */
     public function getCategoriesByType($type) 
     {
-
         return $this->category::where('type', $type)
             ->where('user_id', auth()->user()->id)
             ->get();

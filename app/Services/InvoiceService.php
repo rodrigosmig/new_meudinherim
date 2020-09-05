@@ -16,8 +16,6 @@ class InvoiceService
 
     public function store(array $data)
     {
-        $data['user_id'] = auth()->user()->id;
-
         return $this->invoice->create($data);
     }
 

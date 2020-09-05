@@ -61,7 +61,7 @@ class CardController extends Controller
      */
     public function store(StoreUpdateCardRequest $request)
     {
-        $card = $this->service->createCardAndInvoice($request->all());
+        $card = $this->service->make($request->all());
 
         if (! $card) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));

@@ -17,11 +17,23 @@ class CardService
         $this->invoiceService = $invoiceService;
     }
 
-    public function store(array $data)
+    /**
+     * Create credit card and the first invoice
+     *
+     * @param array $data
+     * @return Card
+     */
+    public function make(array $data)
     {
-        $data['user_id'] = auth()->user()->id;
+        $card = $this->card->create($data);
 
-        return $this->card->create($data);
+        if (! $card) {
+            return false;
+        }
+
+        $this->createInvoice($card, (new DateTime())->format('Y-m-d'));
+
+        return $card;
     }
 
     public function update($id, array $data)
@@ -50,27 +62,6 @@ class CardService
     }
 
     /**
-     * Create card and the first invoice
-     *
-     * @param array $data
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    public function createCardAndInvoice($data) 
-    {
-        $data['balance'] = $data['credit_limit'];
-
-        $card = $this->store($data);
-
-        if (! $card) {
-            return false;
-        }
-
-        $this->createInvoice($card, (new DateTime())->format('Y-m-d'));
-
-        return $card;
-    }
-
-    /**
      * Create invoice
      *
      * @param Card $card
@@ -83,7 +74,6 @@ class CardService
 
         $data = [
             'amount'        => 0,
-            'user_id'       => auth()->user()->id,
             'due_date'      => $date['due_date'],
             'closing_date'  => $date['closing_date']
         ];
@@ -229,8 +219,6 @@ class CardService
      */ 
     public function addInvoiceEntry(Card $card, $data)
     {
-        $data['user_id'] = auth()->user()->id;
-
         if ($data['value'] > $card->balance) {
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }

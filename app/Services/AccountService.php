@@ -14,6 +14,11 @@ class AccountService
         $this->account = $account;
     }
 
+    public function store(array $data)
+    {
+        return $this->account->create($data);
+    }
+
     public function update($id, array $data)
     {
         $account = $this->findById($id);
@@ -80,8 +85,6 @@ class AccountService
      */ 
     public function addEntry(Account $account, $data): AccountEntry
     {
-        $data['user_id'] = auth()->user()->id;
-
         return $account->entries()->create($data);
     }
 }
