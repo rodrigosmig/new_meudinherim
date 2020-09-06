@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Traits\UserTrait;
 use App\Models\AccountEntry;
 use App\Models\AccountBalance;
 use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
+    use UserTrait;
+    
     const MONEY             = 'money';
     const SAVINGS           = 'savings';
     const CHECKING_ACCOUNT  = 'checking_account';

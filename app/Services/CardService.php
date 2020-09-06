@@ -24,6 +24,8 @@ class CardService
      */
     public function make(array $data)
     {
+        $data['balance'] = $data['credit_limit'];
+        
         $card = $this->card->create($data);
 
         if (! $card) {
@@ -38,6 +40,10 @@ class CardService
     public function update($id, array $data)
     {
         $card = $this->findById($id);
+
+        if (! $card) {
+            return false;
+        }
 
         $result = $card->update($data);
 
@@ -85,9 +91,9 @@ class CardService
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getCardsByUser() 
+    public function getCards() 
     {
-        return $this->card::where('user_id', auth()->user()->id)->get();
+        return auth()->user()->cards;
     }
 
     /**
@@ -97,7 +103,7 @@ class CardService
      */
     public function getCardsForForm()
     {
-        return $this->card::where('user_id', auth()->user()->id)->pluck('name', 'id');
+        return auth()->user()->cards()->pluck('name', 'id');
     }
 
      /**
@@ -138,7 +144,6 @@ class CardService
     {
         return $card->invoices()
             ->where('id', $invoice_id)
-            ->where('user_id', auth()->user()->id)
             ->first();
     }
 
@@ -154,7 +159,6 @@ class CardService
     {
         return $card->invoices()
             ->where('paid', $paid)
-            ->where('user_id', auth()->user()->id)
             ->get();
     }
 

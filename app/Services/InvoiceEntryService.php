@@ -98,6 +98,10 @@ class InvoiceEntryService
 
         $entry = $this->findById($id);
 
+        if(! $entry) {
+            return false;
+        }
+
         if ($data['value'] > $entry->invoice->card->balance) {
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
@@ -114,6 +118,10 @@ class InvoiceEntryService
     public function delete($id)
     {
         $entry = $this->findById($id);
+
+        if(! $entry) {
+            return false;
+        }
 
         return $entry->delete();
     }

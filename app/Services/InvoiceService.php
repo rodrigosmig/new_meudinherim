@@ -23,12 +23,20 @@ class InvoiceService
     {
         $invoice = $this->findById($id);
 
+        if (! $invoice) {
+            return false;
+        }
+
         return $invoice->update($data);
     }
 
     public function delete($id)
     {
         $invoice = $this->findById($id);
+
+        if (! $invoice) {
+            return false;
+        }
 
         return $invoice->delete();
     }
@@ -47,7 +55,6 @@ class InvoiceService
     public function getAllInvoicesByStatus($paid = false)
     {
         return $this->invoice::where('paid', $paid)
-                    ->where('user_id', auth()->user()->id)
                     ->get();
     }
 

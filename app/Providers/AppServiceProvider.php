@@ -35,11 +35,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Category::observe(CategoryObserver::class);
-        Account::observe(AccountObserver::class);
-        Card::observe(CardObserver::class);
-        Invoice::observe(InvoiceObserver::class);
-        InvoiceEntry::observe(InvoiceEntryObserver::class);
-        AccountEntry::observe(AccountEntryObserver::class);
+        //
     }
 }

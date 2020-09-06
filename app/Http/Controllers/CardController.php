@@ -17,7 +17,7 @@ class CardController extends Controller
     
     public function __construct(CardService $service)
     {
-        $this->middleware(['auth', 'verified', 'cardOwner']);
+        $this->middleware(['auth', 'verified']);
 
         $this->service = $service;
         $this->title = __('global.credit-card');
@@ -32,7 +32,7 @@ class CardController extends Controller
     {
         $data = [
             'title'     => $this->title,
-            'cards'  => $this->service->getCardsByUser(),
+            'cards'  => $this->service->getCards(),
 
         ];
 
@@ -82,6 +82,11 @@ class CardController extends Controller
     public function edit($id)
     {
         $card = $this->service->findById($id);
+
+        if (! $card) {
+            Alert::error(__('global.invalid_request'), __('messages.cards.not_found'));
+            return redirect()->route('cards.index');
+        }
 
         return view('cards.edit', [
             'card'  => $card,

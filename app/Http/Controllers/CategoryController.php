@@ -17,7 +17,7 @@ class CategoryController extends Controller
 
     public function __construct(CategoryService $service)
     {
-        $this->middleware(['auth', 'verified', 'categoryOwner']);
+        $this->middleware(['auth', 'verified']);
 
         $this->service = $service;
         $this->title = __('global.categories');
@@ -59,7 +59,7 @@ class CategoryController extends Controller
      */
     public function store(StoreUpdateCategoryRequest $request)
     {
-        $this->service->make($request->all());
+        $this->service->store($request->all());
 
         Alert::success(__('global.success'), __('messages.categories.create'));
 
@@ -77,6 +77,11 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = $this->service->findById($id);
+
+        if (! $category) {
+            Alert::error(__('global.invalid_request'), __('messages.categories.not_found'));
+            return redirect()->route('categories.index');
+        }
 
         return view('categories.edit', [
             'category'  => $category,

@@ -12,7 +12,7 @@ class AccountEntryController extends Controller
 {
     public function __construct(AccountEntryService $service, AccountService $accountService)
     {
-        $this->middleware(['auth', 'verified', 'accountEntryOwner']);
+        $this->middleware(['auth', 'verified']);
 
         $this->service          = $service;
         $this->accountService   = $accountService;
@@ -62,6 +62,11 @@ class AccountEntryController extends Controller
 
         $account = $this->accountService->findById($data['account_id']);
 
+        if (! $account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.not_found'));
+            redirect()->route('account_entries.index');
+        }
+
         $entry = $this->service->make($account, $data);
 
         //$this->cardService->updateCardBalance($card);
@@ -79,6 +84,11 @@ class AccountEntryController extends Controller
     public function edit($id)
     {
         $entry = $this->service->findById($id);
+
+        if (! $entry) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('invoices.index');
+        }
 
         return view('account_entries.edit', [
             'title' => __('global.account_entry'),

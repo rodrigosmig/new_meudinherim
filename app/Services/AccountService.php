@@ -23,6 +23,10 @@ class AccountService
     {
         $account = $this->findById($id);
 
+        if (! $account) {
+            return false;
+        }
+
         return $account->update($data);
     }
 
@@ -30,6 +34,10 @@ class AccountService
     public function delete($id)
     {
         $account = $this->findById($id);
+
+        if (! $account) {
+            return false;
+        }
 
         return $account->delete();
     }
@@ -46,7 +54,7 @@ class AccountService
      */
     public function getAccountsForForm()
     {
-        return $this->account::where('user_id', auth()->user()->id)->pluck('name', 'id');
+        return auth()->user()->accounts()->pluck('name', 'id');
     }
 
     /**
@@ -54,10 +62,9 @@ class AccountService
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAccountsByUser() 
+    public function getAccounts() 
     {
-
-        return $this->account::where('user_id', auth()->user()->id)->get();
+        return auth()->user()->accounts;
     }
 
     /**

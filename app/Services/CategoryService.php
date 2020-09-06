@@ -22,6 +22,10 @@ class CategoryService
     {
         $category = $this->findById($id);
 
+        if (! $category) {
+            return false;
+        }
+
         return $category->update($data);
     }
 
@@ -29,6 +33,10 @@ class CategoryService
     public function delete($id)
     {
         $category = $this->findById($id);
+
+        if (! $category) {
+            return false;
+        }
 
         return $category->delete();
     }
@@ -46,7 +54,6 @@ class CategoryService
     public function getCategoriesByType($type) 
     {
         return $this->category::where('type', $type)
-            ->where('user_id', auth()->user()->id)
             ->get();
     }
 
@@ -57,8 +64,7 @@ class CategoryService
      */
     public function getIncomeCategoriesForForm()
     {
-        return $this->category::where('user_id', auth()->user()->id)
-                    ->where('type', $this->category::INCOME)
+        return $this->category::where('type', $this->category::INCOME)
                     ->pluck('name', 'id'); 
     }
 
@@ -69,8 +75,7 @@ class CategoryService
      */
     public function getExpenseCategoriesForForm() 
     {
-        return $this->category::where('user_id', auth()->user()->id)
-                    ->where('type', $this->category::EXPENSE)
+        return $this->category::where('type', $this->category::EXPENSE)
                     ->pluck('name', 'id');
     }
 

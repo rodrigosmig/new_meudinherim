@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
+    use UserTrait;
+
     const INCOME    = 1;
     const EXPENSE   = 2;
     

@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-
-use DateTime;
 use App\Models\User;
 use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Model;
-use App\Repositories\Core\Eloquent\CardRepository;
-use App\Repositories\Core\Eloquent\InvoiceRepository;
+use App\Traits\UserTrait;
 
 class Card extends Model
 {
+    use UserTrait;
+
     protected $fillable = ['name', 'pay_day', 'closing_day', 'credit_limit', 'balance', 'user_id'];
 
     public function user()
@@ -51,7 +50,7 @@ class Card extends Model
      * @param string $date
      * @return Invoice
      */
-    public function getInvoiceByDate($date): Invoice
+    /* public function getInvoiceByDate($date): Invoice
     {
         $repository = new CardRepository();
         
@@ -62,14 +61,14 @@ class Card extends Model
         }
 
         return $invoice;
-    }
+    } */
 
     /**
      * Creates a invoice for the card
      *
      * @return Invoice
      */
-    public function createInvoice(): ?Invoice
+    /* public function createInvoice(): ?Invoice
     {
         $repository = new CardRepository();
         
@@ -94,7 +93,7 @@ class Card extends Model
         ];
 
         return $repository->createInvoice($this, $data);
-    }
+    } */
 
     /**
      * Return invoices for a given status.
@@ -102,10 +101,10 @@ class Card extends Model
      * @param bool $paid
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getInvoicesByStatus($paid = false)
+  /*   public function getInvoicesByStatus($paid = false)
     {
         $repository = new InvoiceRepository();
 
         return $repository->getInvoicesByStatus($this->id, $paid);
-    }
+    } */
 }

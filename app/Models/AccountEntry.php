@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Models\Account;
+use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountEntry extends Model
 {
+    use UserTrait;
+    
     /**
      * The table associated with the model.
      *

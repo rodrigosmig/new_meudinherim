@@ -30,6 +30,10 @@ class AccountEntryService
     public function update($id, array $data)
     {
         $account_entry = $this->findById($id);
+
+        if (! $account_entry) {
+            return false;
+        }
         
         $account_entry->update($data);
         
@@ -39,6 +43,10 @@ class AccountEntryService
     public function delete($id)
     {
         $account_entry = $this->findById($id);
+
+        if (! $account_entry) {
+            return false;
+        }
 
         return $account_entry->delete();
     }
@@ -58,7 +66,6 @@ class AccountEntryService
     {
         return $this->account_entry
             ->where('account_id', $account_id)
-            ->where('user_id', auth()->user()->id)
             ->get();
     }
 
@@ -69,7 +76,8 @@ class AccountEntryService
      */  
     public function  getEntriesForAccountStatement(): array
     {
-        $accounts = $this->account->where('user_id', auth()->user()->id)->pluck('name', 'id');
+        $accountService = app(AccountService::class);
+        $accounts = $accountService->getAccounts()->pluck('name', 'id');
         
         $entries = [];
 

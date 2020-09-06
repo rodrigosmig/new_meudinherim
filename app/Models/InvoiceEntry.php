@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class InvoiceEntry extends Model
 {
+    use UserTrait;
+    
     /**
      * The table associated with the model.
      *

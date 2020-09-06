@@ -16,7 +16,7 @@ class AccountController extends Controller
 
     public function __construct(AccountService $service)
     {
-        $this->middleware(['auth', 'verified', 'accountOwner']);
+        $this->middleware(['auth', 'verified']);
 
         $this->service = $service;
         $this->title = __('global.accounts');
@@ -31,7 +31,7 @@ class AccountController extends Controller
     {
         $data = [
             'title'     => $this->title,
-            'accounts'  => $this->service->getAccountsByUser(),
+            'accounts'  => $this->service->getAccounts(),
 
         ];
 
@@ -78,6 +78,11 @@ class AccountController extends Controller
     public function edit($id)
     {
         $account = $this->service->findById($id);
+
+        if (! $account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.not_found'));
+            return redirect()->route('accounts.index');
+        }
 
         return view('accounts.edit', [
             'account'  => $account,

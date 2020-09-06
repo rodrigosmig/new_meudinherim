@@ -34,7 +34,7 @@ class InvoiceEntryController extends Controller
 
     public function __construct(InvoiceEntryService $service, CardService $cardService, InvoiceService $invoiceService)
     {
-        $this->middleware(['auth', 'verified', 'invoiceEntryOwner']);
+        $this->middleware(['auth', 'verified']);
 
         $this->service          = $service;
         $this->cardService      = $cardService;
@@ -52,7 +52,17 @@ class InvoiceEntryController extends Controller
     {
         $card = $this->cardService->findById($card_id);
 
+        if (!$card) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('invoices.index');
+        }
+
         $invoice = $this->cardService->getInvoiceById($card, $invoice_id);
+
+        if (!$invoice) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('invoices.index');
+        }
 
         $data = [
             'title'     => __('global.invoice'),
@@ -116,6 +126,11 @@ class InvoiceEntryController extends Controller
     {
         $entry = $this->service->findById($id);
 
+        if (! $entry) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('invoices.index');
+        }
+
         return view('invoice_entries.edit', [
             'title' => $this->title,
             'entry' => $entry
@@ -160,6 +175,12 @@ class InvoiceEntryController extends Controller
     public function destroy($id)
     {
         $entry      = $this->service->findById($id);
+
+        if (! $entry) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('invoices.index');
+        }
+
         $invoice    = $entry->invoice;
 
         if (! $this->service->delete($id)) {

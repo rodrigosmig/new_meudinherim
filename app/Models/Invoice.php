@@ -4,13 +4,13 @@ namespace App\Models;
 
 use App\Models\Card;
 use App\Models\User;
+use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
-use App\Repositories\Core\Eloquent\InvoiceRepository;
-use Exception;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class Invoice extends Model
 {
+    use UserTrait;
+    
     public $fillable =  ['due_date', 'closing_date', 'amount', 'paid', 'card_id', 'user_id'];
 
     protected $casts = [
