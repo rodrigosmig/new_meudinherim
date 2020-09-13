@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\AccountEntry;
 use Illuminate\Database\Seeder;
 
@@ -12,49 +13,24 @@ class AccountEntrySeeder extends Seeder
      */
     public function run()
     {
-        AccountEntry::create([
-            'date'          => now()->modify("-3 days")->format('Y-m-d'),
-            'description'   => 'Vendas',
-            'value'         => 1500,
-            'category_id'   => 2,
-            'account_id'    => 2,
-            'user_id'       => 1,
+        $jon = auth()->user();
+
+        $jon_account = $jon->accounts()->where('type', 'checking_account')->first();
+
+        $jon_account->entries()->create([
+            'date'          => now()->modify("-1 days")->format('Y-m-d'),
+            'description'   => 'Salary',
+            'value'         => 1000,
+            'category_id'   => $jon->categories()->where('type', 1)->first()->id,
+            'user_id'       => $jon->id,
         ]);
         
-        AccountEntry::create([
-            'date'          => now()->modify("-2 days")->format('Y-m-d'),
-            'description'   => 'Almoço',
-            'value'         => 20.50,
-            'category_id'   => 4,
-            'account_id'    => 2,
-            'user_id'       => 1,
-        ]);
-
-        AccountEntry::create([
-            'date'          => now()->modify("-1 days")->format('Y-m-d'),
-            'description'   => 'Jantar',
-            'value'         => 45.25,
-            'category_id'   => 4,
-            'account_id'    => 2,
-            'user_id'       => 1,
-        ]);
-
-        AccountEntry::create([
+        $jon_account->entries()->create([
             'date'          => now()->format('Y-m-d'),
-            'description'   => 'Combustível',
-            'value'         => 50,
-            'category_id'   => 4,
-            'account_id'    => 2,
-            'user_id'       => 1,
-        ]);
-
-        AccountEntry::create([
-            'date'          => now()->modify("-1 days")->format('Y-m-d'),
-            'description'   => 'Vendas',
-            'value'         => 50,
-            'category_id'   => 2,
-            'account_id'    => 1,
-            'user_id'       => 1,
+            'description'   => 'Lunch',
+            'value'         => 25.50,
+            'category_id'   => $jon->categories()->where('type', 2)->first()->id,
+            'user_id'       => $jon->id,
         ]);
     }
 }

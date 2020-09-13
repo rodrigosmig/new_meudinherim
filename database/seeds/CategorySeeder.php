@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
 
@@ -12,40 +13,16 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        Category::create([
-            'name'      => 'Salário',
+        $jon = User::first();
+        
+        $jon->categories()->create([
+            'name'      => __('global.incomes'),
             'type'      => Category::INCOME,
-            'user_id'   => 1,
         ]);
 
-        Category::create([
-            'name'      => 'Vendas',
-            'type'      => Category::INCOME,
-            'user_id'   => 1,
-        ]);
-
-        Category::create([
-            'name'      => 'Aluguel',
+        $jon->categories()->create([
+            'name'      => __('global.expenses'),
             'type'      => Category::EXPENSE,
-            'user_id'   => 1,
-        ]);
-
-        Category::create([
-            'name'      => 'Despesas',
-            'type'      => Category::EXPENSE,
-            'user_id'   => 1,
-        ]);
-
-        Category::create([
-            'name'      => 'Vendas',
-            'type'      => Category::INCOME,
-            'user_id'   => 2,
-        ]);
-
-        Category::create([
-            'name'      => 'Despesas',
-            'type'      => Category::EXPENSE,
-            'user_id'   => 2,
         ]);
     }
 }

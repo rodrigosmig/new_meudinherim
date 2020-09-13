@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\Account;
 use Illuminate\Database\Seeder;
 
@@ -12,22 +13,16 @@ class AccountSeeder extends Seeder
      */
     public function run()
     {
-        Account::create([
-            'name'      => 'Dinheiro',
+        $jon = auth()->user();
+
+        $jon->accounts()->create([
+            'name'      => __('global.money'),
             'type'      => Account::MONEY,
-            'user_id'   => 1,
         ]);
 
-        Account::create([
+        $jon->accounts()->create([
             'name'      => 'Nubank',
             'type'      => Account::CHECKING_ACCOUNT,
-            'user_id'   => 1,
-        ]);
-
-        Account::create([
-            'name'      => 'Dinheiro',
-            'type'      => Account::MONEY,
-            'user_id'   => 2,
         ]);
     }
 }

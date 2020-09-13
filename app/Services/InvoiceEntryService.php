@@ -5,6 +5,7 @@ namespace App\Services;
 use DateTime;
 use App\Models\Card;
 use App\Models\InvoiceEntry;
+use App\Services\CardService;
 use App\Exceptions\InsufficientLimitException;
 
 class InvoiceEntryService
@@ -28,10 +29,15 @@ class InvoiceEntryService
         }
 
         if (isset($this->data['installment']) && isset($this->data['installments_number']) && $this->data['installments_number'] > 1) {
-            return $this->createInstallments();
+            $entry =  $this->createInstallments();
         } else {
-            return $this->createEntry();
+            $entry = $this->createEntry();
         }
+
+        $entryservice = app(CardService::class);
+        $entryservice->updateCardBalance($card);
+
+        return $entry;
     }
 
     /**

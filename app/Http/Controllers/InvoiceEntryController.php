@@ -110,8 +110,6 @@ class InvoiceEntryController extends Controller
             return redirect()->back();
         }
 
-        $this->cardService->updateCardBalance($card);
-       
         Alert::success(__('global.success'), __('messages.entries.create'));
         return redirect()->route('cards.invoices.index', $card->id);
     }
