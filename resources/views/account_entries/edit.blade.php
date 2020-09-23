@@ -25,7 +25,7 @@
                 @include('account_entries.partials.form')
             </div>        
             <div class="card-footer">
-                <a href="{{ route('account_entries.index') }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
+                <a href="{{ route('accounts.entries', $entry->account->id) }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
                 <button class="btn btn-primary" type="submit">{{ __('global.submit') }}</button>
             </div>
         </form>

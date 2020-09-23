@@ -68,6 +68,7 @@ return [
     'enter_installments'    => 'Enter the number of installments',
     'number_installments'   => 'Select the number of installments',
     'entry'                 => 'Entry',
-    'accounts_statement'    => 'Accounts Statement',
-    'select_account'        => 'Select an account'
+    'extract'               => 'Extract',
+    'select_account'        => 'Select an account',
+    'balance'               => 'Balance'
 ];

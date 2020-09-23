@@ -17,7 +17,7 @@ class CreateAccountBalancesTable extends Migration
             $table->bigIncrements('id');
             $table->date('date');
             $table->integer('previous_balance');
-            $table->integer('balance');
+            $table->integer('current_balance');
             $table->unsignedBigInteger('account_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

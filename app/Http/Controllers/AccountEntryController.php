@@ -17,7 +17,7 @@ class AccountEntryController extends Controller
         $this->service          = $service;
         $this->accountService   = $accountService;
 
-        $this->title = __('global.accounts_statement');
+        $this->title = __('global.extract');
     }
 
 
@@ -26,13 +26,21 @@ class AccountEntryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($account_id)
     {
+        $account = $this->accountService->findById($account_id);
+
+        if (! $account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.not_found'));
+            return redirect()->route('accounts.index');
+        }
+
         $data = [
-            'title'             => $this->title,
-            'account_entries'   => $this->service->getEntriesForAccountStatement(),
+            'title'     => $this->title,
+            'account'   => $account,
+            'entries'   => $this->service->getEntriesByAccount($account->id),
         ];
-        //dd($data);
+
         return view('account_entries.index', $data);
     }
 
@@ -58,21 +66,21 @@ class AccountEntryController extends Controller
      */
     public function store(StoreAccountEntryRequest $request)
     {
-        $data = $request->except('_token');
+        $data = $request->validated();
 
         $account = $this->accountService->findById($data['account_id']);
 
         if (! $account) {
             Alert::error(__('global.invalid_request'), __('messages.accounts.not_found'));
-            redirect()->route('account_entries.index');
+            return redirect()->route('accounts.index');
         }
 
         $entry = $this->service->make($account, $data);
 
-        //$this->cardService->updateCardBalance($card);
+        $this->accountService->updateBalance($account, $entry->date);
        
         Alert::success(__('global.success'), __('messages.entries.create'));
-        return redirect()->route('account_entries.index');
+        return redirect()->route('accounts.entries', $entry->account->id);
     }
 
     /**
@@ -114,9 +122,11 @@ class AccountEntryController extends Controller
             return redirect()->route('invoices.index');
         }
 
+        $this->accountService->updateBalance($entry->account, $entry->date);
+
         Alert::success(__('global.success'), __('messages.entries.update'));
 
-        return redirect()->route('account_entries.index');
+        return redirect()->route('accounts.entries', $entry->account->id);
     }
 
     /**
@@ -127,10 +137,22 @@ class AccountEntryController extends Controller
      */
     public function destroy($id)
     {
+        $entry = $this->service->findById($id);
+
+        if (! $entry) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.entries.not_found')]);
+        }
+
+        $date = $entry->date;
+        $account = $entry->account;
+
         if (! $this->service->delete($id)) {
             return response()
-                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
         }
+
+        $this->accountService->updateBalance($account, $date);
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.entries.delete')]);

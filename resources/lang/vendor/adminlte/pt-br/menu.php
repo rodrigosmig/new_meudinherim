@@ -22,5 +22,6 @@ return [
     'credit-card'                   => 'Cartão de Crédito',
     'invoices'                      => 'Faturas',
     'cards'                         => 'Cartões',
-    'accounts_statement'            => 'Accounts Statement'
+    'extract'                       => 'Extrato',
+    'manage'                        => 'Gerenciar'
 ];

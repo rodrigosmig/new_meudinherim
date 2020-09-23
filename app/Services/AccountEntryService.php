@@ -68,25 +68,4 @@ class AccountEntryService
             ->where('account_id', $account_id)
             ->get();
     }
-
-    /**
-     * Returns an array with separate entries per account
-     *
-     * @return array
-     */  
-    public function  getEntriesForAccountStatement(): array
-    {
-        $accountService = app(AccountService::class);
-        $accounts = $accountService->getAccounts()->pluck('name', 'id');
-        
-        $entries = [];
-
-        foreach ($accounts as $key => $account) {
-            $entries_account = $this->getEntriesByAccount($key);
-            $entries[$key]['name']  = $account;
-            $entries[$key]['items'] = $entries_account;
-        }
-
-        return $entries;
-    }
 }

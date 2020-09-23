@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\Account;
+use App\Models\Category;
 use App\Models\AccountEntry;
+use App\Models\AccountBalance;
 
 class AccountService
 {
@@ -81,5 +84,120 @@ class AccountService
         }
 
         return $types;
+    }
+
+    /**
+     * Updates account balance
+     *
+     * @param Account $account
+     * @param string $date
+     * @return void
+     */  
+    public function updateBalance(Account $account, $date)
+    {
+        $this->account = $account;
+
+        $entries = $this->getEntriesFromDate($date);
+        $balances = $this->getTotalBalanceOfDay($entries);
+
+        $last_date = Carbon::createFromFormat('Y-m-d', $date)->sub('1 day')->format('Y-m-d');
+        $last_balance = $this->findBalanceByDate($last_date);
+       
+        $previous_balance = $last_balance->current_balance;
+
+        if ($entries->isEmpty()) {
+            $balance = $this->findBalanceByDate($date);
+            if ($balance) {
+                $balance->delete();
+            }
+        }
+        
+        foreach ($balances as $date => $value) {
+            $balance = $this->findBalanceByDate($date);
+            $current_balance = $previous_balance + $value;
+
+            if (!$balance) {                
+                $balance = $this->createBalance($date, $current_balance, $previous_balance);
+            } else {
+                $balance->current_balance = $current_balance;
+            }
+
+            $balance->previous_balance = $previous_balance;
+            $balance->save();
+
+            $previous_balance = $current_balance;
+        }
+    }
+
+    /**
+     * Returns all entries from a given date
+     *
+     * @param string $date
+     * @return Illuminate\Database\Eloquent\Collection
+     */  
+    private function getEntriesFromDate($date)
+    {
+        return $this->account->entries()->where('date', '>=', $date)->get();
+    }
+
+    /**
+     * Returns an array with balances separated by day
+     *
+     * @param Illuminate\Database\Eloquent\Collection $entries
+     * @return array
+     */  
+    private function getTotalBalanceOfDay($entries): array
+    {
+        $total = [];
+
+        foreach ($entries as $entry) {
+            if (! isset($total[$entry->date])) {
+                $total[$entry->date] = 0;
+            }
+
+            if ($entry->category_id === Category::INCOME) {
+                $total[$entry->date] += $entry->value;
+            } else {
+                $total[$entry->date] -= $entry->value;
+            }
+        }
+
+        ksort($total);
+
+        return $total;
+    }
+
+    /**
+     * Returns the balance for the given date
+     *
+     * @param Account $account
+     * @return AccountBalance
+     */  
+    private function findBalanceByDate($date): AccountBalance
+    {
+        $balance = $this->account->balances()->where('date', $date)->first();
+
+        if (!$balance) {
+            $balance = $this->createBalance($date, 0, 0);
+        }
+
+        return $balance;
+    }
+
+    /**
+     * Creates an account balance
+     *
+     * @param string $date
+     * @param int $current_balance
+     * @param int $previous_balance
+     * @return AccountBalance
+     */  
+    private function createBalance($date, $current_balance, $previous_balance = 0): AccountBalance
+    {
+        return $this->account->balances()->create([
+            'date'              => $date,
+            'previous_balance'  => $previous_balance,
+            'current_balance'   => $current_balance
+        ]);
     }
 }

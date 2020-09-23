@@ -31,6 +31,8 @@ class Account extends Model
         self::INVESTMENT        => self::INVESTMENT,
     ];
 
+    protected $appends = ['balance'];
+
     protected $fillable = ['type','name', 'user_id'];
 
     public function user()
@@ -46,5 +48,13 @@ class Account extends Model
     public function balances()
     {
         return $this->hasMany(AccountBalance::class);
+    }
+
+    public function getBalanceAttribute()
+    {
+        $today = now()->format('Y-m-d');
+        $balance = $this->balances()->where('date', '<=', $today)->latest('date')->first();
+
+        return $balance->current_balance;
     }
 }

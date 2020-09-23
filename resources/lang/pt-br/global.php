@@ -68,6 +68,7 @@ return [
     'enter_installments'    => 'Digite o número de parcelas',
     'number_installments'   => 'Selecione a quantidade de parcelas',
     'entry'                 => 'Lançamento',
-    'accounts_statement'    => 'Extrato de Contas',
-    'select_account'        => 'Selecione uma conta'
+    'extract'               => 'Extrato',
+    'select_account'        => 'Selecione uma conta',
+    'balance'               => 'Saldo'
 ];

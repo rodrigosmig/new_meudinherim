@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\User;
-use App\Models\AccountEntry;
+use App\Services\AccountService;
 use Illuminate\Database\Seeder;
 
 class AccountEntrySeeder extends Seeder
@@ -17,7 +16,7 @@ class AccountEntrySeeder extends Seeder
 
         $jon_account = $jon->accounts()->where('type', 'checking_account')->first();
 
-        $jon_account->entries()->create([
+        $entry1 = $jon_account->entries()->create([
             'date'          => now()->modify("-1 days")->format('Y-m-d'),
             'description'   => 'Salary',
             'value'         => 1000,
@@ -25,12 +24,16 @@ class AccountEntrySeeder extends Seeder
             'user_id'       => $jon->id,
         ]);
         
-        $jon_account->entries()->create([
+        $entry2 = $jon_account->entries()->create([
             'date'          => now()->format('Y-m-d'),
             'description'   => 'Lunch',
             'value'         => 25.50,
             'category_id'   => $jon->categories()->where('type', 2)->first()->id,
             'user_id'       => $jon->id,
         ]);
+
+        $service = app(AccountService::class);
+
+        $service->updateBalance($entry1);
     }
 }

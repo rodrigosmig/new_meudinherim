@@ -22,9 +22,22 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('categories', 'CategoryController');
+
 Route::resource('accounts', 'AccountController');
+Route::get('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
+
 Route::resource('cards', 'CardController');
-Route::resource('account_entries', 'AccountEntryController');
+
+Route::get('account_entries/{account_entry}/edit', 'AccountEntryController@edit')->name('account_entries.edit');
+//Route::get('account_entries/{account_entry}', 'AccountEntryController@show')->name('account_entries.show');
+Route::put('account_entries/{account_entry}', 'AccountEntryController@update')->name('account_entries.update');
+Route::delete('account_entries/{account_entry}', 'AccountEntryController@destroy')->name('account_entries.destroy');
+Route::get('account_entries/create', 'AccountEntryController@create')->name('account_entries.create');
+Route::post('account_entries', 'AccountEntryController@store')->name('account_entries.store');
+
+//Route::get('account_entries', 'AccountEntryController@index')->name('account_entries.index');
+
+
 
 Route::get('/invoices', 'InvoiceController@index')->name('invoices.index');
 

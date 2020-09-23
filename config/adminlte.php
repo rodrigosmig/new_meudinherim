@@ -256,20 +256,17 @@ return [
             'active' => ['categories', 'categories/*', 'regex:@^content/[0-9]+$@']
         ],
         [
-            'key'        => 'accounts',
-            'text'        => 'accounts',
-            'url'         => '/accounts',
-            'icon'        => 'fas fa-university',
-            'label_color' => 'success',
-            'active' => ['accounts', 'account', 'accounts/*', 'regex:@^content/[0-9]+$@']
-        ],
-        [
-            'key'        => 'accounts_statement',
-            'text'        => 'accounts_statement',
-            'url'         => '/account_entries',
-            'icon'        => 'fas fa-money-check-alt',
-            'label_color' => 'success',
-            'active' => ['account_entries', 'account_entries/*', 'regex:@^content/[0-9]+$@']
+            'key'     => 'accounts',
+                'text'    => 'accounts',
+                'icon'    => 'fas fa-university',
+                'submenu' => [
+                    [
+                        'text' => 'manage',
+                        'url'  => '/accounts',
+                        'label_color' => 'success',
+                        'active' => ['accounts/{id}/edit', 'accounts/create', 'regex:@^accounts/[0-9]+/edit$@']
+                    ],
+                ],
         ],
         ['header' => 'credit-card'],
         [

@@ -2,19 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Card;
-use App\Models\Account;
-use App\Models\Invoice;
-use App\Models\Category;
-use App\Models\AccountEntry;
-use App\Models\InvoiceEntry;
-use App\Observers\CardObserver;
-use App\Observers\AccountObserver;
-use App\Observers\InvoiceObserver;
-use App\Observers\CategoryObserver;
-use App\Observers\AccountEntryObserver;
-use App\Observers\InvoiceEntryObserver;
+use App\Services\AccountService;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Events\Dispatcher;
+use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,8 +24,32 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(Dispatcher $events)
     {
-        //
+        $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
+            
+            $service    = app(AccountService::class);
+            $accounts   = $service->getAccounts();
+            $items      = [];
+
+            foreach ($accounts as $account) {
+                $item = [
+                    'text' => $account->name,
+                    'url'  => route('accounts.entries', $account->id),
+                    'label_color' => 'success',
+                    'active' => ["accounts/{$account->id}/entries/*"]
+                ];
+                
+                $items[] = $item;
+            }
+
+            $event->menu->addIn('accounts', [
+                'key'     => 'extract',
+                'text'    => 'extract',
+                'icon'    => 'fas fa-money-check-alt',
+                'submenu' => $items,
+            ],);
+
+        });
     }
 }
