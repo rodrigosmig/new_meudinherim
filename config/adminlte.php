@@ -264,28 +264,22 @@ return [
                         'text' => 'manage',
                         'url'  => '/accounts',
                         'label_color' => 'success',
-                        'active' => ['accounts/{id}/edit', 'accounts/create', 'regex:@^accounts/[0-9]+/edit$@']
+                        'active' => ['accounts/create', 'regex:@^accounts/[0-9]+/edit$@']
                     ],
                 ],
         ],
-        ['header' => 'credit-card'],
         [
-            'key'     => 'credit-card',
+            'key'     => 'cards',
             'text'    => 'credit-card',
             'icon'    => 'fa fa-credit-card',
             'submenu' => [
                 [
-                    'text' => 'cards',
+                    'text' => 'manage',
                     'url'  => '/cards',
                     'label_color' => 'success',
-                    'active' => ['credit-card', 'cards/*', 'regex:@^cards/[0-9]+$@']
+                    'active' => ['cards/create', 'regex:@^cards/[0-9]+/edit$@']
                 ],
-                [
-                    'text'    => 'invoices',
-                    'url'     => '/invoices',
-                    'label_color' => 'success',
-                    'active' => ['invoice', 'invoices/*', 'invoice_entries', 'invoice_entries/*', 'regex:@^invoices/[0-9]+$@']
-                ],
+                
             ],
         ],
     ],

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\CardService;
 use App\Services\AccountService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -28,9 +29,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
             
-            $service    = app(AccountService::class);
-            $accounts   = $service->getAccounts();
-            $items      = [];
+            $accountService = app(AccountService::class);
+            $accounts       = $accountService->getAccounts();            
+            $account_items  = [];
 
             foreach ($accounts as $account) {
                 $item = [
@@ -40,16 +41,41 @@ class AppServiceProvider extends ServiceProvider
                     'active' => ["accounts/{$account->id}/entries/*"]
                 ];
                 
-                $items[] = $item;
+                $account_items[] = $item;
             }
 
-            $event->menu->addIn('accounts', [
-                'key'     => 'extract',
-                'text'    => 'extract',
-                'icon'    => 'fas fa-money-check-alt',
-                'submenu' => $items,
-            ],);
+            if ($accounts->isNotEmpty()) {
+                $event->menu->addIn('accounts', [
+                    'key'     => 'extract',
+                    'text'    => 'extract',
+                    'icon'    => 'fas fa-money-check-alt',
+                    'submenu' => $account_items,
+                ],);
+            }
 
+            $cardService    = app(CardService::class);
+            $cards          = $cardService->getCards();
+            $card_items     = [];
+
+            foreach ($cards as $card) {
+                $item = [
+                    'text' => $card->name,
+                    'url'  => route('cards.invoices.index', $card->id),
+                    'label_color' => 'success',
+                    'active' => ["cards/{$card->id}/invoices/*"]
+                ];
+                
+                $card_items[] = $item;
+            }
+
+            if ($cards->isNotEmpty()) {
+                $event->menu->addIn('cards', [
+                    'key'     => 'invoices',
+                    'text'    => 'invoices',
+                    'icon'    => 'fas fa-money-check-alt',
+                    'submenu' => $card_items,
+                ],);
+            }
         });
     }
 }

@@ -55,6 +55,10 @@ class Account extends Model
         $today = now()->format('Y-m-d');
         $balance = $this->balances()->where('date', '<=', $today)->latest('date')->first();
 
+        if (! $balance) {
+            return 0;
+        }
+
         return $balance->current_balance;
     }
 }
