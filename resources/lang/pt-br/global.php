@@ -70,5 +70,31 @@ return [
     'entry'                 => 'Lançamento',
     'extract'               => 'Extrato',
     'select_account'        => 'Selecione uma conta',
-    'balance'               => 'Saldo'
+    'balance'               => 'Saldo',
+
+    'default_categories' => [
+        'salary'            => 'Salário',
+        'credit_on_card'           => "Crédito no Cartão",
+        'investments'       => 'Investimentos',
+        'revenue'           => 'Rendimentos',
+        'withdraw'          => 'Saque',
+        'loans'             => 'Empréstimos',
+        'sales'             => 'Vendas',
+        'others'            => 'Outros',
+        'house'             => 'Casa',
+        'subscriptions'     => 'Assinaturas e serviços',
+        'personal_expenses' => 'Despesas Pessoais',
+        'education'         => 'Educação',
+        'electronics'       => 'Eletrônicos',
+        'recreation'        => 'Lazer',
+        'food'              => 'Alimentação',
+        'health'            => 'Saúde',
+        'payments'          => 'Pagamentos',
+        'bank_transfer'     => 'Transferência bancária',
+        'supermarket'       => 'Supermercado',
+        'transport'         => 'Transporte',
+        'clothes'           => 'Roupas',
+        'travels'           => 'Viagens',
+        'others'            => 'Outros',
+    ]
 ];

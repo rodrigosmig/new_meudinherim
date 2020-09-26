@@ -34,6 +34,6 @@ class AccountEntrySeeder extends Seeder
 
         $service = app(AccountService::class);
 
-        $service->updateBalance($entry1);
+        $service->updateBalance($entry1->account, $entry1->date);
     }
 }

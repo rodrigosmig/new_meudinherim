@@ -70,5 +70,31 @@ return [
     'entry'                 => 'Entry',
     'extract'               => 'Extract',
     'select_account'        => 'Select an account',
-    'balance'               => 'Balance'
+    'balance'               => 'Balance',
+
+    'default_categories' => [
+        'salary'            => 'Salary',
+        'credit_on_card'    => "Credit on Card",
+        'investments'       => 'Investments',
+        'revenue'           => 'Revenue',
+        'withdraw'          => 'Withdraw',
+        'loans'             => 'Loans',
+        'sales'             => 'Sales',
+        'others'            => 'Others',
+        'house'             => 'House',
+        'subscriptions'     => 'Subscriptions and services',
+        'personal_expenses' => 'Personal expenses',
+        'education'         => 'Education',
+        'electronics'       => 'Electronics',
+        'recreation'        => 'Recreation',
+        'food'              => 'Food',
+        'health'            => 'Health',
+        'payments'          => 'Payments',
+        'bank_transfer'     => 'Bank transfer',
+        'supermarket'       => 'Supermarket',
+        'transport'         => 'Transport',
+        'clothes'           => 'Clothes',
+        'travels'           => 'Travels',
+        'others'            => 'Others',
+    ]
 ];
