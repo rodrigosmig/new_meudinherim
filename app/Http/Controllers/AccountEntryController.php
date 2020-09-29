@@ -26,7 +26,7 @@ class AccountEntryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($account_id)
+    public function index(Request $request, $account_id)
     {
         $account = $this->accountService->findById($account_id);
 
@@ -35,10 +35,23 @@ class AccountEntryController extends Controller
             return redirect()->route('accounts.index');
         }
 
+        $range_date = null;
+
+        if (isset($request->filter_from)
+            && $request->filter_from
+            && isset($request->filter_to)
+            && $request->filter_to
+        ) {
+            $range_date = [
+                'from'  => $request->filter_from,
+                'to'    => $request->filter_to
+            ];
+        }
+
         $data = [
             'title'     => $this->title,
             'account'   => $account,
-            'entries'   => $this->service->getEntriesByAccount($account->id),
+            'entries'   => $this->service->getEntriesByAccount($account->id, $range_date),
         ];
 
         return view('account_entries.index', $data);

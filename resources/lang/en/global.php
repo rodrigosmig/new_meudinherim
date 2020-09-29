@@ -71,6 +71,10 @@ return [
     'extract'               => 'Extract',
     'select_account'        => 'Select an account',
     'balance'               => 'Balance',
+    'filter'                => 'Filter',
+    'filter_by_range'       => 'Filter by range',
+    'initial_date'          => 'Initial Date',
+    'final_date'            => 'Final Date',
 
     'default_categories' => [
         'salary'            => 'Salary',

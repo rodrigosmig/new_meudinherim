@@ -71,6 +71,10 @@ return [
     'extract'               => 'Extrato',
     'select_account'        => 'Selecione uma conta',
     'balance'               => 'Saldo',
+    'filter'                => 'Filtrar',
+    'filter_by_range'       => 'Filtrar por período',
+    'initial_date'          => 'Data Inicial',
+    'final_date'            => 'Data Final',
 
     'default_categories' => [
         'salary'            => 'Salário',

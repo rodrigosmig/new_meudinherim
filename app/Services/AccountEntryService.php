@@ -60,12 +60,24 @@ class AccountEntryService
      * Returns account entries according to the given account id
      *
      * @param int $account_id
+     * @param string $range_date
      * @return Illuminate\Database\Eloquent\Collection
      */  
-    public function getEntriesByAccount($account_id)
+    public function getEntriesByAccount($account_id, $range_date = null)
     {
+        $from = date('Y-m-1');
+        $to = date('Y-m-t');
+
+        if ($range_date && isset($range_date['from']) && isset($range_date['to'])) {
+            $from = $range_date['from'];
+            $to = $range_date['to'];
+        }
+
         return $this->account_entry
             ->where('account_id', $account_id)
+            ->where('date', '>=', $from)
+            ->where('date', '<=', $to)
+            ->orderBy('date')
             ->get();
     }
 }

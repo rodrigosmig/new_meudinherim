@@ -1,3 +1,7 @@
 .table-actions .edit, .table-actions .delete, .table-actions .invoices {
     margin-right: 3px;
 }
+
+.table-margin-bottom {
+    margin-bottom: 30px;
+}

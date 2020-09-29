@@ -155,7 +155,7 @@ class AccountService
                 $total[$entry->date] = 0;
             }
 
-            if ($entry->category_id === Category::INCOME) {
+            if ($entry->category->type === Category::INCOME) {
                 $total[$entry->date] += $entry->value;
             } else {
                 $total[$entry->date] -= $entry->value;
