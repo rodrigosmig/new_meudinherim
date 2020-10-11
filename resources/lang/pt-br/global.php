@@ -83,7 +83,9 @@ return [
     'monthly_entries_by_category'   => 'Entradas do Mês por Categoria',
     'monthly_spend_by_category'     => 'Gasto Mensal por Categoria',
     'monthly_cards_by_category'     => 'Gasto Mensal Com Cartão por Categoria',
-    'bills_to_pay'                  => 'Contas a Pagar',
+    'accounts_scheduling'           => 'Agendamento de Contas',
+    'accounts_payable'              => 'Contas a Pagar',
+    'accounts_receivable'           => 'Contas a Receber',
 
     'default_categories' => [
         'salary'            => 'Salário',

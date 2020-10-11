@@ -16,15 +16,5 @@ class CategorySeeder extends Seeder
     {
         $service = app(CategoryService::class);
         $service->createDefaultCategories();
-        
-        /* $jon->categories()->create([
-            'name'      => __('global.incomes'),
-            'type'      => Category::INCOME,
-        ]);
-
-        $jon->categories()->create([
-            'name'      => __('global.expenses'),
-            'type'      => Category::EXPENSE,
-        ]); */
     }
 }

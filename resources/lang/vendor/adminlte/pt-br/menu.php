@@ -23,5 +23,9 @@ return [
     'invoices'                      => 'Faturas',
     'cards'                         => 'Cartões',
     'extract'                       => 'Extrato',
-    'manage'                        => 'Gerenciar'
+    'manage'                        => 'Gerenciar',
+    'bank_accounts'                 => 'Contas Bancárias',
+    'account_scheduling'            => 'Agendamento de Contas',
+    'payable'                       => 'Contas a Pagar',
+    'receivable'                    => 'Contas a Receber'
 ];

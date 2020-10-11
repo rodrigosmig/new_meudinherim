@@ -52,7 +52,7 @@ class InvoiceEntryOwnerMiddleware
             }
 
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('cards.index');
         }
 
         return $next($request);        

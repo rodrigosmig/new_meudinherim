@@ -83,7 +83,8 @@ return [
     'monthly_entries_by_category'   => 'Monthly Entries By Category',
     'monthly_spend_by_category'     => 'Monthly Spend By Category',
     'monthly_cards_by_category'     => 'Monthly Card Spend by Category',
-    'bills_to_pay'                  => 'Bills to Pay',
+    'receivable'                    => 'A Pagar',
+    'payable'                       => 'A Receber',
 
     'default_categories' => [
         'salary'            => 'Salary',

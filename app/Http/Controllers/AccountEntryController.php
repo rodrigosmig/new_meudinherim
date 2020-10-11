@@ -108,7 +108,7 @@ class AccountEntryController extends Controller
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('accounts.index');
         }
 
         return view('account_entries.edit', [
@@ -132,7 +132,7 @@ class AccountEntryController extends Controller
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('accounts.index');
         }
 
         $this->accountService->updateBalance($entry->account, $entry->date);

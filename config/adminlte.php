@@ -255,6 +255,7 @@ return [
             'label_color' => 'success',
             'active' => ['categories', 'categories/*', 'regex:@^content/[0-9]+$@']
         ],
+        ['header' => 'bank_accounts'],
         [
             'key'     => 'accounts',
                 'text'    => 'accounts',
@@ -268,6 +269,7 @@ return [
                     ],
                 ],
         ],
+        ['header' => 'credit-card'],
         [
             'key'     => 'cards',
             'text'    => 'credit-card',
@@ -281,6 +283,15 @@ return [
                 ],
                 
             ],
+        ],
+        ['header' => 'account_scheduling'],
+        [
+            'key'     => 'scheduling',
+            'text'    => 'account_scheduling',
+            'url'     => '/account-scheduling',
+            'icon'    => 'fa fa-calendar',
+            'label_color' => 'success',
+            'active' => ['payable', 'payable/*', 'regex:@^payable/[0-9]+/edit$@']
         ],
     ],
 

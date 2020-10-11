@@ -54,14 +54,14 @@ class InvoiceEntryController extends Controller
 
         if (!$card) {
             Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('cards.index');
         }
 
         $invoice = $this->cardService->getInvoiceById($card, $invoice_id);
 
         if (!$invoice) {
             Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('cards.index');
         }
 
         $data = [
@@ -126,7 +126,7 @@ class InvoiceEntryController extends Controller
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('cards.index');
         }
 
         return view('invoice_entries.edit', [
@@ -153,7 +153,7 @@ class InvoiceEntryController extends Controller
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('cards.index');
         }
         
         $this->invoiceService->updateInvoiceAmount($entry->invoice);
@@ -176,7 +176,7 @@ class InvoiceEntryController extends Controller
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
-            return redirect()->route('invoices.index');
+            return redirect()->route('cards.index');
         }
 
         $invoice    = $entry->invoice;
