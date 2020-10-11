@@ -34,7 +34,6 @@
             from = $( "#filter_from" ).datepicker({
                 locale: 'pt-br',
                 dateFormat: 'yy-mm-dd',
-                defaultDate: new Date(),
                 changeMonth: true,
                 numberOfMonths: 1
             }).on( "change", function() {
@@ -44,7 +43,6 @@
             to = $( "#filter_to" ).datepicker({
                 locale: 'pt-br',
                 dateFormat: 'yy-mm-dd',
-                defaultDate: new Date(),
                 changeMonth: true,
                 numberOfMonths: 1
             }).on( "change", function() {

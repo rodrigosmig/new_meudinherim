@@ -4,6 +4,7 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\Card;
+use App\Models\Category;
 use App\Models\InvoiceEntry;
 use App\Services\CardService;
 use App\Exceptions\InsufficientLimitException;
@@ -137,5 +138,35 @@ class InvoiceEntryService
         return $this->entry->find($id);
     }
 
-    
+    /**
+     * Returns an array with the total grouped by category for a given date
+     *
+     * @param string $date
+     * @return array
+     */ 
+    public function getTotalByCategoryForChart($date): array
+    {
+        $new_date   = new DateTime($date);
+        $month      = $new_date->format('m');
+        $year       = $new_date->format('Y');
+        $result     = [];
+        
+        $total = $this->entry::selectRaw('categories.name, SUM(invoice_entries.value) as total')
+            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
+            ->where('categories.type', Category::EXPENSE)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->groupBy('categories.name')
+            ->get()
+            ->toArray();
+
+        foreach ($total as $value) {
+            $result[] = [
+                'value' => $value['total'] / 100,
+                'label' => $value['name']
+            ];
+        }
+
+        return $result;
+    }
 }
