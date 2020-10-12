@@ -1,20 +1,22 @@
 $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+    
     $(".delete").on('click', function(event) {
         event.preventDefault()
         
-        var id = $(this).attr('data-entry')
+        var id = $(this).attr('data-payable')
         
         if (id) {
             swal({
-                title: entry_title,
-                text: entry_text,
+                title: payable_title,
+                text: payable_text,
                 icon: 'warning',
                 buttons: [button_cancel, button_confirm],
                 }).then(function(confirm) {
                     if (confirm) {          
                         $.ajax({
                             type: 'DELETE',
-                            url: '/account_entries/' + id,
+                            url: '/payables/' + id,
                             datatype: 'JSON',
                             success: function(response) {
                                 swal({
@@ -22,7 +24,7 @@ $(function() {
                                     text: response.text,
                                     icon: 'success',
                                 }).then(function() {
-                                    location.reload();
+                                    window.location="/payables";
                                 })
                             },
                             error: function(response) {
@@ -31,7 +33,7 @@ $(function() {
                                     text: response.responseJSON.text,
                                     icon: 'error',
                                 }).then(function() {
-                                    location.reload();
+                                    window.location="/payables";
                                 })
                             },
                           });	

@@ -18,47 +18,13 @@
         var entry_text = '{{ __('messages.entries.ajax_text') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
-    </script>
 
-    <script>
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-
             $('.datatable').DataTable({
                 "language": {
                     "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
                 }
             });
-
-            var dateFormat = 'yy-mm-dd'
-            from = $( "#filter_from" ).datepicker({
-                locale: 'pt-br',
-                dateFormat: 'yy-mm-dd',
-                changeMonth: true,
-                numberOfMonths: 1
-            }).on( "change", function() {
-                to.datepicker( "option", "minDate", getDate( this ) );
-            }),
-            
-            to = $( "#filter_to" ).datepicker({
-                locale: 'pt-br',
-                dateFormat: 'yy-mm-dd',
-                changeMonth: true,
-                numberOfMonths: 1
-            }).on( "change", function() {
-                from.datepicker( "option", "maxDate", getDate( this ) );
-            });
-        
-            function getDate( element ) {
-                var date;
-                try {
-                    date = $.datepicker.parseDate( dateFormat, element.value );
-                } catch( error ) {
-                    date = null;
-                }
-            
-                return date;
-            }
         })
     </script>
 @stop
@@ -76,20 +42,12 @@
             </h4>
         </div>
         <div class="card-body">
-            <div class="table-margin-bottom">
-                <label>{{ __('global.filter_by_range') }}:</label>
-                <div class="form-inline">
-                    <form action="{{ route('accounts.entries', $account->id) }}" method="POST">
-                        @csrf
-                        <input id="filter_from" class="form-control" type="text" name="filter_from" placeholder="{{ __('global.initial_date') }}">
-                        <input id="filter_to" class="form-control" type="text" name="filter_to" placeholder="{{ __('global.final_date') }}">
-
-                        <button type="submit" class="btn btn-primary waves-effect">
-                            {{ __('global.filter') }}
-                        </button>
-                    </form>
-                </div>
-            </div>            
+            <label>{{ __('global.filter_by_range') }}:</label>
+            <div class="form-inline">
+                <form action="{{ route('accounts.entries', $account->id) }}" method="POST">
+                    @include('includes.form_filter')
+                </form>
+            </div>
 
             @if ($entries->isNotEmpty())
                 <table class="table datatable table-margin-top">

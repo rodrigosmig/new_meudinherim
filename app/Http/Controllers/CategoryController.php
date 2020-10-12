@@ -59,7 +59,12 @@ class CategoryController extends Controller
      */
     public function store(StoreUpdateCategoryRequest $request)
     {
-        $this->service->store($request->all());
+        $category = $this->service->store($request->all());
+
+        if (! $category) {
+            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+            return redirect()->route('categories.index');
+        }
 
         Alert::success(__('global.success'), __('messages.categories.create'));
 

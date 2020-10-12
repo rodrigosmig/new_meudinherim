@@ -47,5 +47,16 @@ return [
         'ajax_text'             => 'O Lançamento será excluído permanentemente',
         'no_open_invoice'       => 'Não existem faturas abertas para esta data',
         'insufficient_limit'    => 'O limite do cartão é insuficiente'
+    ],
+
+    'account_scheduling' => [
+        'not_found'             => 'Nenhuma conta encontrada',
+        'payable_created'       => 'Contas a pagar adicionado com sucesso.',
+        'receivable_created'    => 'Contas a receber adicionado com sucesso.',
+        'payable_updated'       => 'Contas a pagar atualizado com sucesso',
+        'receivable_updated'    => 'Contas a receber atualizado com sucesso',
+        'payable_deleted'       => 'Contas a pagar deletado com sucesso',
+        'receivable_deleted'    => 'Contas a receber deletado com sucesso',
+        'ajax_text'             => 'A conta será excluída permanentemente',
     ]
 ];

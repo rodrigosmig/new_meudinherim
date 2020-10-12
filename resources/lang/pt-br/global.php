@@ -59,6 +59,7 @@ return [
     'entries'                       => 'Lançamentos',
     'return'                        => 'Voltar',
     'opens'                         => 'Abertas',
+    'open'                          => 'Aberta',
     'paids'                         => 'Pagas',
     'limit'                         => 'Limite',
     'invalid'                       => 'Inválido',
@@ -86,6 +87,9 @@ return [
     'accounts_scheduling'           => 'Agendamento de Contas',
     'accounts_payable'              => 'Contas a Pagar',
     'accounts_receivable'           => 'Contas a Receber',
+    'status'                        => 'Status',
+    'paid'                          => 'Pago',
+    'pay'                           => 'Pagar',
 
     'default_categories' => [
         'salary'            => 'Salário',

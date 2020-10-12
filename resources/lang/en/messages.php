@@ -48,4 +48,15 @@ return [
         'no_open_invoice'       => 'There are no open invoices for this date',
         'insufficient_limit'    => 'The card limit is insufficient'
     ],
+
+    'account_scheduling' => [
+        'not_found'             => 'No Account Found',
+        'payable_created'       => 'Accounts payable added successfully',
+        'receivable_created'    => 'Accounts receivable added successfully',
+        'payable_updated'       => 'Accounts payable updated successfully',
+        'receivable_updated'    => 'Accounts receivable updated successfully',
+        'payable_deleted'       => 'Accounts payable successfully deleted',
+        'receivable_deleted'    => 'Accounts receivable successfully deleted',
+        'ajax_text'             => 'The account will be permanently deleted',
+    ]
 ];

@@ -59,6 +59,7 @@ return [
     'entries'                       => 'Entries',
     'return'                        => 'Return',
     'opens'                         => 'Opens',
+    'open'                          => 'Open',
     'paids'                         => 'Paids',
     'limit'                         => 'Limit',
     'invalid'                       => 'Invalid',
@@ -83,8 +84,12 @@ return [
     'monthly_entries_by_category'   => 'Monthly Entries By Category',
     'monthly_spend_by_category'     => 'Monthly Spend By Category',
     'monthly_cards_by_category'     => 'Monthly Card Spend by Category',
-    'receivable'                    => 'A Pagar',
-    'payable'                       => 'A Receber',
+    'accounts_scheduling'           => 'Accounts Scheduling',
+    'accounts_payable'              => 'Accounts Payable',
+    'accounts_receivable'           => 'Accounts Receivable',
+    'status'                        => 'Status',
+    'paid'                          => 'Paid',
+    'pay'                           => 'Pay',
 
     'default_categories' => [
         'salary'            => 'Salary',

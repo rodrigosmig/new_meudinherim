@@ -3,6 +3,7 @@
 namespace App\Http\ViewComposers;
 
 use Illuminate\View\View;
+use App\Services\CategoryService;
 use App\Repositories\Core\Eloquent\CategoryRepository;
 
 class IncomeCategoriesViewComposer
@@ -10,19 +11,19 @@ class IncomeCategoriesViewComposer
     /**
      * The categories repository implementation.
      *
-     * @var CategoryRepository
+     * @var array
      */
     protected $categories;
 
     /**
      * Create a new categories composer.
      *
-     * @param  CategoryRepository  $users
+     * @param  CategoryService  $service
      * @return void
      */
-    public function __construct(CategoryRepository $repository)
+    public function __construct(CategoryService $service)
     {
-        $this->categories = $repository->getIncomeCategoriesForForm();
+        $this->categories = $service->getIncomeCategoriesForForm();
     }
 
     /**

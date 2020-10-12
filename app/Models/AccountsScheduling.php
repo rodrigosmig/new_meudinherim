@@ -9,7 +9,7 @@ class AccountsScheduling extends Model
 {
     use UserTrait;
     
-    public $fillable =  ['date', 'description', 'value', 'category_id', 'user_id'];
+    public $fillable =  ['date', 'description', 'value', 'category_id', 'paid', 'user_id'];
 
     public function category()
     {
@@ -34,5 +34,15 @@ class AccountsScheduling extends Model
     public function isExpenseCategory()
     {
         return $this->category->type === $this->category::EXPENSE;
+    }
+
+    /**
+     * Checks if the account is paid
+     *
+     * @return bool
+     */
+    public function isPaid()
+    {
+        return $this->paid;
     }
 }

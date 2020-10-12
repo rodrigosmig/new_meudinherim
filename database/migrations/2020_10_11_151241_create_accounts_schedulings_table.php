@@ -20,6 +20,7 @@ class CreateAccountsSchedulingsTable extends Migration
             $table->integer('value');
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('user_id');
+            $table->boolean('paid')->default(false);
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories');

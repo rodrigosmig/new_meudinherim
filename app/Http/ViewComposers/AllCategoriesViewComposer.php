@@ -17,7 +17,7 @@ class AllCategoriesViewComposer
     /**
      * Create a new categories composer.
      *
-     * @param  CategoryService  $users
+     * @param  CategoryService  $service
      * @return void
      */
     public function __construct(CategoryService $service)
