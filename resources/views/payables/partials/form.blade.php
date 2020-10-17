@@ -12,9 +12,9 @@
 </div>
 
 <div class="form-group row">
-    <label for="payable-date" class="col-sm-2 col-form-label">{{ __('global.date') }}</label>
+    <label for="payable-due_date" class="col-sm-2 col-form-label">{{ __('global.due_date') }}</label>
     <div class="col-sm-10">
-    <input type="text" id="payable-date" class="form-control datepicker @error('date') is-invalid @enderror" name="date" value="{{ $payable->date ?? old('date') }}" required>
+    <input type="text" id="payable-due_date" class="form-control datepicker @error('due_date') is-invalid @enderror" name="due_date" value="{{ $payable->due_date ?? old('due_date') }}" required>
     </div>
 </div>
 

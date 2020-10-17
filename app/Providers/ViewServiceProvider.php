@@ -34,7 +34,8 @@ class ViewServiceProvider extends ServiceProvider
         ], CardsViewComposer::class);
 
         View::composer([
-            'account_entries.create'
+            'account_entries.create',
+            'payables.show',
         ], AccountsViewComposer::class);
 
         View::composer([

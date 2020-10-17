@@ -2,6 +2,7 @@
 
 @push('js')
     <script src="{{ asset('js/payables/index.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('button-header')
@@ -14,17 +15,8 @@
         var payable_text = '{{ __('messages.account_scheduling.ajax_text') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
-
-        $(function () {
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
-        })
     </script>
 @stop
-
 
 @section('plugins.Datatables', true)
 
@@ -40,9 +32,10 @@
                 </form>
             </div>
 
-            <table class="table datatadsfsdble">
+            <table class="table datatable">
                 <thead>
-                    <th>{{ __('global.date') }}</th>
+                    <th>{{ __('global.due_date') }}</th>
+                    <th>{{ __('global.paid_date') }}</th>
                     <th>{{ __('global.description') }}</th>
                     <th>{{ __('global.category') }}</th>
                     <th>{{ __('global.value') }}</th>
@@ -53,7 +46,12 @@
                     @foreach ($payables as $payable)
                         <tr>
                             <td>
-                                {{ toBrDate($payable->date) }}
+                                {{ toBrDate($payable->due_date) }}
+                            </td>
+                            <td>
+                                @if ($payable->isPaid())
+                                    {{ toBrDate($payable->paid_date) }}
+                                @endif
                             </td>
                             <td>
                                 {{ $payable->description }}
@@ -73,16 +71,21 @@
                             </td>
                             <td class="table-actions">
                                 <div class="row">
-                                    <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
-                                    <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
                                     @if (! $payable->isPaid())
-                                        <a class="btn btn-success btn-sm edit" href="" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
+                                        <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        
+                                        <a class="btn btn-success btn-sm edit" href="{{ route('payables.show', $payable->id) }}" data-toggle="tooltip" data-target="#payment" title="{{ __('global.pay') }}">
                                             <i class="fas fa-money-bill-alt"></i>
                                         </a>
+                                    @else
+                                        <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-target="#payment" title="{{ __('global.cancel_payment') }}">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
                                     @endif
                                 </div>
                             </td>

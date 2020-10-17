@@ -2,15 +2,13 @@
 
 @section('button-header')
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="{{ route('categories.index') }}">{{ $title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('payables.index') }}">{{ $title }}</a></li>
         <li class="breadcrumb-item active">{{ __('global.new') }}</li>
     </ol>
 @endsection
 
 @section('js')
-    <script>
-        $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
-    </script>
+    <script src="{{ asset('js/plugins/init-datepicker.js') }}"></script>
 @endsection
 
 @section('content')

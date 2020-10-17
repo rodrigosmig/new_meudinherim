@@ -4,16 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\AccountService;
+use App\Http\Requests\PaymentRequest;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Requests\StorePayableRequest;
 use App\Services\AccountsSchedulingService;
+use App\Exceptions\AccountsPayableIsNotPaidException;
+use App\Exceptions\AccountsPayableIsAlreadyPaidException;
 
 class PayableController extends Controller
 {
     protected $service;
+    protected $accountService;
 
-    public function __construct(AccountsSchedulingService $service)
+    public function __construct(AccountsSchedulingService $service, AccountService $accountService)
     {
         $this->service = $service;
+        $this->accountService = $accountService;
         $this->title = __('global.accounts_payable');
     }
     /**
@@ -64,14 +71,13 @@ class PayableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePayableRequest $request)
     {
-        //$data = $request->validated();
-        $data = $request->all();
+        $data = $request->validated();
         
-        $account = $this->service->store($data);
+        $payable = $this->service->store($data);
 
-        if (! $account) {
+        if (! $payable) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
             return redirect()->route('accounts-scheduling.index');
         }
@@ -79,6 +85,27 @@ class PayableController extends Controller
         Alert::success(__('global.success'), __('messages.account_scheduling.payable_created'));
 
         return redirect()->route('payables.index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $payable = $this->service->findById($id);
+
+        if (! $payable) {
+            Alert::error(__('global.invalid_request'), __('messages.not_found'));
+            return redirect()->route('payables.index');
+        }
+
+        return view('payables.show', [
+            'title'     => $this->title,
+            'payable'   => $payable
+        ]);
     }
 
     /**
@@ -96,6 +123,10 @@ class PayableController extends Controller
             return redirect()->route('payables.index');
         }
 
+        if ($payable->isPaid()) {
+            return redirect()->route('payables.show', $payable->id);
+        }
+
         return view('payables.edit', [
             'title'     => $this->title,
             'payable'   => $payable 
@@ -109,7 +140,7 @@ class PayableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StorePayableRequest $request, $id)
     {
         if (! $this->service->update($id, $request->all())) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
@@ -137,5 +168,55 @@ class PayableController extends Controller
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.account_scheduling.payable_deleted')]);
+    }
+
+    public function payment(PaymentRequest $request, $id)
+    {
+        $data       = $request->validated();
+        $data['id'] = $id;
+        $account    = $this->accountService->findById($data['account_id']);
+
+        try {
+            $entry = $this->service->payment($account, $data);
+        } catch (AccountsPayableIsAlreadyPaidException $exception) {
+            Alert::error(__('global.invalid_request'), $exception->getMessage());
+            return redirect()->route('payables.index');
+        }
+
+        if (! $entry) {
+            Alert::error(__('global.invalid_request'), __('messages.not_found'));
+            return redirect()->route('payables.index');
+        }
+
+        $this->accountService->updateBalance($account, $data['paid_date']);
+
+        Alert::success(__('global.success'), __('messages.account_scheduling.payable_paid'));
+
+        return redirect()->route('payables.index');
+    }
+
+    public function cancelPayment($id) {
+        $payable = $this->service->findById($id);
+
+        if (! $payable) {
+            Alert::error(__('global.invalid_request'), __('messages.not_found'));
+            return redirect()->route('payables.index');
+        }
+
+        try {
+            $response = $this->service->cancelPayment($payable);
+        } catch (AccountsPayableIsNotPaidException $exception) {
+            Alert::error(__('global.invalid_request'), $exception->getMessage());
+            return redirect()->route('payables.index');
+        }
+
+        if (! $response) {
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_cancel_payment'));
+            return redirect()->route('payables.index');
+        }
+
+        Alert::success(__('global.success'), __('messages.account_scheduling.payable_cancel'));
+
+        return redirect()->route('payables.index');
     }
 }

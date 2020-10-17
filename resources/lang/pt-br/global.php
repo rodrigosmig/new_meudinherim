@@ -49,7 +49,9 @@ return [
     'income'                        => 'Entrada',
     'incomes'                       => 'Entradas',
     'select_category'               => 'Selecione uma categoria',
+    'select_accounts'               => 'Selecione uma conta',
     'due_date'                      => 'Data de Vencimento',
+    'paid_date'                     => 'Data de Pagamento',
     'amount'                        => 'Valor Total',
     'invoices'                      => 'Faturas',
     'invoice'                       => 'Fatura',
@@ -90,6 +92,9 @@ return [
     'status'                        => 'Status',
     'paid'                          => 'Pago',
     'pay'                           => 'Pagar',
+    'payment'                       => 'Pagamento',
+    'cancel_payment'                => 'Cancelar Pagamento',
+    'operations_by_category'        => 'Movimentação por Categoria',
 
     'default_categories' => [
         'salary'            => 'Salário',
