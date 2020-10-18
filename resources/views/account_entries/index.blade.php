@@ -65,19 +65,24 @@
                                 
                                 <td class="table-actions">
                                     <div class="row">
-                                        @if (! $entry->isPayable())
+                                        @if ($entry->isPayable())
+                                            <a href="{{ route('payables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_payment') }}">
+                                                <i class="fas fa-receipt"></i>
+                                            </a>
+                                        @elseif($entry->isReceivable())
+                                            <a href="{{ route('receivables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_receivement') }}">
+                                                <i class="fas fa-receipt"></i>
+                                            </a>
+                                        @else
                                             <a class="btn btn-info btn-sm edit" href="{{ route('account_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </a>
                                             <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        @else
-                                            <a href="{{ route('payables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_account') }}">
-                                                <i class="fas fa-receipt"></i>
-                                            </a>
                                         @endif
-                                        
+
+
                                     </div>
                                 </td>
                             </tr>

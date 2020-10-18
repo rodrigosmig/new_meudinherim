@@ -57,7 +57,7 @@ return [
         'receivable_updated'        => 'Accounts receivable updated successfully',
         'payable_deleted'           => 'Accounts payable successfully deleted',
         'receivable_deleted'        => 'Accounts receivable successfully deleted',
-        'ajax_text'                 => 'When you cancel the payment the entry that was generated in the account will be permanently deleted',
+        'ajax_text'                 => 'When you confirm, the entry that was generated in the account will be permanently deleted',
         'payable_is_paid'           => 'Account payable is already paid',
         'receivable_is_paid'        => 'Account receivable is already paid',
         'payable_cancel'            => 'Payment cancelled successfully',

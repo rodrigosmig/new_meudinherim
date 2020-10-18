@@ -95,6 +95,10 @@ return [
     'payment'                       => 'Payment',
     'cancel_payment'                => 'Cancel Payment',
     'operations_by_category'        => 'Operations by Category',
+    'receive'                       => 'Receive',
+    'receivement'                   => 'Receivement',
+    'received'                      => 'Received',
+    'cancel_receivement'            => 'Cancel Receivement',
 
     'default_categories' => [
         'salary'            => 'Salary',

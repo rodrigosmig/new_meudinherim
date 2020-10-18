@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
 @push('js')
-    <script src="{{ asset('js/payables/index.js') }}"></script>
+    <script src="{{ asset('js/receivables/index.js') }}"></script>
     <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('button-header')
-    <a href="{{ route('payables.create') }}" class="float-sm-right btn btn-sm btn-success shadow-sm"><i class="fas fa-plus"></i> {{__("global.add")}}</a>
+    <a href="{{ route('receivables.create') }}" class="float-sm-right btn btn-sm btn-success shadow-sm"><i class="fas fa-plus"></i> {{__("global.add")}}</a>
 @endsection
 
 @section('js')
     <script>
-        var payable_title = '{{ __('messages.ajax_title') }}';
-        var payable_text = '{{ __('messages.account_scheduling.ajax_text') }}';
+        var receivable_title = '{{ __('messages.ajax_title') }}';
+        var receivable_text = '{{ __('messages.account_scheduling.ajax_text') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
     </script>
@@ -27,7 +27,7 @@
         <div class="card-body">
             <label>{{ __('global.filter_by_range') }}:</label>
             <div class="form-inline">
-                <form action="{{ route('payables.filter') }}" method="POST">
+                <form action="{{ route('receivables.filter') }}" method="POST">
                     @include('includes.form_filter')
                 </form>
             </div>
@@ -43,47 +43,47 @@
                     <th>{{ __('global.actions') }}</th>
                 </thead>
                 <tbody>
-                    @foreach ($payables as $payable)
+                    @foreach ($receivables as $receivable)
                         <tr>
                             <td>
-                                {{ toBrDate($payable->due_date) }}
+                                {{ toBrDate($receivable->due_date) }}
                             </td>
                             <td>
-                                @if ($payable->isPaid())
-                                    {{ toBrDate($payable->paid_date) }}
+                                @if ($receivable->isPaid())
+                                    {{ toBrDate($receivable->paid_date) }}
                                 @endif
                             </td>
                             <td>
-                                {{ $payable->description }}
+                                {{ $receivable->description }}
                             </td>
                             <td>
-                                {{ $payable->category->name }}
+                                {{ $receivable->category->name }}
                             </td>
                             <td>
-                                {{ toBrMoney($payable->value) }}
+                                {{ toBrMoney($receivable->value) }}
                             </td>
                             <td>
-                                @if ($payable->isPaid())
-                                    <span style="color: green">{{ __('global.paid') }}</span>
+                                @if ($receivable->isPaid())
+                                    <span style="color: green">{{ __('global.received') }}</span>
                                 @else
                                     <span style="color: red">{{ __('global.open') }}</span>
                                 @endif
                             </td>
                             <td class="table-actions">
                                 <div class="row">
-                                    @if (! $payable->isPaid())
-                                        <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                    @if (! $receivable->isPaid())
+                                        <a class="btn btn-info btn-sm edit" href="{{ route('receivables.edit', $receivable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
-                                        <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                        <button class="btn btn-danger btn-sm delete" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                         
-                                        <a class="btn btn-success btn-sm edit" href="{{ route('payables.show', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
+                                        <a class="btn btn-success btn-sm edit" href="{{ route('receivables.show', $receivable->id) }}" data-toggle="tooltip" data-placement="top"  title="{{ __('global.receive') }}">
                                             <i class="fas fa-money-bill-alt"></i>
                                         </a>
                                     @else
-                                        <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_payment') }}">
+                                        <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_receivement') }}">
                                             <i class="fas fa-ban"></i>
                                         </button>
                                     @endif

@@ -93,8 +93,14 @@ return [
     'paid'                          => 'Pago',
     'pay'                           => 'Pagar',
     'payment'                       => 'Pagamento',
+    'show_payment'                  => 'Mostrar Pagamento',
     'cancel_payment'                => 'Cancelar Pagamento',
     'operations_by_category'        => 'Movimentação por Categoria',
+    'receive'                       => 'Receber',
+    'receivement'                   => 'Recebimento',
+    'show_receivement'              => 'Mostrar Recebimento',
+    'received'                      => 'Recebido',
+    'cancel_receivement'            => 'Cancelar Recebimento',
 
     'default_categories' => [
         'salary'            => 'Salário',

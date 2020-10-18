@@ -62,6 +62,16 @@ class AccountEntry extends Model
      */
     public function isPayable()
     {
-        return $this->accountScheduling && $this->category->type === $this->category::EXPENSE;
+        return $this->accountScheduling && $this->isExpenseCategory();
+    }
+
+     /**
+     * Checks if the entry was made by an accounts receivable
+     *
+     * @return bool
+     */
+    public function isReceivable()
+    {
+        return $this->accountScheduling && !$this->isExpenseCategory();
     }
 }
