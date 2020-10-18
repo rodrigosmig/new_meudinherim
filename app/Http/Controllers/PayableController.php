@@ -30,22 +30,24 @@ class PayableController extends Controller
      */
     public function index(Request $request)
     {
-        $range_date = null;
+        $filter = null;
 
         if (isset($request->filter_from)
             && $request->filter_from
             && isset($request->filter_to)
             && $request->filter_to
+            && $request->filter_status
         ) {
-            $range_date = [
-                'from'  => $request->filter_from,
-                'to'    => $request->filter_to
+            $filter = [
+                'from'      => $request->filter_from,
+                'to'        => $request->filter_to,
+                'status'    => $request->filter_status
             ];
         }
-        //dd($range_date);
+
         $data = [
             'title'         => $this->title,
-            'payables'       => $this->service->getCategoriesByType(Category::EXPENSE, $range_date)
+            'payables'       => $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter)
         ];
 
         return view('payables.index', $data);

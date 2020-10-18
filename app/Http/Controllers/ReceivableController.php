@@ -31,22 +31,24 @@ class ReceivableController extends Controller
      */
     public function index(Request $request)
     {
-        $range_date = null;
+        $filter = null;
 
         if (isset($request->filter_from)
             && $request->filter_from
             && isset($request->filter_to)
             && $request->filter_to
+            && $request->filter_status
         ) {
-            $range_date = [
-                'from'  => $request->filter_from,
-                'to'    => $request->filter_to
+            $filter = [
+                'from'      => $request->filter_from,
+                'to'        => $request->filter_to,
+                'status'    => $request->filter_status
             ];
         }
         //dd($range_date);
         $data = [
             'title'         => $this->title,
-            'receivables'   => $this->service->getCategoriesByType(Category::INCOME, $range_date)
+            'receivables'   => $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter)
         ];
 
         return view('receivables.index', $data);

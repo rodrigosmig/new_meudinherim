@@ -56,26 +56,33 @@ class AccountsSchedulingService
      * Get accounts payable/receivable by category type
      *
      * @param string $categoryType
-     * @param array $range_date
+     * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getCategoriesByType($categoryType, array $range_date = null)
+    public function getAccountsSchedulingsByType($categoryType, array $filter = null)
     {
         $from = date('Y-m-1');
         $to = date('Y-m-t');
 
-        if ($range_date && isset($range_date['from']) && isset($range_date['to'])) {
-            $from = $range_date['from'];
-            $to = $range_date['to'];
+        if ($filter && isset($filter['from']) && isset($filter['to'])) {
+            $from = $filter['from'];
+            $to = $filter['to'];
         }
 
-        return $this->account_scheduling::select('accounts_schedulings.*')
+        $result = $this->account_scheduling::select('accounts_schedulings.*')
             ->join('categories', 'categories.id', '=', 'accounts_schedulings.category_id')
             ->where('categories.type', $categoryType)
             ->where('due_date', '>=', $from)
             ->where('due_date', '<=', $to)
-            ->orderBy('due_date')
-            ->get();
+            ->orderBy('due_date');
+
+        
+        if (isset($filter['status']) && in_array($filter['status'], ['open', 'paid'])) {
+            $status = $filter['status'] == 'open' ? false : true;
+            $result->where('paid', $status);
+        }
+       
+        return $result->get();
     }
 
     /**

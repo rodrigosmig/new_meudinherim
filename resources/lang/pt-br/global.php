@@ -100,7 +100,9 @@ return [
     'receivement'                   => 'Recebimento',
     'show_receivement'              => 'Mostrar Recebimento',
     'received'                      => 'Recebido',
+    'receiveds'                      => 'Recebidas',
     'cancel_receivement'            => 'Cancelar Recebimento',
+    'all'                           => 'Todas',
 
     'default_categories' => [
         'salary'            => 'Salário',

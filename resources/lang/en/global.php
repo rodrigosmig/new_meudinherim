@@ -98,7 +98,9 @@ return [
     'receive'                       => 'Receive',
     'receivement'                   => 'Receivement',
     'received'                      => 'Received',
+    'receiveds'                     => 'Receiveds',
     'cancel_receivement'            => 'Cancel Receivement',
+    'all'                           => 'All',
 
     'default_categories' => [
         'salary'            => 'Salary',
