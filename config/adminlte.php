@@ -291,16 +291,16 @@ return [
             'icon'    => 'fa fa-calendar',           
             'submenu' => [
                 [
-                    'text' => 'payable',
-                    'url'  => '/payables',
-                    'label_color' => 'success',
-                    'active' => ['payable', 'payables', 'payables/*', 'regex:@^payables/[0-9]+/edit$@'],
-                ],
-                [
                     'text' => 'receivable',
                     'url'  => '/receivables',
                     'label_color' => 'success',
                     'active' => ['receivable', 'receivables/*', 'regex:@^receivables/[0-9]+/edit$@'],
+                ],
+                [
+                    'text' => 'payable',
+                    'url'  => '/payables',
+                    'label_color' => 'success',
+                    'active' => ['payable', 'payables', 'payables/*', 'regex:@^payables/[0-9]+/edit$@'],
                 ],
             ],
         ],

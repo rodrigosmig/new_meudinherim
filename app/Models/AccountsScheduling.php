@@ -3,17 +3,22 @@
 namespace App\Models;
 
 use App\Traits\UserTrait;
+use App\Models\AccountEntry;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountsScheduling extends Model
 {
     use UserTrait;
     
-    public $fillable =  ['date', 'description', 'value', 'category_id', 'paid', 'user_id'];
+    public $fillable =  ['due_date', 'paid_date', 'description', 'value', 'category_id', 'paid', 'user_id'];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function accountEntry(){
+        return $this->hasOne(AccountEntry::class, 'account_scheduling_id');
     }
 
     public function getValueAttribute($value)

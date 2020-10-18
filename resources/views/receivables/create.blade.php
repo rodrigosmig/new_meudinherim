@@ -2,7 +2,7 @@
 
 @section('button-header')
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="{{ route('payables.index') }}">{{ $title }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('receivables.index') }}">{{ $title }}</a></li>
         <li class="breadcrumb-item active">{{ __('global.new') }}</li>
     </ol>
 @endsection
@@ -13,15 +13,15 @@
 
 @section('content')
     <div class="card">
-        <form action="{{ route('payables.store') }}" method="POST">
+        <form action="{{ route('receivables.store') }}" method="POST">
             <div class="card-body">
 
-                @include('payables.partials.form')
+                @include('receivables.partials.form')
 
             </div>
 
             <div class="card-footer">
-                <a href="{{ route('payables.index') }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
+                <a href="{{ route('receivables.index') }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
                 <button class="btn btn-primary" type="submit">{{ __('global.submit') }}</button>
             </div>
             

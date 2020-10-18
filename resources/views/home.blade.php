@@ -81,43 +81,56 @@
 
     <div class="clearfix hidden-md-up"></div>
 
-    
-    <div class="row justify-content-md-center">
-        <div class="col-md-3">
-            <div class="card card-info">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('global.monthly_entries_by_category') }} (%)</h3>
-                </div>
-                <div class="card-body">
-                    <div id="incomeCategoryChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
-                </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ __('global.operations_by_category') }} (%)</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                </button>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card card-danger">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('global.monthly_spend_by_category') }} (%)</h3>
+        <div class="card-body">
+            <div class="row justify-content-md-center">
+                <div class="col-md-3">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('global.incomes') }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="incomeCategoryChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div id="expenseCategoryChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+        
+                <div class="col-md-3">
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('global.expenses') }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="expenseCategoryChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card card-warning">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('global.monthly_cards_by_category') }} (%)</h3>
-                </div>
-                <div class="card-body">
-                    <div id="cardsCategoryChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+        
+                <div class="col-md-3">
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('global.credit-card') }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="cardsCategoryChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    
 
-    <div class="card card-info">
+    <div class="card card-success">
         <div class="card-header">
             <h3 class="card-title">{{ __('global.lasts_six_months') }}</h3>
             <div class="card-tools">

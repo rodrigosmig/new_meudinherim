@@ -50,13 +50,19 @@ return [
     ],
 
     'account_scheduling' => [
-        'not_found'             => 'No Account Found',
-        'payable_created'       => 'Accounts payable added successfully',
-        'receivable_created'    => 'Accounts receivable added successfully',
-        'payable_updated'       => 'Accounts payable updated successfully',
-        'receivable_updated'    => 'Accounts receivable updated successfully',
-        'payable_deleted'       => 'Accounts payable successfully deleted',
-        'receivable_deleted'    => 'Accounts receivable successfully deleted',
-        'ajax_text'             => 'The account will be permanently deleted',
+        'not_found'                 => 'No Account Found',
+        'payable_created'           => 'Accounts payable added successfully',
+        'receivable_created'        => 'Accounts receivable added successfully',
+        'payable_updated'           => 'Accounts payable updated successfully',
+        'receivable_updated'        => 'Accounts receivable updated successfully',
+        'payable_deleted'           => 'Accounts payable successfully deleted',
+        'receivable_deleted'        => 'Accounts receivable successfully deleted',
+        'ajax_text'                 => 'When you confirm, the entry that was generated in the account will be permanently deleted',
+        'payable_is_paid'           => 'Account payable is already paid',
+        'receivable_is_paid'        => 'Account receivable is already paid',
+        'payable_cancel'            => 'Payment cancelled successfully',
+        'receivable_cancel'         => 'Receivement cancelled successfully',
+        'not_cancel_payment'        => 'Payment could not be canceled',
+        'not_cancel_receivement'    => 'Receivement could not be canceled',
     ]
 ];

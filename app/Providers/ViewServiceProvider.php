@@ -34,7 +34,9 @@ class ViewServiceProvider extends ServiceProvider
         ], CardsViewComposer::class);
 
         View::composer([
-            'account_entries.create'
+            'account_entries.create',
+            'payables.show',
+            'receivables.show',
         ], AccountsViewComposer::class);
 
         View::composer([
@@ -45,8 +47,8 @@ class ViewServiceProvider extends ServiceProvider
         ], AllCategoriesViewComposer::class);
 
         View::composer([
-            'accounts_scheduling.create',
-            'accounts_scheduling.edit',
+            'receivables.create',
+            'receivables.edit',
         ], IncomeCategoriesViewComposer::class);
 
         View::composer([

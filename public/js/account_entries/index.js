@@ -1,4 +1,6 @@
 $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+    
     $(".delete").on('click', function(event) {
         event.preventDefault()
         

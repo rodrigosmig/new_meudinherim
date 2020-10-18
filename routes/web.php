@@ -52,5 +52,14 @@ Route::get('invoice_entries/{entry_id}/edit', 'InvoiceEntryController@edit')->na
 Route::put('invoice_entries/{entry_id}/update', 'InvoiceEntryController@update')->name('invoice_entries.update');
 Route::delete('invoice_entries/{entry_id}', 'InvoiceEntryController@destroy')->name('invoice_entries.delete');
 
-//Payables
-Route::resource('account-scheduling', 'AccountsSchedulingController');
+//Accounts Payable
+Route::resource('payables', 'PayableController');
+Route::post('/payables/filter', 'PayableController@index')->name('payables.filter');
+Route::post('/payables/{id}/payment', 'PayableController@payment')->name('payables.payment');
+Route::get('/payables/{id}/cancel', 'PayableController@cancelPayment')->name('payables.cancel');
+
+//Accounts Receivable
+Route::resource('receivables', 'ReceivableController');
+Route::post('/receivables/filter', 'ReceivableController@index')->name('receivables.filter');
+Route::post('/receivables/{id}/receivement', 'ReceivableController@receivement')->name('receivables.receivement');
+Route::get('/receivables/{id}/cancel', 'ReceivableController@cancelreceivement')->name('receivables.cancel');

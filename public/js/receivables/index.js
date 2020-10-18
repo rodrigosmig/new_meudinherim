@@ -16,7 +16,7 @@ $(function() {
                     if (confirm) {          
                         $.ajax({
                             type: 'DELETE',
-                            url: '/payables/' + id,
+                            url: '/receivables/' + id,
                             datatype: 'JSON',
                             success: function(response) {
                                 swal({
@@ -24,7 +24,7 @@ $(function() {
                                     text: response.text,
                                     icon: 'success',
                                 }).then(function() {
-                                    window.location="/payables";
+                                    window.location="/receivables";
                                 })
                             },
                             error: function(response) {
@@ -33,7 +33,7 @@ $(function() {
                                     text: response.responseJSON.text,
                                     icon: 'error',
                                 }).then(function() {
-                                    window.location="/payables";
+                                    window.location="/receivables";
                                 })
                             },
                           });	
@@ -42,19 +42,19 @@ $(function() {
         }
     })
 
-    $(".cancel_payment").on('click', function(event) {
+    $(".cancel_receivement").on('click', function(event) {
         event.preventDefault()
         
-        var id = $(this).attr('data-payable')
+        var id = $(this).attr('data-receivable')
 
         swal({
-            title: payable_title,
-            text: payable_text,
+            title: receivable_title,
+            text: receivable_text,
             icon: 'warning',
             buttons: [button_cancel, button_confirm]
             }).then(function(confirm) {
                 if (confirm) {          
-                    window.location.href = "/payables/" + id + "/cancel";
+                    window.location.href = "/receivables/" + id + "/cancel";
                 }
             });
 

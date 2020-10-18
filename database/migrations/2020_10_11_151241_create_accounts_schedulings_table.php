@@ -15,7 +15,8 @@ class CreateAccountsSchedulingsTable extends Migration
     {
         Schema::create('accounts_schedulings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->date('date');
+            $table->date('due_date');
+            $table->date('paid_date')->nullable();
             $table->string('description');
             $table->integer('value');
             $table->unsignedBigInteger('category_id');

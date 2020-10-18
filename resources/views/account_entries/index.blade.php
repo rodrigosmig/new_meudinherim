@@ -2,6 +2,7 @@
 
 @push('js')
     <script src="{{ asset('js/account_entries/index.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('button-header')
@@ -18,14 +19,6 @@
         var entry_text = '{{ __('messages.entries.ajax_text') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
-
-        $(function () {
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
-        })
     </script>
 @stop
 
@@ -72,12 +65,24 @@
                                 
                                 <td class="table-actions">
                                     <div class="row">
-                                        <a class="btn btn-info btn-sm edit" href="{{ route('account_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        @if ($entry->isPayable())
+                                            <a href="{{ route('payables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_payment') }}">
+                                                <i class="fas fa-receipt"></i>
+                                            </a>
+                                        @elseif($entry->isReceivable())
+                                            <a href="{{ route('receivables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_receivement') }}">
+                                                <i class="fas fa-receipt"></i>
+                                            </a>
+                                        @else
+                                            <a class="btn btn-info btn-sm edit" href="{{ route('account_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        @endif
+
+
                                     </div>
                                 </td>
                             </tr>

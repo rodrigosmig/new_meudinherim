@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Services\AccountService;
-use App\Http\Requests\PaymentRequest;
 use RealRashid\SweetAlert\Facades\Alert;
-use App\Http\Requests\StorePayableRequest;
+use App\Http\Requests\ReceivementRequest;
 use App\Services\AccountsSchedulingService;
+use App\Http\Requests\StoreReceivableRequest;
 use App\Exceptions\AccountsPayableIsNotPaidException;
 use App\Exceptions\AccountsPayableIsAlreadyPaidException;
 
-class PayableController extends Controller
+class ReceivableController extends Controller
 {
     protected $service;
     protected $accountService;
@@ -21,8 +21,9 @@ class PayableController extends Controller
     {
         $this->service = $service;
         $this->accountService = $accountService;
-        $this->title = __('global.accounts_payable');
+        $this->title = __('global.accounts_receivable');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -44,13 +45,13 @@ class PayableController extends Controller
                 'status'    => $request->filter_status
             ];
         }
-
+        //dd($range_date);
         $data = [
             'title'         => $this->title,
-            'payables'       => $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter)
+            'receivables'   => $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter)
         ];
 
-        return view('payables.index', $data);
+        return view('receivables.index', $data);
     }
 
     /**
@@ -64,7 +65,7 @@ class PayableController extends Controller
             'title' => $this->title,
         ];
 
-        return view('payables.create', $data);
+        return view('receivables.create', $data);
     }
 
     /**
@@ -73,20 +74,20 @@ class PayableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePayableRequest $request)
+    public function store(StoreReceivableRequest $request)
     {
         $data = $request->validated();
         
-        $payable = $this->service->store($data);
+        $receivable = $this->service->store($data);
 
-        if (! $payable) {
+        if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
             return redirect()->route('accounts-scheduling.index');
         }
    
-        Alert::success(__('global.success'), __('messages.account_scheduling.payable_created'));
+        Alert::success(__('global.success'), __('messages.account_scheduling.receivable_created'));
 
-        return redirect()->route('payables.index');
+        return redirect()->route('receivables.index');
     }
 
     /**
@@ -97,16 +98,16 @@ class PayableController extends Controller
      */
     public function show($id)
     {
-        $payable = $this->service->findById($id);
+        $receivable = $this->service->findById($id);
 
-        if (! $payable) {
+        if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
-        return view('payables.show', [
-            'title'     => $this->title,
-            'payable'   => $payable
+        return view('receivables.show', [
+            'title'         => $this->title,
+            'receivable'    => $receivable
         ]);
     }
 
@@ -118,20 +119,20 @@ class PayableController extends Controller
      */
     public function edit($id)
     {
-        $payable = $this->service->findById($id);
+        $receivable = $this->service->findById($id);
 
-        if (! $payable) {
+        if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
-        if ($payable->isPaid()) {
-            return redirect()->route('payables.show', $payable->id);
+        if ($receivable->isPaid()) {
+            return redirect()->route('receivables.show', $receivable->id);
         }
 
-        return view('payables.edit', [
+        return view('receivables.edit', [
             'title'     => $this->title,
-            'payable'   => $payable 
+            'receivable'   => $receivable 
         ]);
     }
 
@@ -142,17 +143,17 @@ class PayableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StorePayableRequest $request, $id)
+    public function update(StoreReceivableRequest $request, $id)
     {
         if (! $this->service->update($id, $request->all())) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
 
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
         Alert::success(__('global.success'), __('messages.account_scheduling.payable_updated'));
 
-        return redirect()->route('payables.index');
+        return redirect()->route('receivables.index');
     }
 
     /**
@@ -169,10 +170,10 @@ class PayableController extends Controller
         }
 
         return response()
-                ->json(['title' => __('global.success'), 'text' => __('messages.account_scheduling.payable_deleted')]);
+                ->json(['title' => __('global.success'), 'text' => __('messages.account_scheduling.receivable_deleted')]);
     }
 
-    public function payment(PaymentRequest $request, $id)
+    public function receivement(ReceivementRequest $request, $id)
     {
         $data       = $request->validated();
         $data['id'] = $id;
@@ -182,43 +183,43 @@ class PayableController extends Controller
             $entry = $this->service->payment($account, $data);
         } catch (AccountsPayableIsAlreadyPaidException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
         $this->accountService->updateBalance($account, $data['paid_date']);
 
-        Alert::success(__('global.success'), __('messages.account_scheduling.payable_paid'));
+        Alert::success(__('global.success'), __('messages.account_scheduling.receivable_paid'));
 
-        return redirect()->route('payables.index');
+        return redirect()->route('receivables.index');
     }
 
-    public function cancelPayment($id) {
-        $payable = $this->service->findById($id);
+    public function cancelreceivement($id) {
+        $receivable = $this->service->findById($id);
 
-        if (! $payable) {
+        if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
         try {
-            $response = $this->service->cancelPayment($payable);
+            $response = $this->service->cancelPayment($receivable);
         } catch (AccountsPayableIsNotPaidException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
-            return redirect()->route('payables.index');
+            return redirect()->route('receivables.index');
         }
 
         if (! $response) {
-            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_cancel_payment'));
-            return redirect()->route('payables.index');
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_cancel_receivement'));
+            return redirect()->route('receivables.index');
         }
 
-        Alert::success(__('global.success'), __('messages.account_scheduling.payable_cancel'));
+        Alert::success(__('global.success'), __('messages.account_scheduling.receivable_cancel'));
 
-        return redirect()->route('payables.index');
+        return redirect()->route('receivables.index');
     }
 }

@@ -100,8 +100,7 @@ class AccountService
         $entries = $this->getEntriesFromDate($date);
         $balances = $this->getTotalBalanceOfDay($entries);
 
-        $last_date = Carbon::createFromFormat('Y-m-d', $date)->sub('1 day')->format('Y-m-d');
-        $last_balance = $this->findBalanceByDate($last_date);
+        $last_balance = $this->getLastBalance($date);
        
         $previous_balance = $last_balance->current_balance;
 
@@ -111,7 +110,9 @@ class AccountService
                 $balance->delete();
             }
         }
-        
+
+        $this->deleteNextBalances($date);
+
         foreach ($balances as $date => $value) {
             $balance = $this->findBalanceByDate($date);
             $current_balance = $previous_balance + $value;
@@ -178,10 +179,51 @@ class AccountService
         $balance = $this->account->balances()->where('date', $date)->first();
 
         if (!$balance) {
-            $balance = $this->createBalance($date, 0, 0);
+            $balance = $this->createBalance($date, 0);
         }
 
         return $balance;
+    }
+
+    /**
+     * Returns the last balance before the given date
+     *
+     * @param string $date
+     * @return AccountBalance
+     */  
+    private function getLastBalance($date): AccountBalance
+    {
+        $balance = $this->account->balances()
+            ->where('date', '<', $date)
+            ->orderByDesc('date')
+            ->first();
+        
+        if (!$balance) {
+            $balance = $this->createBalance($date, 0);
+        }
+
+        return $balance;
+    }
+
+    /**
+     * Returns the last balance before the given date
+     *
+     * @param string $date
+     * @return void
+     */  
+    private function deleteNextBalances($date)
+    {
+        $balances = $this->account->balances()
+            ->where('date', '>=', $date)
+            ->get();
+        
+        $ids = [];
+
+        foreach ($balances as $balance) {
+            $ids[] = $balance->id;
+        }
+
+        $this->account->balances()->whereIn('id', $ids)->delete();
     }
 
     /**

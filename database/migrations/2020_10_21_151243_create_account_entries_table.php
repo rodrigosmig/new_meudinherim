@@ -20,11 +20,13 @@ class CreateAccountEntriesTable extends Migration
             $table->integer('value');
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('account_id');
+            $table->unsignedBigInteger('account_scheduling_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_scheduling_id')->references('id')->on('accounts_schedulings');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
