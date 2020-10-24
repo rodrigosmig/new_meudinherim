@@ -17,8 +17,6 @@ class CategoryController extends Controller
 
     public function __construct(CategoryService $service)
     {
-        $this->middleware(['auth', 'verified']);
-
         $this->service = $service;
         $this->title = __('global.categories');
     }

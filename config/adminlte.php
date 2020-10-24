@@ -255,7 +255,6 @@ return [
             'label_color' => 'success',
             'active' => ['categories', 'categories/*', 'regex:@^content/[0-9]+$@']
         ],
-        ['header' => 'bank_accounts'],
         [
             'key'     => 'accounts',
                 'text'    => 'accounts',
@@ -269,7 +268,6 @@ return [
                     ],
                 ],
         ],
-        ['header' => 'credit-card'],
         [
             'key'     => 'cards',
             'text'    => 'credit-card',
@@ -284,7 +282,6 @@ return [
                 
             ],
         ],
-        ['header' => 'account_scheduling'],
         [
             'key'     => 'scheduling',
             'text'    => 'account_scheduling',
@@ -302,6 +299,30 @@ return [
                     'label_color' => 'success',
                     'active' => ['payable', 'payables', 'payables/*', 'regex:@^payables/[0-9]+/edit$@'],
                 ],
+            ],
+        ],
+        [
+            'key'     => 'reports',
+            'text'    => 'reports',
+            'icon'    => 'far fa-list-alt',           
+            'submenu' => [
+                [
+                    'text' => 'receivable',
+                    'url'  => '/reports/receivables',
+                    'label_color' => 'success',
+                    'active' => ['/reports/receivable/*'],
+                ],
+                [
+                    'text' => 'payable',
+                    'url'  => '/reports/payables',
+                    'label_color' => 'success',
+                    'active' => ['/reports/payables/*'],
+                ],
+                [
+                    'text' => 'total_by_category',
+                    'url'  => '/reports/total-by-category',
+                    'label_color' => 'success',
+                ],                
             ],
         ],
     ],

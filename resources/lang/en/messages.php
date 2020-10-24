@@ -40,7 +40,7 @@ return [
     ],
 
     'entries' => [
-        'not_found'             => 'No EntryFound',
+        'not_found'             => 'No Entry Found',
         'create'                => 'Entry successfully added.',
         'update'                => 'Entry successfully updated.',
         'delete'                => 'Entry successfully deleted',

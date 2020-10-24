@@ -101,6 +101,13 @@ return [
     'receiveds'                     => 'Receiveds',
     'cancel_receivement'            => 'Cancel Receivement',
     'all'                           => 'All',
+    'reports'                       => 'Reports',
+    'total_opens'                   => 'Total Opens',
+    'total_paids'                   => 'Total Paids',
+    'total_paids'                   => 'Total Receiveds',
+    'total_by_category'             => 'Total by Category',
+    'quantity'                      => 'Quantity',
+    'source'                        => 'Source',
 
     'default_categories' => [
         'salary'            => 'Salary',

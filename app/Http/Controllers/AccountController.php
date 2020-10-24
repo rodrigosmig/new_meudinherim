@@ -16,8 +16,6 @@ class AccountController extends Controller
 
     public function __construct(AccountService $service)
     {
-        $this->middleware(['auth', 'verified']);
-
         $this->service = $service;
         $this->title = __('global.accounts');
     }

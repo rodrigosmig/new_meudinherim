@@ -47,7 +47,7 @@ class PayableController extends Controller
 
         $data = [
             'title'         => $this->title,
-            'payables'       => $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter)
+            'payables'      => $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter)
         ];
 
         return view('payables.index', $data);

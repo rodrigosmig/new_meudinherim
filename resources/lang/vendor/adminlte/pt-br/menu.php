@@ -27,5 +27,9 @@ return [
     'bank_accounts'                 => 'Contas Bancárias',
     'account_scheduling'            => 'Agendamento de Contas',
     'payable'                       => 'Contas a Pagar',
-    'receivable'                    => 'Contas a Receber'
+    'receivable'                    => 'Contas a Receber',
+    'reports'                       => 'Relatórios',
+    'total_by_category'             => 'Total por Categoria',
+    'incomes'                       => 'Entradas',
+    'expenses'                      => 'Saidas',
 ];

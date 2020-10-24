@@ -17,8 +17,6 @@ class CardController extends Controller
     
     public function __construct(CardService $service)
     {
-        $this->middleware(['auth', 'verified']);
-
         $this->service = $service;
         $this->title = __('global.credit-card');
     }

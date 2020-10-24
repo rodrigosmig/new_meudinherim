@@ -11,7 +11,7 @@ use App\Services\AccountEntryService;
 use App\Http\Requests\DashboardFormRequest;
 use App\Services\InvoiceEntryService;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
     protected $entriesService;
     protected $invoiceService;
@@ -28,8 +28,6 @@ class HomeController extends Controller
         InvoiceEntryService $invoiceEntryService,
         DashboardService $dashboardService
     ){
-        $this->middleware('auth');
-
         $this->entriesService       = $entriesService;
         $this->invoiceService       = $invoiceService;
         $this->dashboardService     = $dashboardService;

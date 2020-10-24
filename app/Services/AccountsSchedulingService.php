@@ -152,10 +152,34 @@ class AccountsSchedulingService
         return true;
     }
 
-
     private function updateAccountBalance($account, $date) 
     {
         $service = app(AccountService::class);
         $service->updateBalance($account, $date);
+    }
+
+    /**
+     * 
+     *
+     * @param Illuminate\Database\Eloquent\Collection $items
+     * @return array
+     */
+    public function getTotalForReportByCategoryType($items): array
+    {
+        $total_paid = 0;
+        $total_open = 0;
+
+        foreach ($items as $item) {
+            if ($item->isPaid()) {
+                $total_paid += $item->value;
+            } else {
+                $total_open += $item->value;
+            }
+        }
+
+        return [
+            'open' => $total_open,
+            'paid' => $total_paid
+        ];
     }
 }

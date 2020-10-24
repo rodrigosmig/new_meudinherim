@@ -170,4 +170,43 @@ class AccountEntryService
 
         return $total / 100;
     }
+
+    /**
+     * Returns the total values of entries by category type for a given date
+     *
+     * @param int $categoryType
+     * @param array $filter
+     * @return array
+     */ 
+    public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
+    {       
+        return $this->account_entry::selectRaw('categories.name as category, categories.id, SUM(account_entries.value) / 100 as total, count(*) as quantity')
+            ->join('categories', 'categories.id', '=', 'account_entries.category_id')
+            ->where('categories.type', $categoryType)
+            ->where('date', '>=', $filter['from'])
+            ->where('date', '<=', $filter['to'])
+            ->orderByDesc('total')
+            ->groupBy('categories.name', 'categories.id')
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Returns the entries for the given category id and range date
+     *
+     * @param int $categoryType
+     * @param array $filter
+     * @return array
+     */ 
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
+    {       
+        return $this->account_entry
+            ->with('account')
+            ->with('category')
+            ->where('category_id', $category_id)
+            ->where('date', '>=', $from)
+            ->where('date', '<=', $to)
+            ->get()
+            ->toArray();
+    }
 }

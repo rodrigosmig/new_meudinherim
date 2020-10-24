@@ -5,7 +5,7 @@
     <select class="form-control" name="filter_status">
         <option value="all">{{ __('global.all') }}</option>
         <option value="open">{{ __('global.opens') }}</option>
-        <option value="paid">{{ __('global.receiveds') }}</option>
+        <option value="paid">{{ isset($payables) ? __('global.paids') : __('global.receiveds') }}</option>
     </select>
 
     <button type="submit" class="btn btn-primary waves-effect">

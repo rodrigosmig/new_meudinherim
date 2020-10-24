@@ -34,8 +34,6 @@ class InvoiceEntryController extends Controller
 
     public function __construct(InvoiceEntryService $service, CardService $cardService, InvoiceService $invoiceService)
     {
-        $this->middleware(['auth', 'verified']);
-
         $this->service          = $service;
         $this->cardService      = $cardService;
         $this->invoiceService   = $invoiceService;

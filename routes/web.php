@@ -21,45 +21,64 @@ Route::get('/', function () {
 
 Auth::routes();
 
-//Dashboard
-Route::get('/dashboard', 'HomeController@index')->name('dashboard.index');
-Route::post('/dashboard', 'HomeController@index')->name('dashboard.months');
+Route::group([
+    'middleware' => ['auth', 'verified']
+], function () {
+    //Dashboard
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard.index');
+    Route::post('/dashboard', 'DashboardController@index')->name('dashboard.months');
 
-//Categories
-Route::resource('categories', 'CategoryController');
+    //Categories
+    Route::resource('categories', 'CategoryController');
 
-//Acounts
-Route::resource('accounts', 'AccountController');
-Route::get('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
-Route::post('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
+    //Acounts
+    Route::resource('accounts', 'AccountController');
+    Route::get('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
+    Route::post('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
 
-//Credit-Card
-Route::resource('cards', 'CardController');
-Route::get('cards/{card_id}/invoices', 'CardController@invoices')->name('cards.invoices.index');
-Route::get('/cards/{card_id}/invoices/{invoice_id}/entries', 'InvoiceEntryController@index')->name('invoice_entries.index');
+    //Credit-Card
+    Route::resource('cards', 'CardController');
+    Route::get('cards/{card_id}/invoices', 'CardController@invoices')->name('cards.invoices.index');
+    Route::get('/cards/{card_id}/invoices/{invoice_id}/entries', 'InvoiceEntryController@index')->name('invoice_entries.index');
 
-//Account entries
-Route::get('account_entries/{account_entry}/edit', 'AccountEntryController@edit')->name('account_entries.edit');
-Route::put('account_entries/{account_entry}', 'AccountEntryController@update')->name('account_entries.update');
-Route::delete('account_entries/{account_entry}', 'AccountEntryController@destroy')->name('account_entries.destroy');
-Route::get('account_entries/create', 'AccountEntryController@create')->name('account_entries.create');
-Route::post('account_entries', 'AccountEntryController@store')->name('account_entries.store');
+    //Account entries
+    Route::get('account_entries/{account_entry}/edit', 'AccountEntryController@edit')->name('account_entries.edit');
+    Route::put('account_entries/{account_entry}', 'AccountEntryController@update')->name('account_entries.update');
+    Route::delete('account_entries/{account_entry}', 'AccountEntryController@destroy')->name('account_entries.destroy');
+    Route::get('account_entries/create', 'AccountEntryController@create')->name('account_entries.create');
+    Route::post('account_entries', 'AccountEntryController@store')->name('account_entries.store');
 
-//Invoice Entries
-Route::get('invoice_entries', 'InvoiceEntryController@create')->name('invoice_entries.create');
-Route::post('invoice_entries', 'InvoiceEntryController@store')->name('invoice_entries.store');
-Route::get('invoice_entries/{entry_id}/edit', 'InvoiceEntryController@edit')->name('invoice_entries.edit');
-Route::put('invoice_entries/{entry_id}/update', 'InvoiceEntryController@update')->name('invoice_entries.update');
-Route::delete('invoice_entries/{entry_id}', 'InvoiceEntryController@destroy')->name('invoice_entries.delete');
+    //Invoice Entries
+    Route::get('invoice_entries', 'InvoiceEntryController@create')->name('invoice_entries.create');
+    Route::post('invoice_entries', 'InvoiceEntryController@store')->name('invoice_entries.store');
+    Route::get('invoice_entries/{entry_id}/edit', 'InvoiceEntryController@edit')->name('invoice_entries.edit');
+    Route::put('invoice_entries/{entry_id}/update', 'InvoiceEntryController@update')->name('invoice_entries.update');
+    Route::delete('invoice_entries/{entry_id}', 'InvoiceEntryController@destroy')->name('invoice_entries.delete');
 
-//Accounts Payable
-Route::resource('payables', 'PayableController');
-Route::post('/payables/filter', 'PayableController@index')->name('payables.filter');
-Route::post('/payables/{id}/payment', 'PayableController@payment')->name('payables.payment');
-Route::get('/payables/{id}/cancel', 'PayableController@cancelPayment')->name('payables.cancel');
+    //Accounts Payable
+    Route::resource('payables', 'PayableController');
+    Route::post('/payables/filter', 'PayableController@index')->name('payables.filter');
+    Route::post('/payables/{id}/payment', 'PayableController@payment')->name('payables.payment');
+    Route::get('/payables/{id}/cancel', 'PayableController@cancelPayment')->name('payables.cancel');
 
-//Accounts Receivable
-Route::resource('receivables', 'ReceivableController');
-Route::post('/receivables/filter', 'ReceivableController@index')->name('receivables.filter');
-Route::post('/receivables/{id}/receivement', 'ReceivableController@receivement')->name('receivables.receivement');
-Route::get('/receivables/{id}/cancel', 'ReceivableController@cancelreceivement')->name('receivables.cancel');
+    //Accounts Receivable
+    Route::resource('receivables', 'ReceivableController');
+    Route::post('/receivables/filter', 'ReceivableController@index')->name('receivables.filter');
+    Route::post('/receivables/{id}/receivement', 'ReceivableController@receivement')->name('receivables.receivement');
+    Route::get('/receivables/{id}/cancel', 'ReceivableController@cancelreceivement')->name('receivables.cancel');
+
+    //Reports
+    Route::prefix('reports')
+        ->as('reports.')
+        ->group(function() {
+            Route::get('/payables', 'ReportsController@payables')->name('payables');
+            Route::post('/payables', 'ReportsController@payables')->name('payables.filter');
+            Route::get('/receivables', 'ReportsController@receivables')->name('receivables');
+            Route::post('/receivables', 'ReportsController@receivables')->name('receivables.filter');
+            Route::get('/total-by-category', 'ReportsController@totalByCategory')->name('total_by_category');
+            Route::post('/total-by-category', 'ReportsController@totalByCategory')->name('total_by_category.filter');
+            Route::get('/total-by-category/ajax', 'ReportsController@ajaxtotalByCategory');
+        });
+   
+});
+

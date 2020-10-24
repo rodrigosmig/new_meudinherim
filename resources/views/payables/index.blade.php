@@ -3,6 +3,7 @@
 @push('js')
     <script src="{{ asset('js/payables/index.js') }}"></script>
     <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datepicker_range.js') }}"></script>
 @endpush
 
 @section('button-header')

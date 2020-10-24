@@ -15,8 +15,6 @@ class InvoiceController extends Controller
 
     public function __construct(InvoiceService $service)
     {
-        $this->middleware(['auth', 'verified']);
-
         $this->service = $service;
         $this->title = __('global.invoices');
     }

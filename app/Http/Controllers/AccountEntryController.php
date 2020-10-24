@@ -12,8 +12,6 @@ class AccountEntryController extends Controller
 {
     public function __construct(AccountEntryService $service, AccountService $accountService)
     {
-        $this->middleware(['auth', 'verified']);
-
         $this->service          = $service;
         $this->accountService   = $accountService;
 

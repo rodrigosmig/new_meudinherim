@@ -100,9 +100,16 @@ return [
     'receivement'                   => 'Recebimento',
     'show_receivement'              => 'Mostrar Recebimento',
     'received'                      => 'Recebido',
-    'receiveds'                      => 'Recebidas',
+    'receiveds'                     => 'Recebidas',
     'cancel_receivement'            => 'Cancelar Recebimento',
     'all'                           => 'Todas',
+    'reports'                       => 'Relatórios',
+    'total_opens'                   => 'Total Abertas',
+    'total_paids'                   => 'Total Pagas',
+    'total_receiveds'               => 'Total Recebidas',
+    'total_by_category'             => 'Total por Categoria',
+    'quantity'                      => 'Quantidade',
+    'source'                        => 'Origem',
 
     'default_categories' => [
         'salary'            => 'Salário',

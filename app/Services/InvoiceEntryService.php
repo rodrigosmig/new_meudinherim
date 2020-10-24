@@ -169,4 +169,43 @@ class InvoiceEntryService
 
         return $result;
     }
+
+    /**
+     * Returns the total values of entries by category type for a given date
+     *
+     * @param int $categoryType
+     * @param array $filter
+     * @return array
+     */ 
+    public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
+    {       
+        return $this->entry::selectRaw('categories.name as category, categories.id, SUM(invoice_entries.value) / 100 as total, count(*) as quantity')
+            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
+            ->where('categories.type', $categoryType)
+            ->where('date', '>=', $filter['from'])
+            ->where('date', '<=', $filter['to'])
+            ->orderByDesc('total')
+            ->groupBy('categories.name', 'categories.id')
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Returns the entries for the given category id and range date
+     *
+     * @param int $categoryType
+     * @param array $filter
+     * @return array
+     */ 
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
+    {       
+        return $this->entry
+            ->with('invoice.card')
+            ->with('category')
+            ->where('category_id', $category_id)
+            ->where('date', '>=', $from)
+            ->where('date', '<=', $to)
+            ->get()
+            ->toArray();
+    }
 }
