@@ -110,6 +110,10 @@ return [
     'total_by_category'             => 'Total por Categoria',
     'quantity'                      => 'Quantidade',
     'source'                        => 'Origem',
+    'source_account'                => 'Conta de Origem',
+    'destination_account'           => 'Conta de Destino',
+    'add_menu'                      => 'Menu adicionar',
+    'bank_transfer'                 => 'Transferência Bancária',
 
     'default_categories' => [
         'salary'            => 'Salário',

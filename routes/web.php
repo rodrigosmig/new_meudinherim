@@ -32,6 +32,8 @@ Route::group([
     Route::resource('categories', 'CategoryController');
 
     //Acounts
+    Route::get('accounts/transfer', 'AccountController@transfer')->name('accounts.transfer');
+    Route::post('accounts/transfer', 'AccountController@transferStore')->name('accounts.transfer_store');
     Route::resource('accounts', 'AccountController');
     Route::get('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
     Route::post('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');

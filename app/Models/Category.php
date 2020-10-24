@@ -24,4 +24,9 @@ class Category extends Model
     {
         return $this->hasMany(InvoiceEntry::class);
     }
+
+    public function isExpense(): bool
+    {
+        return $this->type == static::EXPENSE;
+    }
 }

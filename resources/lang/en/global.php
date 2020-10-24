@@ -108,6 +108,10 @@ return [
     'total_by_category'             => 'Total by Category',
     'quantity'                      => 'Quantity',
     'source'                        => 'Source',
+    'source_account'                => 'Source Account',
+    'destination_account'           => 'Destination Account',
+    'add_menu'                      => 'Add Menu',
+    'bank_transfer'                 => 'Bank Transfer',
 
     'default_categories' => [
         'salary'            => 'Salary',

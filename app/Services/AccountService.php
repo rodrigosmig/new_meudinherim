@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use Exception;
 use Carbon\Carbon;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\AccountEntry;
 use App\Models\AccountBalance;
+use App\Services\CategoryService;
+use App\Services\AccountEntryService;
 
 class AccountService
 {
@@ -241,5 +244,53 @@ class AccountService
             'previous_balance'  => $previous_balance,
             'current_balance'   => $current_balance
         ]);
+    }
+
+    /**
+     * Transfers an amount between bank accounts
+     *
+     * @param array $data
+     * @return void
+     * @throws Exception
+     */  
+    public function accountTransfer($data)
+    {
+        $source_account     = $this->findById($data['source_account_id']);
+        $destination_account    = $this->findById($data['destination_account_id']);
+
+        if ($source_account->id === $destination_account->id) {
+            throw new Exception(__('messages.accounts.equal_accounts'));
+        }
+
+        $newData = $this->prepareDataForEntry($data);
+
+        $accountEntryService = app(AccountEntryService::class);
+
+        $accountEntryService->make($source_account, $newData['source']);
+        $accountEntryService->make($destination_account, $newData['destination']);
+
+        $this->updateBalance($source_account, $data['date']);
+        $this->updateBalance($destination_account, $data['date']);
+    }
+
+    private function prepareDataForEntry($data): array
+    {
+        $newData['source'] = [
+            "account_id" => $data['source_account_id'],
+            "category_id" => $data['source_category_id'],
+            "date" => $data['date'],
+            "description" => $data['description'],
+            "value" => $data['value'],
+        ];
+
+        $newData['destination'] = [
+            "account_id" => $data['destination_account_id'],
+            "category_id" => $data['destination_category_id'],
+            "date" => $data['date'],
+            "description" => $data['description'],
+            "value" => $data['value'],
+        ];
+
+        return $newData;
     }
 }

@@ -13,14 +13,17 @@ return [
         'update'            => 'Category successfully updated.',
         'delete'            => 'Category successfully deleted',
         'ajax_text'         => 'The category will be permanently deleted',
+        'invalid_type'      => 'The category type is invalid'
     ],
 
     'accounts' => [
-        'not_found'         => 'No Account Found',
-        'create'            => 'Account successfully added.',
-        'update'            => 'Account successfully updated.',
-        'delete'            => 'Account successfully deleted',
-        'ajax_text'         => 'The account will be permanently deleted',
+        'not_found'             => 'No Account Found',
+        'create'                => 'Account successfully added.',
+        'update'                => 'Account successfully updated.',
+        'delete'                => 'Account successfully deleted',
+        'ajax_text'             => 'The account will be permanently deleted',
+        'equal_accounts'        => 'Source and destination accounts cannot be the same',
+        'transfer_completed'    => 'Transfer completed successfully'
     ],
 
     'cards' => [

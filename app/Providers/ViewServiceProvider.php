@@ -37,6 +37,7 @@ class ViewServiceProvider extends ServiceProvider
             'account_entries.create',
             'payables.show',
             'receivables.show',
+            'accounts.transfer'
         ], AccountsViewComposer::class);
 
         View::composer([
@@ -49,11 +50,13 @@ class ViewServiceProvider extends ServiceProvider
         View::composer([
             'receivables.create',
             'receivables.edit',
+            'accounts.transfer'
         ], IncomeCategoriesViewComposer::class);
 
         View::composer([
             'payables.create',
             'payables.edit',
+            'accounts.transfer'
         ], ExpenseCategoriesViewComposer::class);
     }
 }

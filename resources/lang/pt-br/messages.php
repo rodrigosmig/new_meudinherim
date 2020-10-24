@@ -13,14 +13,17 @@ return [
         'update'            => 'Categoria atualizada com sucesso',
         'delete'            => 'Categoria deletada com sucesso',
         'ajax_text'         => 'A categoria sera excluída permanentemente',
+        'invalid_type'      => 'O tipo de categoria é inválido'
     ],
 
     'accounts' => [
-        'not_found'         => 'Nenhuma Conta Encontrada',
-        'create'            => 'Conta adicionada com sucesso.',
-        'update'            => 'Conta atualizada com sucesso',
-        'delete'            => 'Conta deletada com sucesso',
-        'ajax_text'         => 'A conta será excluída permanentemente',
+        'not_found'             => 'Nenhuma Conta Encontrada',
+        'create'                => 'Conta adicionada com sucesso.',
+        'update'                => 'Conta atualizada com sucesso',
+        'delete'                => 'Conta deletada com sucesso',
+        'ajax_text'             => 'A conta será excluída permanentemente',
+        'equal_accounts'        => 'As contas de origem e destino não podem ser iguais',
+        'transfer_completed'    => 'Transferência completada com sucesso'
     ],
 
     'cards' => [
