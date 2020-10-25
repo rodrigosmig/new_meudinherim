@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
                     'text'    => 'extract',
                     'icon'    => 'fas fa-money-check-alt',
                     'submenu' => $account_items,
-                ],);
+                ]);
             }
 
             $cardService    = app(CardService::class);
