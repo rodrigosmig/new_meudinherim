@@ -17,7 +17,7 @@ class AccountsViewComposer
     /**
      * Create a new accounts composer.
      *
-     * @param  AccountService  $users
+     * @param  AccountService  $service
      * @return void
      */
     public function __construct(AccountService $service)

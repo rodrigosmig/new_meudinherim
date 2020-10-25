@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Http\ViewComposers\CardsViewComposer;
 use App\Http\ViewComposers\AccountsViewComposer;
 use App\Http\ViewComposers\AllCategoriesViewComposer;
+use App\Http\ViewComposers\AccountBalanceViewComposer;
 use App\Http\ViewComposers\IncomeCategoriesViewComposer;
 use App\Http\ViewComposers\ExpenseCategoriesViewComposer;
 
@@ -58,5 +59,9 @@ class ViewServiceProvider extends ServiceProvider
             'payables.edit',
             'accounts.transfer'
         ], ExpenseCategoriesViewComposer::class);
+
+        View::composer([
+            '*'
+        ], AccountBalanceViewComposer::class);
     }
 }

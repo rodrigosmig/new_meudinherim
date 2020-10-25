@@ -4,6 +4,7 @@
 
 @section('content_top_nav_right')
     @include('includes.add_menu')
+    @include('includes.balance_menu')
 @stop
 
 @push('css')

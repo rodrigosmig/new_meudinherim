@@ -3,12 +3,9 @@
 namespace App\Services;
 
 use Exception;
-use Carbon\Carbon;
 use App\Models\Account;
 use App\Models\Category;
-use App\Models\AccountEntry;
 use App\Models\AccountBalance;
-use App\Services\CategoryService;
 use App\Services\AccountEntryService;
 
 class AccountService
@@ -292,5 +289,28 @@ class AccountService
         ];
 
         return $newData;
+    }
+
+    /**
+     * returns the balance of all user accounts
+     *
+     * @return array
+     */  
+    public function getAllAccountBalances(): array
+    {
+        $accounts   = $this->account->get();
+        $balances   = [];
+        $total      = 0; 
+
+        foreach ($accounts as $account) {
+            $balances[] = [
+                'account_name'  => $account->name,
+                'balance'       => $account->balance
+            ];
+            $total += $account->balance;
+        }
+
+        $balances['total'] = $total;
+        return $balances;
     }
 }

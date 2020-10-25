@@ -2,27 +2,28 @@
 
 namespace App\Http\ViewComposers;
 
+use App\Services\AccountService;
 use Illuminate\View\View;
-use App\Services\CardService;
 
-class CardsViewComposer
+
+class AccountBalanceViewComposer
 {
     /**
      * The card repository implementation.
      *
      * @var array
      */
-    protected $cards;
+    protected $balances;
 
     /**
      * Create a new cards composer.
      *
-     * @param  CardService  $service
+     * @param  AccountService  $service
      * @return void
      */
-    public function __construct(CardService $service)
+    public function __construct(AccountService $service)
     {
-        $this->cards = $service->getCardsForForm();
+        $this->balances = $service->getAllAccountBalances();
     }
 
     /**
@@ -33,6 +34,6 @@ class CardsViewComposer
      */
     public function compose(View $view)
     {
-        $view->with('form_cards', $this->cards);
+        $view->with('all_account_balances', $this->balances);
     }
 }
