@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Account;
 use App\Models\AccountsScheduling;
 use App\Services\AccountEntryService;
-use App\Exceptions\InvalidCategoryException;
 use App\Exceptions\AccountsPayableIsNotPaidException;
 use App\Exceptions\AccountsPayableIsAlreadyPaidException;
 
@@ -120,6 +119,12 @@ class AccountsSchedulingService
         $entry = $accountEntryService->make($account, $entryData);        
         $entry->accountScheduling()->associate($account_scheduling);
 
+        if ($account_scheduling->invoice) {
+            $account_scheduling->invoice()->update([
+                'paid' => true
+            ]);
+        }
+
         $entry->save();
         $account_scheduling->save();
         
@@ -145,6 +150,13 @@ class AccountsSchedulingService
         $payable->accountEntry()->delete();
         $payable->paid_date = null;
         $payable->paid = false;
+
+        if ($payable->invoice) {
+            $payable->invoice()->update([
+                'paid' => false
+            ]);
+        } 
+
         $payable->save();
 
         $this->updateAccountBalance($account, $payment_date);

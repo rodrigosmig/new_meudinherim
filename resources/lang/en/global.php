@@ -112,6 +112,9 @@ return [
     'destination_account'           => 'Destination Account',
     'add_menu'                      => 'Add Menu',
     'bank_transfer'                 => 'Bank Transfer',
+    'generate_payment'              => 'Generate Payment',
+    'closing_date'                  => 'Closing Date',
+    'show_invoice'                  => 'Show Invoice',
 
     'default_categories' => [
         'salary'            => 'Salary',

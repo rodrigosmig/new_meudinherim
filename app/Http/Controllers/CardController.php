@@ -142,4 +142,31 @@ class CardController extends Controller
 
         return view('cards.invoices.index', $data);
     }
+
+    public function generatePayment($card_id, $invoice_id)
+    {
+        $card = $this->service->findById($card_id);
+
+        if (! $card) {
+            Alert::error(__('global.invalid_request'), __('messages.cards.not_found'));
+            return redirect()->route('cards.index');
+        }
+
+        $invoice = $this->service->getInvoiceById($card, $invoice_id);
+
+        if (! $invoice) {
+            Alert::error(__('global.invalid_request'), __('messages.invoices.not_found'));
+            return redirect()->route('cards.index');
+        }
+
+        $data = [
+            'title' => 'Gerar fatura',
+            "due_date" => $invoice->due_date,
+            "description" => __('global.invoice') . ": " . $invoice->card->name,
+            "value" => $invoice->amount,
+            "invoice_id" => $invoice->id,
+        ];
+
+        return view('cards.invoices.payable', $data);
+    }
 }

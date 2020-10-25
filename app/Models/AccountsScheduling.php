@@ -10,7 +10,7 @@ class AccountsScheduling extends Model
 {
     use UserTrait;
     
-    public $fillable =  ['due_date', 'paid_date', 'description', 'value', 'category_id', 'paid', 'user_id'];
+    public $fillable =  ['due_date', 'paid_date', 'description', 'value', 'category_id', 'invoice_id', 'paid', 'user_id'];
 
     public function category()
     {
@@ -19,6 +19,11 @@ class AccountsScheduling extends Model
 
     public function accountEntry(){
         return $this->hasOne(AccountEntry::class, 'account_scheduling_id');
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     public function getValueAttribute($value)

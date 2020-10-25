@@ -10,7 +10,6 @@ use RealRashid\SweetAlert\Facades\Alert;
 use App\Exceptions\InsufficientLimitException;
 use App\Http\Requests\StoreInvoiceEntryRequest;
 use App\Http\Requests\UpdateInvoiceEntryRequest;
-use App\Http\Requests\StoreUpdateInvoiceEntryRequest;
 
 class InvoiceEntryController extends Controller
 {
@@ -58,7 +57,7 @@ class InvoiceEntryController extends Controller
         $invoice = $this->cardService->getInvoiceById($card, $invoice_id);
 
         if (!$invoice) {
-            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            Alert::error(__('global.invalid_request'), __('messages.invoices.not_found'));
             return redirect()->route('cards.index');
         }
 

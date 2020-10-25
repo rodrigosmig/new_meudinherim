@@ -57,11 +57,12 @@ class ViewServiceProvider extends ServiceProvider
         View::composer([
             'payables.create',
             'payables.edit',
-            'accounts.transfer'
+            'accounts.transfer',
+            'cards.invoices.payable'
         ], ExpenseCategoriesViewComposer::class);
 
         View::composer([
-            '*'
+            'includes.balance_menu'
         ], AccountBalanceViewComposer::class);
     }
 }

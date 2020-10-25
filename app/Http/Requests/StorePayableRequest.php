@@ -30,6 +30,7 @@ class StorePayableRequest extends FormRequest
             'due_date'      => 'required|date_format:Y-m-d',
             'description'   => 'required|min:3',
             'value'         => 'required|numeric',
+            'invoice_id'    => 'nullable|numeric',
             'category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {

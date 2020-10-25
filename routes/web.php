@@ -1,7 +1,5 @@
 <?php
 
-use App\Services\AccountService;
-use App\Services\AccountEntryService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +39,7 @@ Route::group([
     //Credit-Card
     Route::resource('cards', 'CardController');
     Route::get('cards/{card_id}/invoices', 'CardController@invoices')->name('cards.invoices.index');
+    Route::get('cards/{card_id}/invoices/{invoice_id}/generate-payment', 'CardController@generatePayment')->name('cards.invoices.generate-payment');
     Route::get('/cards/{card_id}/invoices/{invoice_id}/entries', 'InvoiceEntryController@index')->name('invoice_entries.index');
 
     //Account entries

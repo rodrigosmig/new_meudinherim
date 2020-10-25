@@ -211,4 +211,21 @@ class CardService
             'closing_date'  => $closing_date
         ];
     }
+
+    /**
+     * Updates card balance
+     *
+     * @param Invoice $invoice
+     * @return bool
+     */  
+    public function generatePayment(Invoice $invoice): bool
+    {
+        $invoice->payable()->create([
+            "due_date" => $invoice->due_date,
+            "description" => "Teste 1",
+            "value" => $invoice->amount,
+            "category_id" => "17",
+        ]);
+    }
+
 }

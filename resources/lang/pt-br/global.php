@@ -114,6 +114,9 @@ return [
     'destination_account'           => 'Conta de Destino',
     'add_menu'                      => 'Menu adicionar',
     'bank_transfer'                 => 'Transferência Bancária',
+    'generate_payment'              => 'Gerar pagamento',
+    'closing_date'                  => 'Data de Fechamento',
+    'show_invoice'                  => 'Mostrar Fatura',
 
     'default_categories' => [
         'salary'            => 'Salário',

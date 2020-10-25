@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Card;
 use App\Models\User;
 use App\Traits\UserTrait;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
@@ -12,10 +13,6 @@ class Invoice extends Model
     use UserTrait;
     
     public $fillable =  ['due_date', 'closing_date', 'amount', 'paid', 'card_id', 'user_id'];
-
-    protected $casts = [
-        'paid' => 'boolean',
-    ];
 
     public function user()
     {
@@ -32,6 +29,10 @@ class Invoice extends Model
         return $this->hasMany(InvoiceEntry::class);
     }
 
+    public function payable(){
+        return $this->hasOne(AccountsScheduling::class);
+    }
+
     public function getAmountAttribute($value)
     {
         return $value / 100;
@@ -43,12 +44,24 @@ class Invoice extends Model
     }
 
     /**
-     * Checks if the authenticated user is invoice owner
+     * Checks if the invoice is closed
      *
      * @return bool
      */
-    public function isOwner(): bool
+    public function isClosed(): bool
     {
-        return $this->user_id === auth()->user()->id;
+        $closing_date = new DateTime($this->closing_date);
+
+        return $closing_date < now();
+    }
+
+    /**
+     * Checks if the invoice is paid
+     *
+     * @return bool
+     */
+    public function isPaid(): bool
+    {
+        return $this->paid;
     }
 }

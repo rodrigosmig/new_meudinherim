@@ -52,7 +52,9 @@
                         <th>{{ __('global.category') }}</th>
                         <th>{{ __('global.description') }}</th>
                         <th>{{ __('global.value') }}</th>
-                        <th>{{ __('global.actions') }}</th>
+                        @if (! $invoice->isPaid())
+                            <th>{{ __('global.actions') }}</th>
+                        @endif
                     </thead>
                     <tbody>
                         @foreach ($entries as $entry)
@@ -69,16 +71,18 @@
                                         {{ toBrMoney($entry->value) }}
                                     </td>
                                 @endif
-                                <td class="table-actions">
-                                    <div class="row">
-                                        <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
+                                @if (! $invoice->isPaid())
+                                    <td class="table-actions">
+                                        <div class="row">
+                                            <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

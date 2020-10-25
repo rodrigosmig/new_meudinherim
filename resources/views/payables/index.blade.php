@@ -55,7 +55,13 @@
                                 @endif
                             </td>
                             <td>
-                                {{ $payable->description }}
+                                @if ($payable->invoice)
+                                    <a href="{{ route('invoice_entries.index', [$payable->invoice->card->id, $payable->invoice->id]) }}" title="{{ __('global.show_invoice') }}">
+                                        {{ $payable->description }}
+                                    </a>
+                                @else
+                                    {{ $payable->description }}
+                                @endif
                             </td>
                             <td>
                                 {{ $payable->category->name }}
