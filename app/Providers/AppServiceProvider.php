@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\CardService;
 use App\Services\AccountService;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Events\Dispatcher;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
@@ -75,6 +76,10 @@ class AppServiceProvider extends ServiceProvider
                     'icon'    => 'fas fa-money-check-alt',
                     'submenu' => $card_items,
                 ]);
+            }
+
+            if($this->app->environment('production')) {
+                URL::forceScheme('https');
             }
         });
     }
