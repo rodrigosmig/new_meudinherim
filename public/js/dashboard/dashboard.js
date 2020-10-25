@@ -145,7 +145,6 @@ $(function() {
     })
 
     function initDonutChart(id, values) {
-        console.log(id, values)
         let amount = 0;
 
         for (const object of values) {

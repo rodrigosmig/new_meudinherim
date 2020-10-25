@@ -211,4 +211,27 @@ class InvoiceEntryService
             ->get()
             ->toArray();
     }
+
+    /**
+     * Returns the total values of entries by category type for a given date
+     *
+     * @param int $categoryType
+     * @param string $date
+     * @return float
+     */ 
+    public function getTotalMonthlyByCategory($categoryType, $date): float
+    {
+        $new_date   = new DateTime($date);
+        $month      = $new_date->format('m');
+        $year       = $new_date->format('Y');
+
+        $total = $this->entry
+            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
+            ->where('categories.type', $categoryType)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->sum('value');
+               
+        return $total / 100;
+    }
 }

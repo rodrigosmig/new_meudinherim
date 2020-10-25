@@ -148,24 +148,4 @@ class InvoiceService
 
         return $result;
     }
-
-    /**
-     * Returns the total values of entries by category type for a given date
-     *
-     * @param string $date
-     * @return float
-     */ 
-    public function getTotalMonthlyByCategory($date): float
-    {
-        $new_date   = new DateTime($date);
-        $month      = $new_date->format('m');
-        $year       = $new_date->format('Y');
-        
-        $total = $this->invoice
-            ->whereMonth('due_date', $month)
-            ->whereYear('due_date', $year)
-            ->sum('amount');
-        
-        return $total / 100;
-    }
 }

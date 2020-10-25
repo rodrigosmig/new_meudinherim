@@ -78,59 +78,69 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
                     @isset($incomes)
-                        <table class="table table-striped">
-                            <thead>
-                                <th width="33%">{{ __('global.category') }}</th>
-                                <th width="33%">{{ __('global.quantity') }}</th>
-                                <th>Total</th>
-                            </thead>
+                        @if (! empty($incomes))
+                            <table class="table table-striped">
+                                <thead>
+                                    <th width="33%">{{ __('global.category') }}</th>
+                                    <th width="33%">{{ __('global.quantity') }}</th>
+                                    <th>Total</th>
+                                </thead>
 
-                            <tbody>                                
-                                @foreach ($incomes as $category)
-                                    <tr>
-                                        <td>{{ $category['category'] }}</td>
-                                        <td>
-                                            <a class="badge-pill badge-success show-entries" data-from="{{ $from }}" data-to="{{ $to }}" data-category="{{ $category['id'] }}" data-type="account" href="javascript:void(0)" data-toggle="modal" data-target="#modal-entries">
-                                                {{ $category['quantity'] }}
-                                            </a>
-                                        </td>
-                                        <td>{{ toBrMoney($category['total'] )}}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                <tbody>                                
+                                    @foreach ($incomes as $category)
+                                        <tr>
+                                            <td>{{ $category['category'] }}</td>
+                                            <td>
+                                                <a class="badge-pill badge-success show-entries" data-from="{{ $from }}" data-to="{{ $to }}" data-category="{{ $category['id'] }}" data-type="account" href="javascript:void(0)" data-toggle="modal" data-target="#modal-entries">
+                                                    {{ $category['quantity'] }}
+                                                </a>
+                                            </td>
+                                            <td>{{ toBrMoney($category['total'] )}}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <h4>{{ __('messages.entries.not_found') }}</h4>
+                        @endif
+                        
                     @endisset                
                 </div>
         
                 <div class="tab-pane fade show" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
                     @isset($expenses)
-                        <table class="table table-striped">
-                            <thead>
-                                <th width="33%">{{ __('global.category') }}</th>
-                                <th width="33%">{{ __('global.quantity') }}</th>
-                                <th>Total</th>
-                            </thead>
+                        @if (! empty($expenses))
+                            <table class="table table-striped">
+                                <thead>
+                                    <th width="33%">{{ __('global.category') }}</th>
+                                    <th width="33%">{{ __('global.quantity') }}</th>
+                                    <th>Total</th>
+                                </thead>
 
-                            <tbody>                                
-                                @foreach ($expenses as $category)
-                                    <tr>
-                                        <td>{{ $category['category'] }}</td>
-                                        <td>
-                                            <a class="badge-pill badge-success show-entries" data-from="{{ $from }}" data-to="{{ $to }}" data-category="{{ $category['id'] }}" data-type="account" href="javascript:void(0)" data-toggle="modal" data-target="#modal-entries">
-                                                {{ $category['quantity'] }}
-                                            </a>
-                                        </td>
-                                        <td>{{ toBrMoney($category['total'] )}}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                <tbody>                                
+                                    @foreach ($expenses as $category)
+                                        <tr>
+                                            <td>{{ $category['category'] }}</td>
+                                            <td>
+                                                <a class="badge-pill badge-success show-entries" data-from="{{ $from }}" data-to="{{ $to }}" data-category="{{ $category['id'] }}" data-type="account" href="javascript:void(0)" data-toggle="modal" data-target="#modal-entries">
+                                                    {{ $category['quantity'] }}
+                                                </a>
+                                            </td>
+                                            <td>{{ toBrMoney($category['total'] )}}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <h4>{{ __('messages.entries.not_found') }}</h4>
+                        @endif
+                        
                     @endisset
                 </div>
         
                 <div class="tab-pane fade show" id="credit_card" role="tabpanel" aria-labelledby="credit_card-tab">
                     @isset($cards)
-                        @if (! empty($card))
+                        @if (! empty($cards))
                             <table class="table table-striped">
                                 <thead>
                                     <th width="33%">{{ __('global.category') }}</th>

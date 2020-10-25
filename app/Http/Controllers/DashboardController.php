@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use DateTime;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Services\InvoiceService;
@@ -48,10 +47,10 @@ class DashboardController extends Controller
             'months'                        => $this->dashboardService->getMonths($date),
             'total_income'                  => $this->entriesService->getTotalMonthlyByCategory(Category::INCOME, $date),
             'total_expense'                 => $this->entriesService->getTotalMonthlyByCategory(Category::EXPENSE, $date),
-            'total_invoices'                => $this->invoiceService->getTotalMonthlyByCategory($date),
+            'total_invoices'                => $this->invoiceEntryService->getTotalMonthlyByCategory(Category::EXPENSE, $date),
             'total_income_in_six_months'    => $this->entriesService->getTotalOfSixMonthsByCategoryTypeAndDate(Category::INCOME, $date),
             'total_expense_in_six_months'   => $this->entriesService->getTotalOfSixMonthsByCategoryTypeAndDate(Category::EXPENSE, $date),
-            'total_invoices_in_six_monthss' => $this->invoiceService->getTotalInvoicesForSixMonthsForChart($date),
+            'total_invoices_in_six_months' => $this->invoiceService->getTotalInvoicesForSixMonthsForChart($date),
             'total_income_category'         => $this->entriesService->getTotalByCategoryForChart(Category::INCOME, $date),
             'total_expense_category'        => $this->entriesService->getTotalByCategoryForChart(Category::EXPENSE, $date),
             'total_card_expense_category'   => $this->invoiceEntryService->getTotalByCategoryForChart($date),

@@ -8,7 +8,7 @@
     <script>
         var total_income = @json($total_income_in_six_months);
         var total_expense = @json($total_expense_in_six_months);
-        var total_invoices = @json($total_invoices_in_six_monthss);
+        var total_invoices = @json($total_invoices_in_six_months);
         var total_income_category = @json($total_income_category);
         var total_expense_category = @json($total_expense_category);
         var total_card_expense_category = @json($total_card_expense_category);
@@ -170,7 +170,7 @@
                     <div class="card">
                         <div class="card-header border-0">
                             <div class="d-flex justify-content-between">
-                                <h3 class="card-title">{{ __('global.credit-card') }}</h3>
+                                <h3 class="card-title">{{ __('global.invoices') }}</h3>
                             </div>
                         </div>
                         <div class="card-body">
