@@ -74,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
                     'text'    => 'invoices',
                     'icon'    => 'fas fa-money-check-alt',
                     'submenu' => $card_items,
-                ],);
+                ]);
             }
         });
     }
