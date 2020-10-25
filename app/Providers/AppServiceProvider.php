@@ -77,10 +77,6 @@ class AppServiceProvider extends ServiceProvider
                     'submenu' => $card_items,
                 ]);
             }
-
-            if($this->app->environment('production')) {
-                URL::forceScheme('https');
-            }
         });
     }
 }
