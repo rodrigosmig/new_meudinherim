@@ -24,8 +24,11 @@ class InvoiceEntryService
     {
         $this->card = $card;
         $this->data = $data;
+        
+        $categoryService = app(CategoryService::class);
+        $category = $categoryService->findById($data['category_id']);
 
-        if ($this->data['value'] > $this->card->balance) {
+        if ($this->data['value'] > $this->card->balance && $category->isExpense()) {
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
 

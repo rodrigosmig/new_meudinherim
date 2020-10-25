@@ -41,7 +41,11 @@
         <div class="card-header">
             <h4>
                 <i class="far fa-calendar-alt"></i> {{ toBrDate($invoice->due_date) }}
-                <span class="float-right" style="color: red">{{ toBrMoney($invoice->amount) }}</span>
+                @if ($invoice->amount < 0)
+                    <span class="float-right" style="color: blue">{{ toBrMoney(($invoice->amount * -1)) }}</span>
+                @else
+                    <span class="float-right" style="color: red">{{ toBrMoney($invoice->amount) }}</span>
+                @endif
             </h4>
         </div>
         <div class="card-body">        
