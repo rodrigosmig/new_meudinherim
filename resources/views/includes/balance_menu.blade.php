@@ -6,7 +6,8 @@
         <h5 class="dropdown-item text-center">{{ __('global.accounts') }}</h5>
         <div class="dropdown-divider"></div>
         @foreach ($all_account_balances as $key => $balance)
-            @if($key != 'total')
+        
+            @if($key !== 'total')
                 <a href="#" class="dropdown-item">
                     <div class="media">                
                         <div class="media-body">
