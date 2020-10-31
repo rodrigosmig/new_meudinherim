@@ -115,6 +115,14 @@ return [
     'generate_payment'              => 'Generate Payment',
     'closing_date'                  => 'Closing Date',
     'show_invoice'                  => 'Show Invoice',
+    'profile'                       => 'Profile',
+    'cards'                         => 'Cards',
+    'password'                      => 'Password',
+    'change'                        => 'Change',
+    'current_password'              => 'Current Password',
+    'confirm_password'              => 'Confirm Password',
+    'new_password'                  => 'New Password',
+    'email'                         => 'E-mail',
 
     'default_categories' => [
         'salary'            => 'Salary',

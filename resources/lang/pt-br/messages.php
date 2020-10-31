@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'not_save'          => 'Não foi possível salvar. Tente novamente.',
-    'not_delete'        => 'Não foi possível deletar. Tente novamente',
-    'ajax_title'        => 'Tem certeza?',
-    'not_found'         => 'Nenhum registro encontrado',
+    'not_save'              => 'Não foi possível salvar. Tente novamente.',
+    'not_delete'            => 'Não foi possível deletar. Tente novamente',
+    'ajax_title'            => 'Tem certeza?',
+    'not_found'             => 'Nenhum registro encontrado',
 
     'categories' => [
         'select_type'       => 'Selecione um tipo de categoria',
@@ -69,5 +69,11 @@ return [
         'receivable_cancel'         => 'Recebimento cancelado com sucesso',
         'not_cancel_payment'        => 'Não foi possível cancelar o pagamento',
         'not_cancel_receivement'    => 'Não foi possível cancelar o recebimento',
+    ],
+
+    'profile' => [
+        'incorrect_password'    => 'Sua senha atual está incorreta',
+        'same_password'         => 'A senha atual e a nova senha não podem ser iguais',
+        'password_updated'      => 'Senha alterada com sucesso',
     ]
 ];

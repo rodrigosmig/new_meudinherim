@@ -243,6 +243,13 @@ return [
             'label_color' => 'success',
         ],
         [
+            'text'        => 'profile',
+            'url'         => '/profile',
+            'icon'        => 'fas fa-user',
+            'label_color' => 'success',
+            'topnav_user' => true
+        ],
+        [
             'key'        => 'categories',
             'text'        => 'categories',
             'url'         => '/categories',
