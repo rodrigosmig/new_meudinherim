@@ -81,5 +81,10 @@ Route::group([
             Route::post('/total-by-category', 'ReportsController@totalByCategory')->name('total_by_category.filter');
             Route::get('/total-by-category/ajax', 'ReportsController@ajaxtotalByCategory');
         });
-   
+
+    //Profile
+    Route::get('profile', 'ProfileController@profile')->name('profile.index');
+    Route::put('profile/password', 'ProfileController@updatePassword')->name('profile.password');
+    Route::put('profile/update', 'ProfileController@updateProfile')->name('profile.update');
+    Route::put('profile/avatar', 'ProfileController@updateAvatar')->name('profile.avatar');
 });

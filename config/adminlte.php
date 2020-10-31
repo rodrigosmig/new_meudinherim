@@ -67,7 +67,7 @@ return [
     'usermenu_enabled' => true,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
@@ -241,6 +241,13 @@ return [
             'url'         => '/dashboard',
             'icon'        => 'fas fa-tachometer-alt',
             'label_color' => 'success',
+        ],
+        [
+            'text'        => 'profile',
+            'url'         => '/profile',
+            'icon'        => 'fas fa-user',
+            'label_color' => 'success',
+            'topnav_user' => true
         ],
         [
             'key'        => 'categories',

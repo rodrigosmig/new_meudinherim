@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'not_save'          => 'Could not be saved. Try again.',
-    'not_delete'        => 'Could not be deleted. Try again.',
-    'ajax_title'        => 'Are you sure?',
-    'not_found'         => 'No records found',
+    'not_save'              => 'Could not be saved. Try again.',
+    'not_delete'            => 'Could not be deleted. Try again.',
+    'ajax_title'            => 'Are you sure?',
+    'not_found'             => 'No records found',
 
     'categories' => [
         'select_type'       => 'Select a category type',
@@ -67,5 +67,14 @@ return [
         'receivable_cancel'         => 'Receivement cancelled successfully',
         'not_cancel_payment'        => 'Payment could not be canceled',
         'not_cancel_receivement'    => 'Receivement could not be canceled',
+    ],
+
+    'profile' => [
+        'incorrect_password'    => 'Your current password is incorrect.',
+        'same_password'         => 'The current password and the new password cannot be the same',
+        'password_updated'      => 'Password updated successfully',
+        'profile_updated'       => 'Profile updated successfully',
+        'invalid_user'          => 'Invalid User',
+        'avatar_updated'        => 'Avatar updated successfully',
     ]
 ];

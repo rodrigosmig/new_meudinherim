@@ -117,6 +117,15 @@ return [
     'generate_payment'              => 'Gerar pagamento',
     'closing_date'                  => 'Data de Fechamento',
     'show_invoice'                  => 'Mostrar Fatura',
+    'profile'                       => 'Perfil',
+    'cards'                         => 'Cartões',
+    'password'                      => 'Senha',
+    'change'                        => 'Alterar',
+    'current_password'              => 'Senha Atual',
+    'confirm_password'              => 'Confirmar Senha',
+    'new_password'                  => 'Nova Senha',
+    'email'                         => 'E-mail',
+    'discard_changes'               => 'Descartar alteração',
 
     'default_categories' => [
         'salary'            => 'Salário',
