@@ -7,42 +7,40 @@
     </ol>
 @endsection
 
+@push('js')
+    <script src="{{ asset('js/profile/profile.js') }}"></script>
+@endpush
+
+@push('css')
+    <link rel="stylesheet" href="{{ asset('css/profile/profile.css') }}">
+@endpush
+
 @section('content')
     <div class="row">
         <div class="col-md-3">
             <div class="card card-primary card-outline">
                 <div class="card-body box-profile">
                     <div class="text-center">
-                        <form id="formEditPhoto" action="" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <img src="{{ asset('images/user.png') }}" id="imgProfile" style="width: 100px; height: 100px" class="profile-user-img img-fluid img-circle" />
-                           {{--  @if (! auth()->user()->hasPhoto())
-                                <img src="{{ asset('img/user.png') }}" id="imgProfile" style="width: 150px; height: 150px" class="img-thumbnail" />
-                            @else
-                                <img src="/storage/{{auth()->user()->photo}}" id="imgProfile" style="width: 150px; height: 150px" class="img-thumbnail" />
-                            @endif --}}
-                            
-                            {{-- <div class="middle">
-                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                                <input type="button" class="btn btn-secondary" id="btnChangePicture" value="Change" />
-                                <input type="file" style="display: none;" id="profilePicture" name="file" />
-                            </div> --}}
-                        </form>
-                        {{-- <img class="profile-user-img img-fluid img-circle" src="../../dist/img/user4-128x128.jpg" alt="{{ $user->name }}"> --}}
+                        <div class="image-container">
+                            <form id="formEditPhoto" action="{{ route('profile.avatar') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                <img src="{{ $user->adminlte_image() }}" id="imgProfile" style="width: 100px; height: 100px" class="profile-user-img img-fluid img-circle" />
+                                <div class="middle">
+                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                                    <input type="button" class="btn btn-secondary" id="btnChangePicture" value="Change" />
+                                    <input type="file" style="display: none;" id="profilePicture" name="file" />
+                                </div>
+                            </form>
+                        </div>
                     </div>
         
-                  <h3 class="profile-username text-center">{{ $user->name }}</h3>
+                    <h3 class="profile-username text-center">{{ $user->name }}</h3>
+                    <h5 class="text-center">{{ $user->email }}</h4>
         
-                    <ul class="list-group list-group-unbordered mb-3">
-                        <li class="list-group-item">
-                        <b>{{ __('global.accounts') }}</b> <a class="float-right">{{ $user->accounts()->count() }}</a>
-                        </li>
-                        <li class="list-group-item">
-                        <b>{{ __('global.cards') }}</b> <a class="float-right">{{ $user->cards()->count() }}</a>
-                        </li>
-                    </ul>
-        
-                    <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                    <div class="ml-auto">
+                        <input type="button" class="btn btn-primary btn-block d-none" id="btnDiscard" value="{{ __('global.discard_changes') }}" />
+                    </div>
                 </div>
             </div>
         </div>

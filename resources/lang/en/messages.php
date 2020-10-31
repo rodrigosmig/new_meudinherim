@@ -74,5 +74,7 @@ return [
         'same_password'         => 'The current password and the new password cannot be the same',
         'password_updated'      => 'Password updated successfully',
         'profile_updated'       => 'Profile updated successfully',
+        'invalid_user'          => 'Invalid User',
+        'avatar_updated'        => 'Avatar updated successfully',
     ]
 ];

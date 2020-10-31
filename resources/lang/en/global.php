@@ -123,6 +123,7 @@ return [
     'confirm_password'              => 'Confirm Password',
     'new_password'                  => 'New Password',
     'email'                         => 'E-mail',
+    'discard_changes'               => 'Discard Changes',
 
     'default_categories' => [
         'salary'            => 'Salary',

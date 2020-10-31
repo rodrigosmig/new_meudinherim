@@ -75,5 +75,8 @@ return [
         'incorrect_password'    => 'Sua senha atual está incorreta',
         'same_password'         => 'A senha atual e a nova senha não podem ser iguais',
         'password_updated'      => 'Senha alterada com sucesso',
+        'profile_updated'       => 'Perfil atualizado com sucesso',
+        'invalid_user'          => 'Usuário Inválido',
+        'avatar_updated'        => 'Avatar atualizado com sucesso',
     ]
 ];

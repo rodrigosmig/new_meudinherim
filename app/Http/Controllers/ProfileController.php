@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\ProfileService;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Requests\UpdateAvatarRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
 
@@ -45,6 +46,16 @@ class ProfileController extends Controller
         $this->service->updateProfile($data);
 
         Alert::success(__('global.success'), __('messages.profile.profile_updated'));
+
+        return redirect()->route('profile.index');
+    }
+
+    public function updateAvatar(UpdateAvatarRequest $request)
+    {
+        $data = $request->validated();
+        $this->service->updateAvatar($data);
+
+        Alert::success(__('global.success'), __('messages.profile.avatar_updated'));
 
         return redirect()->route('profile.index');
     }

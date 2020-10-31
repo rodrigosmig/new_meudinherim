@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -56,5 +57,19 @@ class User extends Authenticatable
     public function categories()
     {
         return $this->hasMany(Category::class);
+    }
+
+    public function hasAvatar(): bool
+    {
+        return $this->avatar !== 'user.png';
+    }
+
+    public function adminlte_image()
+    {
+        if (! $this->hasAvatar()) {
+            return asset('images/user.png');
+        }
+
+        return Storage::url($this->avatar);
     }
 }

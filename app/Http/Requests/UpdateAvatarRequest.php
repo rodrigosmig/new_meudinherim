@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangePasswordRequest extends FormRequest
+class UpdateAvatarRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,8 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'current_password'  => 'required',
-            'password'          => 'required|confirmed|min:8',
-            
+            'user_id'   => 'required',
+            'file'      => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }
 
@@ -40,12 +39,8 @@ class ChangePasswordRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ( !Hash::check($this->current_password, $this->user()->password) ) {
-                $validator->errors()->add('current_password', __('messages.profile.incorrect_password'));
-            }
-
-            if ( $this->current_password === $this->password) {
-                $validator->errors()->add('current_password', __('messages.profile.same_password'));
+            if (auth()->user()->id != $this->user_id ) {
+                $validator->errors()->add('user_id', __('messages.profile.invalid_user'));
             }
         });
         return;

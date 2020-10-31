@@ -125,6 +125,7 @@ return [
     'confirm_password'              => 'Confirmar Senha',
     'new_password'                  => 'Nova Senha',
     'email'                         => 'E-mail',
+    'discard_changes'               => 'Descartar alteração',
 
     'default_categories' => [
         'salary'            => 'Salário',
