@@ -65,6 +65,7 @@ class CategoryService
     public function getIncomeCategoriesForForm()
     {
         return $this->category::where('type', $this->category::INCOME)
+                    ->orderBy('name')
                     ->pluck('name', 'id'); 
     }
 
@@ -76,6 +77,7 @@ class CategoryService
     public function getExpenseCategoriesForForm() 
     {
         return $this->category::where('type', $this->category::EXPENSE)
+                    ->orderBy('name')
                     ->pluck('name', 'id');
     }
 
