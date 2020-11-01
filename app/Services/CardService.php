@@ -159,6 +159,7 @@ class CardService
     {
         return $card->invoices()
             ->where('paid', $paid)
+            ->orderByDesc('due_date')
             ->get();
     }
 

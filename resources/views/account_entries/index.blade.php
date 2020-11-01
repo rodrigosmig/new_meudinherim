@@ -2,6 +2,8 @@
 
 @push('js')
     <script src="{{ asset('js/account_entries/index.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>
     <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
