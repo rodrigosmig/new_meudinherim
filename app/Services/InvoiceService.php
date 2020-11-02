@@ -76,8 +76,6 @@ class InvoiceService
         } else {
             $entry = $invoice->entries()->create($data);
         }
-
-        dd($data, isset($data['installment']));
         
         if ($entry) {
             $this->updateInvoiceAmount($invoice);

@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('js')
+    <script src="{{ asset('js/plugins/bootstrap-switch.min.js') }}"></script>
+@endpush
+
 @section('button-header')
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{ route('receivables.index') }}">{{ $title }}</a></li>
@@ -9,6 +13,12 @@
 
 @section('js')
     <script src="{{ asset('js/plugins/init-datepicker.js') }}"></script>
+
+    <script>
+        $("input[data-bootstrap-switch]").each(function(){
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
+    </script>
 @endsection
 
 @section('content')

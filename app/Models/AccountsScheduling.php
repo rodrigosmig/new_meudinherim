@@ -10,7 +10,17 @@ class AccountsScheduling extends Model
 {
     use UserTrait;
     
-    public $fillable =  ['due_date', 'paid_date', 'description', 'value', 'category_id', 'invoice_id', 'paid', 'user_id'];
+    public $fillable =  [
+        'due_date', 
+        'paid_date', 
+        'description', 
+        'value', 
+        'category_id', 
+        'invoice_id', 
+        'paid',
+        'monthly',
+        'user_id'
+    ];
 
     public function category()
     {

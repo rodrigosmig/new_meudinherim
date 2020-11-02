@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @push('js')
+    <script src="{{ asset('js/plugins/init-datepicker_range.js') }}"></script>
     <script src="{{ asset('js/receivables/index.js') }}"></script>
     <script src="{{ asset('js/moment.min.js') }}"></script>
     <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>

@@ -7,8 +7,18 @@
     </ol>
 @endsection
 
+@push('js')
+    <script src="{{ asset('js/plugins/bootstrap-switch.min.js') }}"></script>
+@endpush
+
 @section('js')
     <script src="{{ asset('js/plugins/init-datepicker.js') }}"></script>
+
+    <script>
+        $("input[data-bootstrap-switch]").each(function(){
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
+    </script>
 @endsection
 
 @section('content')
