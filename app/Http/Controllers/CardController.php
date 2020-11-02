@@ -133,6 +133,11 @@ class CardController extends Controller
     {
         $card = $this->service->findById($card_id);
 
+        if (! $card) {
+            Alert::error(__('global.invalid_request'), __('messages.cards.not_found'));
+            return redirect()->route('cards.index');
+        }
+
         $data = [
             'title'     => __('global.invoices'),
             'open_invoices'  => $this->service->getInvoicesByStatus($card),

@@ -5,6 +5,7 @@
 @section('content_top_nav_right')
     @include('includes.add_menu')
     @include('includes.balance_menu')
+    @include('includes.open_invoices_menu')
 @stop
 
 @push('css')

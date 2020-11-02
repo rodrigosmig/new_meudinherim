@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Http\ViewComposers\CardsViewComposer;
 use App\Http\ViewComposers\AccountsViewComposer;
+use App\Http\ViewComposers\OpenInvoicesViewComposer;
 use App\Http\ViewComposers\AllCategoriesViewComposer;
 use App\Http\ViewComposers\AccountBalanceViewComposer;
 use App\Http\ViewComposers\IncomeCategoriesViewComposer;
@@ -64,5 +65,9 @@ class ViewServiceProvider extends ServiceProvider
         View::composer([
             'includes.balance_menu'
         ], AccountBalanceViewComposer::class);
+
+        View::composer([
+            'includes.open_invoices_menu'
+        ], OpenInvoicesViewComposer::class);
     }
 }

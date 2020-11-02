@@ -146,4 +146,30 @@ class InvoiceService
 
         return $result;
     }
+
+    /**
+     * Returns the most recent open invoice
+     *
+     * @return array
+     */ 
+    public function getOpenInvoicesForMenu(): array
+    {
+        $cards  = auth()->user()->cards;
+        $result = [];
+        $total  = 0;
+
+        foreach ($cards as $card) {            
+            $invoice = $card->invoices()
+                ->where('paid', false)
+                ->orderBy('due_date')
+                ->first();
+            
+            $result[$card->name] = $invoice;
+            $total += $invoice->amount;
+        }
+
+        $result['total'] = $total;
+        
+        return $result;
+    }
 }
