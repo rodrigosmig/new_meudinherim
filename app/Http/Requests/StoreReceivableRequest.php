@@ -29,6 +29,7 @@ class StoreReceivableRequest extends FormRequest
             'due_date'      => 'required|date_format:Y-m-d',
             'description'   => 'required|min:3',
             'value'         => 'required|numeric',
+            'monthly'       => 'nullable',
             'category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {

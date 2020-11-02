@@ -1,5 +1,5 @@
 <li class="nav-item dropdown">
-    <a class="nav-link" data-toggle="dropdown" href="#" title="{{ __('global.balance') }}">
+    <a class="nav-link" data-toggle="dropdown" href="#" title="{{ __('global.account_balance') }}">
         <i class="fas fa-dollar-sign"></i>
     </a>
     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="width: 200px">
@@ -14,7 +14,19 @@
                             <h3 class="dropdown-item-title">
                                 {{ $balance['account_name'] }}
                             </h3>
-                            <p class="text-sm text-muted">Saldo: {{ toBrMoney($balance['balance']) }}</p>
+                            <p class="text-sm text-muted">Saldo:
+                                <span style="color: {{ $balance['balance'] < 0 ? 'red' : 'blue' }}">
+                                    {{ toBrMoney($balance['balance']) }}
+                                </span>
+                                {{-- @if ($balance['balance'] < 0)
+                                    <span style="color: red">
+                                        {{ toBrMoney($balance['balance']) }}
+                                    </span>
+                                @else
+                                    
+                                @endif --}}
+                                
+                            </p>
                         </div>
                     </div>
                 </a>
@@ -22,6 +34,6 @@
             @endif
         @endforeach      
         <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item dropdown-footer text-center"><strong>Total</strong>: <span style="color: blue">{{ toBrMoney($all_account_balances['total']) }}</span></a>
+            <a href="#" class="dropdown-item dropdown-footer text-center"><strong>Total</strong>: <span style="color: {{ $all_account_balances['total'] < 0 ? 'red' : 'blue' }}">{{ toBrMoney($all_account_balances['total']) }}</span></a>
         </div>
   </li>

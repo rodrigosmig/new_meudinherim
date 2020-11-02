@@ -109,7 +109,7 @@ class ReportsController extends Controller
             $data['from'] = $filter['from'];
             $data['to'] = $filter['to'];
         }
-        //dd($data);
+
         return view('reports.total_by_category', $data);
     }
 

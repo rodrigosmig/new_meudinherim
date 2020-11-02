@@ -45,7 +45,7 @@ class ReceivableController extends Controller
                 'status'    => $request->filter_status
             ];
         }
-        //dd($range_date);
+
         $data = [
             'title'         => $this->title,
             'receivables'   => $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter)

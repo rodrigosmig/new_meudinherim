@@ -4,15 +4,16 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
         })
     </script>
 @stop
+
+@push('js')
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
+@endpush
+
 
 @section('button-header')
     <ol class="breadcrumb float-sm-right">
@@ -41,8 +42,8 @@
                     @if ($open_invoices->isNotEmpty())
                         <table class="table datatable">
                             <thead>
-                                <th>{{ __('global.closing_date') }}</th>
                                 <th>{{ __('global.due_date') }}</th>
+                                <th>{{ __('global.closing_date') }}</th>
                                 @if (! isset($card))
                                     <th>{{ __('global.card') }}</th>
                                 @endif
@@ -52,8 +53,8 @@
                             <tbody>
                                 @foreach ($open_invoices as $invoice)
                                     <tr>
-                                        <td>{{ toBrDate($invoice->closing_date) }}</td>
                                         <td>{{ toBrDate($invoice->due_date) }}</td>
+                                        <td>{{ toBrDate($invoice->closing_date) }}</td>
                                         @if (! isset($card))
                                             <td>{{ $invoice->card->name }}</td>
                                         @endif
@@ -85,8 +86,8 @@
                     @if ($paid_invoices->isNotEmpty())
                         <table class="table datatable">
                             <thead>
-                                <th>{{ __('global.closing_date') }}</th>
                                 <th>{{ __('global.due_date') }}</th>
+                                <th>{{ __('global.closing_date') }}</th>
                                 @if (! isset($card))
                                     <th>{{ __('global.card') }}</th>
                                 @endif
@@ -96,8 +97,8 @@
                             <tbody>
                                 @foreach ($paid_invoices as $invoice)
                                     <tr>
-                                        <td>{{ toBrDate($invoice->closing_date) }}</td>
                                         <td>{{ toBrDate($invoice->due_date) }}</td>
+                                        <td>{{ toBrDate($invoice->closing_date) }}</td>
                                         @if (! isset($card))
                                             <td>{{ $invoice->card->name }}</td>
                                         @endif

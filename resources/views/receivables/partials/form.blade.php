@@ -31,3 +31,10 @@
         <input type="number" id="receivable-value" class="form-control @error('value') is-invalid @enderror" name="value" value="{{ $receivable->value ?? old('value') }}" min="0.01" step="any" required>
     </div>
 </div>
+
+<div class="form-group row">
+    <label for="receivable-monthly" class="col-sm-2 col-form-label">{{ __('global.monthly') }}</label>
+    <div class="col-sm-10">
+        <input id="receivable-monthly" type="checkbox" name="monthly" data-bootstrap-switch data-off-color="danger" data-on-color="success">
+    </div>
+</div>

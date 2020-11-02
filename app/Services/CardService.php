@@ -58,6 +58,10 @@ class CardService
     {
         $card = $this->findById($id);
 
+        if (! $card) {
+            return false;
+        }
+
         return $card->delete();
     }
 
@@ -159,6 +163,7 @@ class CardService
     {
         return $card->invoices()
             ->where('paid', $paid)
+            ->orderByDesc('due_date')
             ->get();
     }
 
@@ -211,21 +216,4 @@ class CardService
             'closing_date'  => $closing_date
         ];
     }
-
-    /**
-     * Updates card balance
-     *
-     * @param Invoice $invoice
-     * @return bool
-     */  
-    public function generatePayment(Invoice $invoice): bool
-    {
-        $invoice->payable()->create([
-            "due_date" => $invoice->due_date,
-            "description" => "Teste 1",
-            "value" => $invoice->amount,
-            "category_id" => "17",
-        ]);
-    }
-
 }

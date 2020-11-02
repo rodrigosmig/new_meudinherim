@@ -7,8 +7,19 @@
     </ol>
 @endsection
 
+@push('js')
+    <script src="{{ asset('js/plugins/bootstrap-switch.min.js') }}"></script>
+@endpush
+
 @section('js')
     <script>
+        var monthly = "{{ $payable->monthly }}";
+
+        if (monthly === '1') {
+            $("#payable-monthly").bootstrapSwitch('state', true)
+        } else {
+            $("#payable-monthly").bootstrapSwitch('state', false)
+        }
         $('.datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
     </script>
 @endsection

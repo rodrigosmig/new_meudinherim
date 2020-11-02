@@ -7,6 +7,7 @@ use App\Models\AccountsScheduling;
 use App\Services\AccountEntryService;
 use App\Exceptions\AccountsPayableIsNotPaidException;
 use App\Exceptions\AccountsPayableIsAlreadyPaidException;
+use DateTime;
 
 class AccountsSchedulingService
 {
@@ -19,6 +20,8 @@ class AccountsSchedulingService
 
     public function store(array $data)
     {
+        $data['monthly'] = isset($data['monthly']) ? true : false;
+        
         return $this->account_scheduling->create($data);
     }
 
@@ -29,6 +32,8 @@ class AccountsSchedulingService
         if (! $account_scheduling) {
             return false;
         }
+
+        $data['monthly'] = isset($data['monthly']) ? true : false;
         
         $account_scheduling->update($data);
         
@@ -125,10 +130,34 @@ class AccountsSchedulingService
             ]);
         }
 
+        if ($account_scheduling->monthly) {
+            $this->createMonthlyPayment($account_scheduling);
+        }
+
         $entry->save();
         $account_scheduling->save();
         
         return true;
+    }
+
+    /**
+     * Creates the account payables to next month
+     *
+     * @param AccountsScheduling $payable
+     * @return void
+     */
+    public function createMonthlyPayment(AccountsScheduling $payable)
+    {
+        $date = new DateTime($payable->due_date);
+        $next_month = $date->modify('+1 month');
+
+        $this->account_scheduling->create([
+            'due_date'      => $next_month->format('Y-m-d'),
+            'description'   => $payable->description,
+            'value'         => $payable->value,
+            'category_id'   => $payable->category_id,
+            'monthly'       => $payable->monthly
+        ]);
     }
 
     /**
