@@ -132,7 +132,7 @@ return [
     'no_notification'               => 'Nenhuma Notificação',
     'all_read'                      => 'Marcar todas como lidas',
     'view_accounts'                 => 'Ver Contas',
-    'regards'                       => 'Atenciosamente,',
+    'regards'                       => 'Atenciosamente',
     'receive_notifications'         => 'Receber Notificações',
 
     'default_categories' => [
