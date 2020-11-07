@@ -126,6 +126,11 @@ return [
     'new_password'                  => 'Nova Senha',
     'email'                         => 'E-mail',
     'discard_changes'               => 'Descartar alteração',
+    'notifications'                 => 'Notificações',
+    'payables'                      => 'A Pagar',
+    'receivables'                   => 'A Receber',
+    'no_notification'               => 'Nenhuma Notificação',
+    'all_read'                      => 'Marcar todas como lidas',
 
     'default_categories' => [
         'salary'            => 'Salário',

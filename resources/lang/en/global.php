@@ -124,6 +124,11 @@ return [
     'new_password'                  => 'New Password',
     'email'                         => 'E-mail',
     'discard_changes'               => 'Discard Changes',
+    'notifications'                 => 'Notifications',
+    'payables'                      => 'Payables',
+    'receivables'                   => 'Receivables',
+    'no_notification'               => 'No Notification',
+    'all_read'                      => 'Mark All as Read',
 
     'default_categories' => [
         'salary'            => 'Salary',

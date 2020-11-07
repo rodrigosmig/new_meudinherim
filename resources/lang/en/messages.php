@@ -76,5 +76,9 @@ return [
         'profile_updated'       => 'Profile updated successfully',
         'invalid_user'          => 'Invalid User',
         'avatar_updated'        => 'Avatar updated successfully',
-    ]
+    ],
+
+    'mail' => [
+
+    ];
 ];
