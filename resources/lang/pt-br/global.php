@@ -133,6 +133,7 @@ return [
     'all_read'                      => 'Marcar todas como lidas',
     'view_accounts'                 => 'Ver Contas',
     'regards'                       => 'Atenciosamente,',
+    'receive_notifications'         => 'Receber Notificações',
 
     'default_categories' => [
         'salary'            => 'Salário',

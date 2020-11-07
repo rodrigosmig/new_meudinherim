@@ -30,7 +30,8 @@ class UpdateProfileRequest extends FormRequest
                 'required',
                 'email',
                 Rule::unique('users')->ignore($this->user())
-            ]
+            ],
+            'enable_notification' => 'nullable'
         ];
     }
 }

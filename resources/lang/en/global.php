@@ -131,6 +131,7 @@ return [
     'all_read'                      => 'Mark All as Read',
     'view_accounts'                 => 'View Accounts',
     'regards'                       => 'Regards,',
+    'receive_notifications'         => 'Receive Notifications',
 
     'default_categories' => [
         'salary'            => 'Salary',

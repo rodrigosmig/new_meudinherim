@@ -22,7 +22,7 @@ class ReceivablesCron extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Notifies users if there is an account receivable on the current date';
 
     /**
      * Create a new command instance.
