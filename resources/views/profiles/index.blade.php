@@ -9,11 +9,28 @@
 
 @push('js')
     <script src="{{ asset('js/profile/profile.js') }}"></script>
+    <script src="{{ asset('js/plugins/bootstrap-switch.min.js') }}"></script>
 @endpush
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/profile/profile.css') }}">
 @endpush
+
+@section('js')
+    <script>
+        $("input[data-bootstrap-switch]").each(function(){
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
+
+        var monthly = "{{ $user->enable_notification }}";
+
+        if (monthly === '1') {
+            $("#enable_notification").bootstrapSwitch('state', true)
+        } else {
+            $("#enable_notification").bootstrapSwitch('state', false)
+        }
+    </script>
+@endsection
 
 @section('content')
     <div class="row">
@@ -72,6 +89,13 @@
                                         <label for="email" class="col-sm-2 col-form-label">{{ __('global.email') }}</label>
                                         <div class="col-sm-10">
                                             <input type="email" class="form-control" id="email" name="email" placeholder="{{ __('global.email') }}" value="{{ $user->email }}" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="enable_notification" class="col-sm-2 col-form-label">{{ __('global.receive_notifications') }}</label>
+                                        <div class="col-sm-10">
+                                            <input id="enable_notification" type="checkbox" name="enable_notification" data-bootstrap-switch data-off-color="danger" data-on-color="success">
                                         </div>
                                     </div>
                                 </div>

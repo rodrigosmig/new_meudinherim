@@ -22,7 +22,7 @@ class PayablesCron extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Notifies users if there is an account payable on the current date';
 
     /**
      * Create a new command instance.
