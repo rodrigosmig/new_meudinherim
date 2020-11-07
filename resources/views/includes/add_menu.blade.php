@@ -20,6 +20,16 @@
             <span class="float-right text-muted text-sm"><i class="fas fa-plus"></i></span>
         </a>
         <div class="dropdown-divider"></div>
+        <a href="{{ route('payables.create') }}" class="dropdown-item">
+            <i class="fas fa-money-bill-alt"></i> {{ __('global.accounts_payable') }}
+            <span class="float-right text-muted text-sm"><i class="fas fa-plus"></i></span>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="{{ route('receivables.create') }}" class="dropdown-item">
+            <i class="fas fa-money-check-alt"></i> {{ __('global.accounts_receivable') }}
+            <span class="float-right text-muted text-sm"><i class="fas fa-plus"></i></span>
+        </a>
+        <div class="dropdown-divider"></div>
         <a href="{{ route('accounts.transfer_store') }}" class="dropdown-item">
             <i class="fas fa-exchange-alt"></i> {{ __('global.bank_transfer') }}
             <span class="float-right text-muted text-sm"><i class="fas fa-plus"></i></span>
