@@ -130,7 +130,7 @@ return [
     'no_notification'               => 'No Notification',
     'all_read'                      => 'Mark All as Read',
     'view_accounts'                 => 'View Accounts',
-    'regards'                       => 'Regards,',
+    'regards'                       => 'Regards',
     'receive_notifications'         => 'Receive Notifications',
 
     'default_categories' => [

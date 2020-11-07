@@ -4,12 +4,12 @@ $(function() {
     $(".delete").on('click', function(event) {
         event.preventDefault()
         
-        var id = $(this).attr('data-payable')
+        var id = $(this).attr('data-receivable')
         
         if (id) {
             swal({
-                title: payable_title,
-                text: payable_text,
+                title: receivable_title,
+                text: receivable_text,
                 icon: 'warning',
                 buttons: [button_cancel, button_confirm],
                 }).then(function(confirm) {
