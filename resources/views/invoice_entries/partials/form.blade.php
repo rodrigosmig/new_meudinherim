@@ -38,13 +38,6 @@
     </div>
 </div>
 
-<div id="entry-monthly" class="form-group row">
-    <label for="invoice_entry-monthly" class="col-sm-2 col-form-label">{{ __('global.monthly') }}</label>
-    <div class="col-sm-10">
-        <input id="invoice_entry-monthly" type="checkbox" name="monthly" data-bootstrap-switch data-off-color="danger" data-on-color="success">
-    </div>
-</div>
-
 @if (! isset($entry))
     <div class="form-group row">
         <label for="invoice_entry-installment" class="col-sm-2 col-form-label">{{ __('global.installment') }}</label>
