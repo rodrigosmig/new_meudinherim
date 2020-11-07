@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,4 +89,12 @@ Route::group([
     Route::put('profile/password', 'ProfileController@updatePassword')->name('profile.password');
     Route::put('profile/update', 'ProfileController@updateProfile')->name('profile.update');
     Route::put('profile/avatar', 'ProfileController@updateAvatar')->name('profile.avatar');
+    
+    //Notifications
+    Route::get('notifications', 'NotificationController@all_read')->name('notifications.all_read');
+    Route::get('notifications/{notification_id}/account/{account_id}', 'NotificationController@show')->name('notifications.as_read');
+});
+
+Route::get('mail', function() {
+    return view('vendor.notifications.email');
 });

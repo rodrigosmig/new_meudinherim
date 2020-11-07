@@ -6,4 +6,12 @@
     margin-bottom: 30px;
 }
 
+.navbar-badge {
+    font-size: .5rem;
+    font-weight: 50;
+    padding: 2px 4px;
+    position: absolute;
+    right: 0px;
+    top: 9px;
+  }
 

@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use DateTime;
+use App\Models\User;
 use App\Models\Account;
 use App\Models\AccountsScheduling;
 use App\Services\AccountEntryService;
 use App\Exceptions\AccountsPayableIsNotPaidException;
 use App\Exceptions\AccountsPayableIsAlreadyPaidException;
-use DateTime;
 
 class AccountsSchedulingService
 {
@@ -222,5 +223,25 @@ class AccountsSchedulingService
             'open' => $total_open,
             'paid' => $total_paid
         ];
+    }
+
+    /**
+     * Returns accounts scheduling for a given category type and a given user
+     * for the current date
+     * 
+     * @param User $user
+     * @param int $categoryType
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function getAccountsByUserForCron(User $user, $categoryType)
+    {
+        return $this->account_scheduling::select('accounts_schedulings.*')
+            ->withoutGlobalScopes()
+            ->join('categories', 'categories.id', '=', 'accounts_schedulings.category_id')
+            ->where('categories.type', $categoryType)
+            ->where('due_date', now()->format('Y-m-d'))
+            ->where('paid', false)
+            ->where('accounts_schedulings.user_id', $user->id)
+            ->get();
     }
 }

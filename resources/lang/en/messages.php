@@ -76,5 +76,11 @@ return [
         'profile_updated'       => 'Profile updated successfully',
         'invalid_user'          => 'Invalid User',
         'avatar_updated'        => 'Avatar updated successfully',
+    ],
+
+    'mail' => [
+        'payable_due_in'    => "Accounts payable due in",
+        'receivable_due_in' => "Accounts receivable due in",
+        'footer_mail'       => 'If you’re having trouble clicking the :actionText button, copy and paste the URL below into your web browser:'
     ]
 ];
