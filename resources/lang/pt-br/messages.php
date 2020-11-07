@@ -78,5 +78,11 @@ return [
         'profile_updated'       => 'Perfil atualizado com sucesso',
         'invalid_user'          => 'Usuário Inválido',
         'avatar_updated'        => 'Avatar atualizado com sucesso',
+    ],
+
+    'mail' => [
+        'payable_due_in'    => "Contas a pagar com vencimento em ",
+        'receivable_due_in' => "Contas a receber com vencimento em ",
+        'footer_mail'       => 'Se você estiver tendo problemas para clicar no botão ":actionText", copie e cole o endereço abaixo em seu navegador da web:'
     ]
 ];

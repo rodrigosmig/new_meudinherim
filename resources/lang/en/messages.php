@@ -79,6 +79,8 @@ return [
     ],
 
     'mail' => [
-
-    ];
+        'payable_due_in'    => "Accounts payable due in",
+        'receivable_due_in' => "Accounts receivable due in",
+        'footer_mail'       => 'If you’re having trouble clicking the :actionText button, copy and paste the URL below into your web browser:'
+    ]
 ];

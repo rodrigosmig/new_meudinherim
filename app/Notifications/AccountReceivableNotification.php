@@ -30,8 +30,7 @@ class AccountReceivableNotification extends Notification
      */
     public function via($notifiable)
     {
-        //return ['mail'];
-        return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -42,10 +41,17 @@ class AccountReceivableNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        $mail = (new MailMessage)
+            ->greeting(__('messages.mail.receivable_due_in') . now()->format('d/m/Y'))
+            ->subject(now()->format('d/m/Y'));
+
+        foreach ($this->receivables as $receivable) {
+            $mail->line(__('global.account') . ": " . $receivable->description . " - " . __('global.value') . ": " . toBrMoney($receivable->value));
+        }
+
+        $mail->action(__("global.view_accounts"), route('receivables.index'));
+
+        return $mail;
     }
 
     /**

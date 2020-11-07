@@ -129,6 +129,8 @@ return [
     'receivables'                   => 'Receivables',
     'no_notification'               => 'No Notification',
     'all_read'                      => 'Mark All as Read',
+    'view_accounts'                 => 'View Accounts',
+    'regards'                       => 'Regards,',
 
     'default_categories' => [
         'salary'            => 'Salary',

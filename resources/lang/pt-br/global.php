@@ -131,6 +131,8 @@ return [
     'receivables'                   => 'A Receber',
     'no_notification'               => 'Nenhuma Notificação',
     'all_read'                      => 'Marcar todas como lidas',
+    'view_accounts'                 => 'Ver Contas',
+    'regards'                       => 'Atenciosamente,',
 
     'default_categories' => [
         'salary'            => 'Salário',

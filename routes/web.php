@@ -96,5 +96,5 @@ Route::group([
 });
 
 Route::get('mail', function() {
-    return view('mail.account_scheduling');
+    return view('vendor.notifications.email');
 });

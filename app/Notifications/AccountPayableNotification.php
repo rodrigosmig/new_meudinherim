@@ -31,8 +31,7 @@ class AccountPayableNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
-        //return ['database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -43,12 +42,17 @@ class AccountPayableNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        //dd($notifiable);
-        return (new MailMessage)
-                    ->subject("Contas com vencimento")
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        $mail = (new MailMessage)
+            ->greeting(__('messages.mail.payable_due_in') . now()->format('d/m/Y'))
+            ->subject(now()->format('d/m/Y'));
+
+        foreach ($this->payables as $payable) {
+            $mail->line(__('global.account') . ": " . $payable->description . " - " . __('global.value') . ": " . toBrMoney($payable->value));
+        }
+
+        $mail->action(__("global.view_accounts"), route('payables.index'));
+
+        return $mail;
     }
 
     /**
