@@ -11,6 +11,7 @@ use App\Http\ViewComposers\AllCategoriesViewComposer;
 use App\Http\ViewComposers\AccountBalanceViewComposer;
 use App\Http\ViewComposers\IncomeCategoriesViewComposer;
 use App\Http\ViewComposers\ExpenseCategoriesViewComposer;
+use App\Http\ViewComposers\UserNotificationsViewComposer;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -69,5 +70,9 @@ class ViewServiceProvider extends ServiceProvider
         View::composer([
             'includes.open_invoices_menu'
         ], OpenInvoicesViewComposer::class);
+
+        View::composer([
+            'includes.notifications'
+        ], UserNotificationsViewComposer::class);
     }
 }

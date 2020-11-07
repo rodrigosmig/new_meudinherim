@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileService
 {
+    protected $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
     public function updatePassword(array $data): bool
     {
         $user = auth()->user();
@@ -36,5 +43,17 @@ class ProfileService
         
         $user->avatar = $avatar;
         $user->save();
+    }
+
+    /**
+     * Returns users with notification enabled
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function getUsersForNotification()
+    {
+        return $this->user
+            ->where('enable_notification', true)
+            ->get();
     }
 }

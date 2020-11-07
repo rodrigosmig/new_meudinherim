@@ -32,7 +32,7 @@ class ReportsController extends Controller
         $filter = null;
         
         $data = [
-            'title' => $this->title
+            'title' => $this->title . " - " . __('global.accounts_payable')
         ];
 
         if (isset($request->filter_from)
@@ -61,7 +61,7 @@ class ReportsController extends Controller
         $filter = null;
         
         $data = [
-            'title' => $this->title
+            'title' => $this->title . " - " . __('global.accounts_receivable')
         ];
 
         if (isset($request->filter_from)

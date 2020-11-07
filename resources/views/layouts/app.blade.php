@@ -3,6 +3,7 @@
 @section('title', $title)
 
 @section('content_top_nav_right')
+    @include('includes.notifications')    
     @include('includes.add_menu')
     @include('includes.balance_menu')
     @include('includes.open_invoices_menu')
@@ -11,7 +12,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}?1">
 @endpush
 
 @push('js')
