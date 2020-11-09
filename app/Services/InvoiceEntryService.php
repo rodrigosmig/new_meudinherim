@@ -208,6 +208,7 @@ class InvoiceEntryService
             ->where('category_id', $category_id)
             ->where('date', '>=', $from)
             ->where('date', '<=', $to)
+            ->orderBy('date')
             ->get()
             ->toArray();
     }

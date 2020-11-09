@@ -23,7 +23,7 @@ $(function() {
                 }
 
                 for (const entry of response) {
-                    let date        = new Date(entry.date)
+                    let date        = new Date(entry.date + "T00:00:00.000-03:00")
                     let type_entry  = ""                    
 
                     if (type === 'account') {
@@ -31,7 +31,7 @@ $(function() {
                     } else if (type === 'card') {
                         type_entry = entry.invoice.card.name
                     }
-
+                    console.log(777, date, entry.date)
                     const value     = entry.value.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});                    
                     const options   = { year: 'numeric', month: '2-digit', day: '2-digit' };
 
