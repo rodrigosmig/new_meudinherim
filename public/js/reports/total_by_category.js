@@ -31,7 +31,7 @@ $(function() {
                     } else if (type === 'card') {
                         type_entry = entry.invoice.card.name
                     }
-                    console.log(777, date, entry.date)
+
                     const value     = entry.value.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});                    
                     const options   = { year: 'numeric', month: '2-digit', day: '2-digit' };
 
