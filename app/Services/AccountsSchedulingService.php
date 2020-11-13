@@ -22,8 +22,44 @@ class AccountsSchedulingService
     public function store(array $data)
     {
         $data['monthly'] = isset($data['monthly']) ? true : false;
-        
+
+        if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
+            return $this->createInstallments($data);
+        } 
+
         return $this->account_scheduling->create($data);
+    }
+
+    /**
+     * Create the installments
+     *
+     * @param array $data
+     * @return bool
+     */ 
+    public function createInstallments(array $data): bool
+    {
+        $date                   = new DateTime($data['due_date']);
+        $total                  = $data['value'];
+        $installments_number    = $data['installments_number'];
+        $installment_value      = number_format($total / $installments_number, 2);
+        $description_default    = $data['description'];
+
+        $data['value'] = $installment_value;
+
+        for ($i = 1; $i <= $installments_number; $i++) {
+            $data['due_date']       = $date->format('Y-m-d');
+            $data['description']    = $description_default . " {$i}/{$installments_number}" ;           
+
+            $entry = $this->account_scheduling->create($data);
+
+            if (! $entry) {
+                return false;
+            }
+
+            $date = $date->modify('+1 month');
+        }
+
+        return true;
     }
 
     public function update($id, array $data)

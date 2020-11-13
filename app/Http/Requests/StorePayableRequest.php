@@ -32,6 +32,9 @@ class StorePayableRequest extends FormRequest
             'value'         => 'required|numeric',
             'invoice_id'    => 'nullable|numeric',
             'monthly'       => 'nullable',
+            'installment'           => 'nullable',
+            'installments_number'   => 'nullable|numeric',
+            'installment_value'     => 'nullable|numeric',
             'category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {
