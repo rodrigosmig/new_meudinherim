@@ -2,6 +2,7 @@
 
 @push('js')
     <script src="{{ asset('js/plugins/bootstrap-switch.min.js') }}"></script>
+    <script src="{{ asset('js/receivables/create.js') }}"></script>
 @endpush
 
 @section('button-header')
@@ -15,6 +16,10 @@
     <script src="{{ asset('js/plugins/init-datepicker.js') }}"></script>
 
     <script>
+        var installments_number = '{{ __('global.installments_number') }}';
+        var installment_value = '{{ __('global.installment_value') }}';
+        var number_installments = '{{ __('global.number_installments') }}';
+
         $("input[data-bootstrap-switch]").each(function(){
             $(this).bootstrapSwitch('state', $(this).prop('checked'));
         });

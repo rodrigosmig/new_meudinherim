@@ -32,9 +32,20 @@
     </div>
 </div>
 
-<div class="form-group row">
+<div id="view-monthly" class="form-group row">
     <label for="receivable-monthly" class="col-sm-2 col-form-label">{{ __('global.monthly') }}</label>
     <div class="col-sm-10">
         <input id="receivable-monthly" type="checkbox" name="monthly" data-bootstrap-switch data-off-color="danger" data-on-color="success">
     </div>
+</div>
+
+<div class="form-group row">
+    <label for="receivables-installment" class="col-sm-2 col-form-label">{{ __('global.installment') }}</label>
+    <div class="col-sm-10">
+        <input id="receivables-installment" type="checkbox" name="installment" data-bootstrap-switch data-off-color="danger" data-on-color="success">
+    </div>
+</div>
+
+
+<div id="installments" style="display: none">
 </div>
