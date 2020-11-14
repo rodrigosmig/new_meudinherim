@@ -63,6 +63,19 @@
             </div>
         </div>
 
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-money-bill-alt"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">{{ __('global.balance') }}</span>
+                    <span class="info-box-number">
+                        {{ toBrMoney($total_income - $total_expense) }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <div class="clearfix hidden-md-up"></div>
 
         <div class="col-12 col-sm-6 col-md-3">
@@ -92,7 +105,7 @@
 
         <div class="card-body">
             <div class="row justify-content-md-center">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card card-info">
                         <div class="card-header">
                             <h3 class="card-title">{{ __('global.incomes') }}</h3>
@@ -103,7 +116,7 @@
                     </div>
                 </div>
         
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card card-danger">
                         <div class="card-header">
                             <h3 class="card-title">{{ __('global.expenses') }}</h3>
@@ -114,7 +127,7 @@
                     </div>
                 </div>
         
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card card-warning">
                         <div class="card-header">
                             <h3 class="card-title">{{ __('global.credit-card') }}</h3>
@@ -127,8 +140,6 @@
             </div>
         </div>
     </div>
-    
-    
 
     <div class="card card-success">
         <div class="card-header">
