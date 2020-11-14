@@ -60,11 +60,11 @@
                                         @endif
                                         <td style="color: red">{{ toBrMoney($invoice->amount) }}</td>
                                         <td>
-                                            <a class="btn btn-success btn-sm edit" href="{{ route('invoice_entries.index', [$invoice->id, $invoice->card->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.view_entries') }}">
+                                            <a class="btn btn-success btn-sm edit" href="{{ route('invoice_entries.index', [$invoice->card->id, $invoice->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.view_entries') }}">
                                                 <i class="fas fa-shopping-cart"></i>
                                             </a>
                                             @if ($invoice->isClosed() && ! $invoice->payable)
-                                                <a class="btn btn-info btn-sm" href="{{ route('cards.invoices.generate-payment', [$invoice->id, $invoice->card->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.generate_payment') }}">
+                                                <a class="btn btn-info btn-sm" href="{{ route('cards.invoices.generate-payment', [$invoice->card->id, $invoice->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.generate_payment') }}">
                                                     <i class="fas fa-file-invoice-dollar"></i>
                                                 </a>
                                             @endif
@@ -104,11 +104,11 @@
                                         @endif
                                         <td style="color: red">{{ toBrMoney($invoice->amount) }}</td>
                                         <td>
-                                            <a class="btn btn-success btn-sm edit" href="{{ route('invoice_entries.index', [$invoice->id, $invoice->card->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.view_entries') }}">
+                                            <a class="btn btn-success btn-sm edit" href="{{ route('invoice_entries.index', [$invoice->card->id, $invoice->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.view_entries') }}">
                                                 <i class="fas fa-shopping-cart"></i>
                                             </a>
                                             @if ($invoice->isClosed() && ! $invoice->payable)
-                                                <a class="btn btn-info btn-sm" href="{{ route('cards.invoices.generate-payment', [$invoice->id, $invoice->card->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.generate_payment') }}">
+                                                <a class="btn btn-info btn-sm" href="{{ route('cards.invoices.generate-payment', [$invoice->card->id, $invoice->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.generate_payment') }}">
                                                     <i class="fas fa-file-invoice-dollar"></i>
                                                 </a>
                                             @endif
