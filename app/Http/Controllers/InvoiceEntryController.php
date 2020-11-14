@@ -45,7 +45,7 @@ class InvoiceEntryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($invoice_id, $card_id)
+    public function index($card_id, $invoice_id)
     {
         $card = $this->cardService->findById($card_id);
 
