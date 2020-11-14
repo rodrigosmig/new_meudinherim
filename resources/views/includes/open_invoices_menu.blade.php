@@ -7,7 +7,7 @@
         <div class="dropdown-divider"></div>
         @foreach ($all_open_invoices as $key => $invoice)
             @if($key !== 'total')
-                <a href="#" class="dropdown-item">
+                <a href="{{ route('invoice_entries.index', [$invoice->card->id, $invoice->id]) }}" class="dropdown-item">
                     <div class="media">                
                         <div class="media-body">
                             <h3 class="dropdown-item-title">
