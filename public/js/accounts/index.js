@@ -1,5 +1,5 @@
 $(function() {
-    $(".delete-account").on('click', function(event) {
+    $(document).on('click', '.delete-account', function(event) {
         event.preventDefault()
         
         var id = $(this).attr('data-account')
