@@ -1,7 +1,7 @@
 $(function() {
     $('[data-toggle="tooltip"]').tooltip()
     
-    $(".delete").on('click', function(event) {
+    $(document).on('click', '.delete', function(event) {
         event.preventDefault()
         
         var id = $(this).attr('data-payable')
@@ -42,7 +42,7 @@ $(function() {
         }
     })
 
-    $(".cancel_payment").on('click', function(event) {
+    $(document).on('click', '.cancel_payment', function(event) {
         event.preventDefault()
         
         var id = $(this).attr('data-payable')

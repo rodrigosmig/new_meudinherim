@@ -1,5 +1,5 @@
 $(function() {
-    $(".delete-category").on('click', function(event) {
+    $(document).on('click', '.delete-category', function(event) {
         event.preventDefault()
         
         var id = $(this).attr('data-category')

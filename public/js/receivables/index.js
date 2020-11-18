@@ -1,7 +1,7 @@
 $(function() {
     $('[data-toggle="tooltip"]').tooltip()
     
-    $(".delete").on('click', function(event) {
+    $(document).on('click', '.delete', function(event) {
         event.preventDefault()
         
         var id = $(this).attr('data-receivable')
@@ -42,7 +42,7 @@ $(function() {
         }
     })
 
-    $(".cancel_receivement").on('click', function(event) {
+    $(document).on('click', '.cancel_receivement', function(event) {
         event.preventDefault()
         
         var id = $(this).attr('data-receivable')

@@ -1,9 +1,9 @@
 $(function() {
     $('[data-toggle="tooltip"]').tooltip()
     
-    $(".delete").on('click', function(event) {
+    $(document).on('click', '.delete', function(event) {
         event.preventDefault()
-        
+
         var id = $(this).attr('data-entry')
         
         if (id) {
