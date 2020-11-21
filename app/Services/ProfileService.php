@@ -58,4 +58,23 @@ class ProfileService
             ->where('enable_notification', true)
             ->get();
     }
+
+    public function getApiUser()
+    {
+        return auth()->user();
+    }
+
+    /**
+     * Returns users with notification enabled
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function createUser(array $data)
+    {
+        return $this->user->create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+    }
 }
