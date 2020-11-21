@@ -55,7 +55,7 @@ class CategoryController extends Controller
         $category = $this->service->findById($id);
 
         if (! $category) {
-            return response()->json(['message' => __('messages.categories.not_found')], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json($category);

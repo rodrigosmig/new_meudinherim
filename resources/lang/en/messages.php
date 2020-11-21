@@ -24,7 +24,8 @@ return [
         'delete'                => 'Account successfully deleted',
         'ajax_text'             => 'The account will be permanently deleted',
         'equal_accounts'        => 'Source and destination accounts cannot be the same',
-        'transfer_completed'    => 'Transfer completed successfully'
+        'transfer_completed'    => 'Transfer completed successfully',
+        'api_not_found'         => 'Account Not Found'
     ],
 
     'cards' => [

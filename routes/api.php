@@ -23,6 +23,7 @@ Route::group([
     //Auth
     Route::prefix('auth')
         ->group(function() {
+            Route::post('/register', 'Api\\AuthController@register');
             Route::post('/logout', 'Api\\AuthController@logout');
             Route::post('/refresh', 'Api\\AuthController@refresh');
         }
@@ -46,8 +47,16 @@ Route::group([
             Route::get('/{id}', 'Api\\CategoryController@show');
             Route::put('/{id}', 'Api\\CategoryController@update');
             Route::delete('/{id}', 'Api\\CategoryController@destroy');
+        }
+    );
 
-            
+    Route::prefix('accounts')
+        ->group(function() {
+            Route::post('/', 'Api\\AccountController@store');
+            Route::get('/', 'Api\\AccountController@index');
+            Route::get('/{id}', 'Api\\AccountController@show');
+            Route::put('/{id}', 'Api\\AccountController@update');
+            Route::delete('/{id}', 'Api\\AccountController@destroy');
         }
     );
         

@@ -24,7 +24,8 @@ return [
         'delete'                => 'Conta deletada com sucesso',
         'ajax_text'             => 'A conta será excluída permanentemente',
         'equal_accounts'        => 'As contas de origem e destino não podem ser iguais',
-        'transfer_completed'    => 'Transferência completada com sucesso'
+        'transfer_completed'    => 'Transferência completada com sucesso',
+        'api_not_found'         => 'Conta não encontrada'
     ],
 
     'cards' => [
