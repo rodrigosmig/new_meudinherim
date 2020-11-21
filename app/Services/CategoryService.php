@@ -54,6 +54,7 @@ class CategoryService
     public function getCategoriesByType($type) 
     {
         return $this->category::where('type', $type)
+            ->orderBy('name')
             ->get();
     }
 
@@ -151,5 +152,15 @@ class CategoryService
             ];
             $this->store($data);
         }
+    }
+
+    public function getAllCategories()
+    {
+        $categories = [
+            'income'    => $this->getCategoriesByType($this->category::INCOME),
+            'expense'   => $this->getCategoriesByType($this->category::EXPENSE),
+        ];
+
+        return $categories;
     }
 }

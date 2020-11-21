@@ -13,7 +13,8 @@ return [
         'update'            => 'Category successfully updated.',
         'delete'            => 'Category successfully deleted',
         'ajax_text'         => 'The category will be permanently deleted',
-        'invalid_type'      => 'The category type is invalid'
+        'invalid_type'      => 'The category type is invalid',
+        'api_not_found'     => 'Category Not Found'
     ],
 
     'accounts' => [

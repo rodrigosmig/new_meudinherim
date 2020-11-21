@@ -13,7 +13,8 @@ return [
         'update'            => 'Categoria atualizada com sucesso',
         'delete'            => 'Categoria deletada com sucesso',
         'ajax_text'         => 'A categoria sera excluída permanentemente',
-        'invalid_type'      => 'O tipo de categoria é inválido'
+        'invalid_type'      => 'O tipo de categoria é inválido',
+        'api_not_found'     => 'Categoria não encontrada'
     ],
 
     'accounts' => [

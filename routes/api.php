@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('auth/login', 'Api\\AuthController@login');
+Route::post('/users', 'Api\\UserController@store');
 
 Route::group([
     'middleware' => ['apiJwt']
@@ -24,16 +25,30 @@ Route::group([
         ->group(function() {
             Route::post('/logout', 'Api\\AuthController@logout');
             Route::post('/refresh', 'Api\\AuthController@refresh');
-        });
+        }
+    );
     
     //User
     Route::prefix('users')
         ->group(function() {
-            Route::post('/', 'Api\\UserController@store');
             Route::get('/', 'Api\\UserController@show');
             Route::put('/', 'Api\\UserController@update');
             Route::post('/avatar', 'Api\\UserController@updateAvatar');
             
-        });
+        }
+    );
+
+    //Categories
+    Route::prefix('categories')
+        ->group(function() {
+            Route::post('/', 'Api\\CategoryController@store');
+            Route::get('/', 'Api\\CategoryController@index');
+            Route::get('/{id}', 'Api\\CategoryController@show');
+            Route::put('/{id}', 'Api\\CategoryController@update');
+            Route::delete('/{id}', 'Api\\CategoryController@destroy');
+
+            
+        }
+    );
         
 });
