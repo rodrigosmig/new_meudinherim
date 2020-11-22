@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Services\AccountService;
+use App\Services\CategoryService;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Api\UserStoreRequest;
+use App\Services\ProfileService;
 
 class AuthController extends Controller
 {
@@ -60,5 +67,33 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(UserStoreRequest $request)
+    {
+        $userService        = app(ProfileService::class);
+        $categoryService    = app(CategoryService::class);
+
+        $data = $request->validated();
+
+        $user = $userService->createUser($data);
+
+        auth('api')->login($user);
+        
+        $categoryService->createDefaultCategoriesForApi();
+        
+        Account::createWithoutEvents([
+            'name'      => __('global.money'),
+            'type'      => Account::MONEY,
+            'user_id'   => auth('api')->user()->id
+        ]);
+
+        return response()->json($user, Response::HTTP_CREATED);
     }
 }

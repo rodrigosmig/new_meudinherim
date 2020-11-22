@@ -24,14 +24,14 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserStoreRequest $request)
+    /* public function store(UserStoreRequest $request)
     {
         $data = $request->validated();
 
         $user = $this->service->createUser($data);
 
         return response()->json($user, Response::HTTP_CREATED);
-    }
+    } */
 
     /**
      * Display the specified resource.
