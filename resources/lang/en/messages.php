@@ -34,6 +34,8 @@ return [
         'update'            => 'Credit Card successfully updated.',
         'delete'            => 'Credit Card successfully deleted',
         'ajax_text'         => 'The credit card will be permanently deleted',
+        'api_not_found'     => 'Card Not Found',
+        'not_delete'        => 'The card has invoices, you cannot delete'
     ],
 
     'invoices' => [

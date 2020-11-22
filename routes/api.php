@@ -59,5 +59,7 @@ Route::group([
             Route::delete('/{id}', 'Api\\AccountController@destroy');
         }
     );
-        
+
+    //Cards
+    Route::apiResource('cards', 'Api\\CardController');        
 });

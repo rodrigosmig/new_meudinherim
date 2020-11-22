@@ -34,6 +34,8 @@ return [
         'update'            => 'Cartão de Crédito atualizado com sucesso',
         'delete'            => 'Cartão de Crédito deletado com sucesso',
         'ajax_text'         => 'O Cartão de Crédito será excluído permanentemente',
+        'api_not_found'     => 'Cartão não encontrado',
+        'not_delete'        => 'O cartão possui faturas, não é possível excluir'
     ],
 
     'invoices' => [
