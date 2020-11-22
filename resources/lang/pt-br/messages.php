@@ -14,7 +14,8 @@ return [
         'delete'            => 'Categoria deletada com sucesso',
         'ajax_text'         => 'A categoria sera excluída permanentemente',
         'invalid_type'      => 'O tipo de categoria é inválido',
-        'api_not_found'     => 'Categoria não encontrada'
+        'api_not_found'     => 'Categoria não encontrada',
+        'not_delete'        => 'A categoria está associada com lançamentos, não é possível excluir'
     ],
 
     'accounts' => [
@@ -25,7 +26,8 @@ return [
         'ajax_text'             => 'A conta será excluída permanentemente',
         'equal_accounts'        => 'As contas de origem e destino não podem ser iguais',
         'transfer_completed'    => 'Transferência completada com sucesso',
-        'api_not_found'         => 'Conta não encontrada'
+        'api_not_found'         => 'Conta não encontrada',
+        'not_delete'            => 'A conta possui lançamentos, não é possível excluir'
     ],
 
     'cards' => [

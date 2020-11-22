@@ -14,7 +14,8 @@ return [
         'delete'            => 'Category successfully deleted',
         'ajax_text'         => 'The category will be permanently deleted',
         'invalid_type'      => 'The category type is invalid',
-        'api_not_found'     => 'Category Not Found'
+        'api_not_found'     => 'Category Not Found',
+        'not_delete'        => 'The category is associated with entries, you cannot delete'
     ],
 
     'accounts' => [
@@ -25,7 +26,8 @@ return [
         'ajax_text'             => 'The account will be permanently deleted',
         'equal_accounts'        => 'Source and destination accounts cannot be the same',
         'transfer_completed'    => 'Transfer completed successfully',
-        'api_not_found'         => 'Account Not Found'
+        'api_not_found'         => 'Account Not Found',
+        'not_delete'            => 'The card has entries, you cannot delete'
     ],
 
     'cards' => [

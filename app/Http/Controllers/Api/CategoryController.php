@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
+use App\Http\Resources\CategoryResource;
 use App\Http\Requests\Api\CategoryUpdateStoreRequest;
 
 class CategoryController extends Controller
@@ -23,10 +25,10 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         if (isset($request->type)) {
-            return response()->json($this->service->getCategoriesByType($request->type));
+            return CategoryResource::collection($this->service->getCategoriesByType($request->type));
         }
 
-        return response()->json($this->service->getAllCategories());
+        return CategoryResource::collection($this->service->getAllCategories());
     }
 
     /**
@@ -41,7 +43,9 @@ class CategoryController extends Controller
 
         $category = $this->service->store($data);
 
-        return response()->json($category, Response::HTTP_CREATED);
+        return (new CategoryResource($category))
+                    ->response()
+                    ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -58,7 +62,7 @@ class CategoryController extends Controller
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json($category);
+        return new CategoryResource($category);
     }
 
     /**
@@ -76,7 +80,7 @@ class CategoryController extends Controller
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json($this->service->findById($id));
+        return (new CategoryResource($this->service->findById($id)));
     }
 
     /**
@@ -87,7 +91,11 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category = $this->service->delete($id);
+        try {
+            $category = $this->service->delete($id);
+        } catch (QueryException $e) {
+            return response()->json(['message' => __('messages.categories.not_delete')], Response::HTTP_BAD_REQUEST);
+        }
 
         if (! $category) {
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);

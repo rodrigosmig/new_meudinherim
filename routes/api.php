@@ -40,25 +40,10 @@ Route::group([
     );
 
     //Categories
-    Route::prefix('categories')
-        ->group(function() {
-            Route::post('/', 'Api\\CategoryController@store');
-            Route::get('/', 'Api\\CategoryController@index');
-            Route::get('/{id}', 'Api\\CategoryController@show');
-            Route::put('/{id}', 'Api\\CategoryController@update');
-            Route::delete('/{id}', 'Api\\CategoryController@destroy');
-        }
-    );
+    Route::apiResource('categories', 'Api\\CategoryController');
 
-    Route::prefix('accounts')
-        ->group(function() {
-            Route::post('/', 'Api\\AccountController@store');
-            Route::get('/', 'Api\\AccountController@index');
-            Route::get('/{id}', 'Api\\AccountController@show');
-            Route::put('/{id}', 'Api\\AccountController@update');
-            Route::delete('/{id}', 'Api\\AccountController@destroy');
-        }
-    );
+    //Accounts
+    Route::apiResource('accounts', 'Api\\AccountController');
 
     //Cards
     Route::apiResource('cards', 'Api\\CardController');        

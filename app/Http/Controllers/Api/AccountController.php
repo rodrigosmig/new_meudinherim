@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\AccountService;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 use App\Http\Requests\Api\AccountUpdateStoreRequest;
+use App\Http\Resources\AccountResource;
 
 class AccountController extends Controller
 {
@@ -22,7 +24,9 @@ class AccountController extends Controller
      */
     public function index()
     {
-        return response()->json($this->service->getAccounts());
+        $accounts = $this->service->getAccounts();
+
+        return AccountResource::collection($accounts);
     }
 
     /**
@@ -37,7 +41,9 @@ class AccountController extends Controller
 
         $account = $this->service->store($data);
 
-        return response()->json($account, Response::HTTP_CREATED);
+        return (new AccountResource($account))
+                    ->response()
+                    ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -54,7 +60,7 @@ class AccountController extends Controller
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json($account);
+        return new AccountResource($account);
     }
 
     /**
@@ -72,7 +78,7 @@ class AccountController extends Controller
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json($this->service->findById($id));
+        return (new AccountResource($this->service->findById($id)));
     }
 
     /**
@@ -83,12 +89,16 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        $account = $this->service->delete($id);
+        try {
+            $account = $this->service->delete($id);
+        } catch (QueryException $e) {
+            return response()->json(['message' => __('messages.accounts.not_delete')], Response::HTTP_BAD_REQUEST);
+        }
 
         if (! $account) {
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json();
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }

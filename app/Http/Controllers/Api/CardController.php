@@ -62,7 +62,7 @@ class CardController extends Controller
             return response()->json(['message' => __('messages.cards.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return (new CardResource($card));
+        return new CardResource($card);
     }
 
     /**
@@ -94,7 +94,7 @@ class CardController extends Controller
         try {
             $card = $this->service->delete($id);
         } catch (QueryException $e) {
-            return response()->json(['message' => __('messages.cards.not_delete')], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => __('messages.cards.not_delete')], Response::HTTP_BAD_REQUEST);
         }
 
         if (! $card) {
