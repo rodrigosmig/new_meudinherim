@@ -12,9 +12,9 @@ use App\Exceptions\AccountIsPaidException;
 use App\Services\AccountsSchedulingService;
 use App\Exceptions\AccountIsNotPaidException;
 use App\Http\Resources\AccountsSchedulingResource;
-use App\Http\Requests\Api\PayableUpdateStoreRequest;
+use App\Http\Requests\Api\ReceivableUpdateStoreRequest;
 
-class PayableController extends Controller
+class ReceivableController extends Controller
 {
     protected $service;
     protected $accountService;
@@ -47,7 +47,7 @@ class PayableController extends Controller
             ];
         }
 
-        $payables = $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter);
+        $payables = $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter);
 
         return AccountsSchedulingResource::collection($payables);
     }
@@ -58,17 +58,17 @@ class PayableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PayableUpdateStoreRequest $request)
+    public function store(ReceivableUpdateStoreRequest $request)
     {
         $data = $request->validated();
 
-        $payable = $this->service->store($data);
+        $receivable = $this->service->store($data);
 
-        if (gettype($payable) === 'boolean') {
+        if (gettype($receivable) === 'boolean') {
             return response()->json(['message' => __('messages.account_scheduling.installments_created')]);
         }
 
-        return (new AccountsSchedulingResource($payable))
+        return (new AccountsSchedulingResource($receivable))
                     ->response()
                     ->setStatusCode(Response::HTTP_CREATED);
     }
@@ -81,17 +81,17 @@ class PayableController extends Controller
      */
     public function show($id)
     {
-        $payable = $this->service->findById($id);
+        $receivable = $this->service->findById($id);
 
-        if (! $payable) {
+        if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        if (! $payable->isExpenseCategory()) {
+        if ($receivable->isExpenseCategory()) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return new AccountsSchedulingResource($payable);
+        return new AccountsSchedulingResource($receivable);
     }
 
     /**
@@ -101,15 +101,15 @@ class PayableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PayableUpdateStoreRequest $request, $id)
+    public function update(ReceivableUpdateStoreRequest $request, $id)
     {
         try {
-            $payable = $this->service->update($id, $request->validated());
+            $receivable = $this->service->update($id, $request->validated());
         } catch (AccountIsPaidException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (! $payable) {
+        if (! $receivable) {
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
@@ -124,17 +124,15 @@ class PayableController extends Controller
      */
     public function destroy($id)
     {
-        $payable = $this->service->findById($id);
+        try {
+            $receivable = $this->service->delete($id);
+        } catch (AccountIsPaidException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-        if (! $payable) {
+        if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
-
-        if ($payable->isPaid()) {
-            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $this->service->delete($id);
 
         return response()->json();
     }
@@ -157,22 +155,22 @@ class PayableController extends Controller
 
         $this->accountService->updateBalance($account, $data['paid_date']);
 
-        return response()->json(['message' => __('messages.account_scheduling.payable_paid')], Response::HTTP_OK);
+        return response()->json(['message' => __('messages.account_scheduling.receivable_paid')], Response::HTTP_OK);
     }
 
     public function cancelPayment($id) {
-        $payable = $this->service->findById($id);
+        $receivable = $this->service->findById($id);
 
-        if (! $payable) {
+        if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
         try {
-            $this->service->cancelPayment($payable);
+            $this->service->cancelPayment($receivable);
         } catch (AccountIsNotPaidException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return response()->json(['message' => __('messages.account_scheduling.payable_cancel')], Response::HTTP_OK);
+        return response()->json(['message' => __('messages.account_scheduling.receivable_cancel')], Response::HTTP_OK);
     }
 }

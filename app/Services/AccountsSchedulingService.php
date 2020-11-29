@@ -7,8 +7,8 @@ use App\Models\User;
 use App\Models\Account;
 use App\Models\AccountsScheduling;
 use App\Services\AccountEntryService;
-use App\Exceptions\AccountsPayableIsNotPaidException;
-use App\Exceptions\AccountsPayableIsAlreadyPaidException;
+use App\Exceptions\AccountIsPaidException;
+use App\Exceptions\AccountIsNotPaidException;
 
 class AccountsSchedulingService
 {
@@ -70,6 +70,10 @@ class AccountsSchedulingService
             return false;
         }
 
+        if ($account_scheduling->isPaid()) {
+            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
+        }
+
         $data['monthly'] = isset($data['monthly']) ? true : false;
         
         $account_scheduling->update($data);
@@ -83,6 +87,10 @@ class AccountsSchedulingService
 
         if (! $account_scheduling) {
             return false;
+        }
+
+        if ($account_scheduling->isPaid()) {
+            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
         }
 
         return $account_scheduling->delete();
@@ -132,7 +140,7 @@ class AccountsSchedulingService
      * @param Account $account
      * @param array $data
      * @return bool
-     * @throws AccountsPayableIsAlreadyPaidException
+     * @throws AccountIsPaidException
      */
     public function payment(Account $account, array $data): bool
     {
@@ -143,7 +151,7 @@ class AccountsSchedulingService
         }
 
         if ($account_scheduling->isPaid()) {
-            throw new AccountsPayableIsAlreadyPaidException(__('messages.account_scheduling.payable_is_paid'));
+            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
         }
 
         $account_scheduling->paid_date = $data['paid_date'];
@@ -202,12 +210,12 @@ class AccountsSchedulingService
      *
      * @param AccountsScheduling $payable
      * @return bool
-     * @throws AccountsPayableIsNotPaidException
+     * @throws AccountIsNotPaidException
      */
     public function cancelPayment($payable): bool
     {
         if (! $payable->isPaid()) {
-            throw new AccountsPayableIsNotPaidException(__('messages.account_scheduling.payable_is_not_paid'));
+            throw new AccountIsNotPaidException(__('messages.account_scheduling.account_is_not_paid'));
         }
 
         $account        = $payable->accountEntry->account;

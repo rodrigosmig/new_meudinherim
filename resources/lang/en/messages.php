@@ -67,7 +67,6 @@ return [
         'payable_deleted'           => 'Accounts payable successfully deleted',
         'receivable_deleted'        => 'Accounts receivable successfully deleted',
         'ajax_text'                 => 'When you confirm, the entry that was generated in the account will be permanently deleted',
-        'payable_is_paid'           => 'Account payable is already paid',
         'receivable_is_paid'        => 'Account receivable is already paid',
         'payable_paid'              => 'Account successfully paid',
         'receivable_paid'           => 'Account received successfully',
@@ -77,8 +76,12 @@ return [
         'not_cancel_receivement'    => 'Receivement could not be canceled',
         'installments_created'      => 'Installments successfully created',
         'api_not_found'             => 'Account not found',
-        'delete_payable_paid'       => 'It is not possible to delete a paid account. Cancel payment',
-        'payable_is_not_paid'       => 'Account is not paid'
+        'delete_payable_paid'       => 'It is not possible to delete a paid account. Cancel the payment',
+        'delete_receivable_paid'    => 'It is not possible to delete a received account. Cancel the receivement',
+        'update_payable_paid'       => 'It is not possible to update a paid account. Cancel the payment',
+        'update_receivable_paid'    => 'It is not possible to update a received account. Cancel the receivement',
+        'account_is_paid'           => 'It is not possible to process the request because the account is paid. Try canceling payment/receivement for this account',
+        'account_is_not_paid'       => 'It is not possible to process the request because the account is not paid'
     ],
 
     'profile' => [

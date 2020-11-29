@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use App\Services\AccountService;
 use App\Http\Requests\PaymentRequest;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\Exceptions\AccountIsPaidException;
 use App\Http\Requests\StorePayableRequest;
 use App\Services\AccountsSchedulingService;
-use App\Exceptions\AccountsPayableIsNotPaidException;
-use App\Exceptions\AccountsPayableIsAlreadyPaidException;
+use App\Exceptions\AccountIsNotPaidException;
 
 class PayableController extends Controller
 {
@@ -180,7 +180,7 @@ class PayableController extends Controller
 
         try {
             $entry = $this->service->payment($account, $data);
-        } catch (AccountsPayableIsAlreadyPaidException $exception) {
+        } catch (AccountIsPaidException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->route('payables.index');
         }
@@ -207,7 +207,7 @@ class PayableController extends Controller
 
         try {
             $response = $this->service->cancelPayment($payable);
-        } catch (AccountsPayableIsNotPaidException $exception) {
+        } catch (AccountIsNotPaidException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->route('payables.index');
         }

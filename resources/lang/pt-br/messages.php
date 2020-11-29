@@ -67,7 +67,6 @@ return [
         'payable_deleted'           => 'Contas a pagar deletado com sucesso',
         'receivable_deleted'        => 'Contas a receber deletado com sucesso',
         'ajax_text'                 => 'Ao confirmar, o lançamento que foi gerado na conta será excluído permanentemente',
-        'payable_is_paid'           => 'Conta a pagar já está paga',
         'receivable_is_paid'        => 'Conta a receber já está paga',
         'payable_paid'              => 'Conta paga com sucesso',
         'receivable_paid'           => 'Conta recebida com sucesso',
@@ -78,7 +77,11 @@ return [
         'installments_created'      => 'Parcelas criadas com sucesso',
         'api_not_found'             => 'Conta não encontrada',
         'delete_payable_paid'       => 'Não é possível excluir uma conta paga. Cancele o pagamento',
-        'payable_is_not_paid'       => 'Conta não está paga'
+        'delete_receivable_paid'    => 'Não é possível excluir uma conta recebida. Cancele o recebimento',
+        'update_payable_paid'       => 'Não é possível alterar uma conta paga. Cancele o pagamento',
+        'update_receivable_paid'    => 'Não é possível alterar uma conta recebida. Cancele o recebimento',
+        'account_is_paid'           => 'Não é possível processar a requisição porque a conta está paga. Tente cancelar o pagamento/recebimento desta conta',
+        'account_is_not_paid'       => 'Não é possível processar a requisição porque a conta não está paga'
     ],
 
     'profile' => [

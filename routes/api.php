@@ -52,4 +52,9 @@ Route::group([
     Route::apiResource('payables', 'Api\\PayableController');
     Route::post('payables/{id}/payment', 'Api\\PayableController@payment');
     Route::post('payables/{id}/cancel-payment', 'Api\\PayableController@cancelPayment');
+
+    //Receivables
+    Route::apiResource('receivables', 'Api\\ReceivableController');
+    Route::post('receivables/{id}/receivement', 'Api\\ReceivableController@payment');
+    Route::post('receivables/{id}/cancel-receivement', 'Api\\ReceivableController@cancelPayment');
 });
