@@ -69,10 +69,16 @@ return [
         'ajax_text'                 => 'When you confirm, the entry that was generated in the account will be permanently deleted',
         'payable_is_paid'           => 'Account payable is already paid',
         'receivable_is_paid'        => 'Account receivable is already paid',
+        'payable_paid'              => 'Account successfully paid',
+        'receivable_paid'           => 'Account received successfully',
         'payable_cancel'            => 'Payment cancelled successfully',
         'receivable_cancel'         => 'Receivement cancelled successfully',
         'not_cancel_payment'        => 'Payment could not be canceled',
         'not_cancel_receivement'    => 'Receivement could not be canceled',
+        'installments_created'      => 'Installments successfully created',
+        'api_not_found'             => 'Account not found',
+        'delete_payable_paid'       => 'It is not possible to delete a paid account. Cancel payment',
+        'payable_is_not_paid'       => 'Account is not paid'
     ],
 
     'profile' => [

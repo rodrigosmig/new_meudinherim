@@ -46,5 +46,10 @@ Route::group([
     Route::apiResource('accounts', 'Api\\AccountController');
 
     //Cards
-    Route::apiResource('cards', 'Api\\CardController');        
+    Route::apiResource('cards', 'Api\\CardController');
+
+    //Payables
+    Route::apiResource('payables', 'Api\\PayableController');
+    Route::post('payables/{id}/payment', 'Api\\PayableController@payment');
+    Route::post('payables/{id}/cancel-payment', 'Api\\PayableController@cancelPayment');
 });

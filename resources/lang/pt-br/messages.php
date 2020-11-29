@@ -75,6 +75,10 @@ return [
         'receivable_cancel'         => 'Recebimento cancelado com sucesso',
         'not_cancel_payment'        => 'Não foi possível cancelar o pagamento',
         'not_cancel_receivement'    => 'Não foi possível cancelar o recebimento',
+        'installments_created'      => 'Parcelas criadas com sucesso',
+        'api_not_found'             => 'Conta não encontrada',
+        'delete_payable_paid'       => 'Não é possível excluir uma conta paga. Cancele o pagamento',
+        'payable_is_not_paid'       => 'Conta não está paga'
     ],
 
     'profile' => [
