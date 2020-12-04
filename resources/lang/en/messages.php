@@ -13,7 +13,9 @@ return [
         'update'            => 'Category successfully updated.',
         'delete'            => 'Category successfully deleted',
         'ajax_text'         => 'The category will be permanently deleted',
-        'invalid_type'      => 'The category type is invalid'
+        'invalid_type'      => 'The category type is invalid',
+        'api_not_found'     => 'Category Not Found',
+        'not_delete'        => 'The category is associated with entries, you cannot delete'
     ],
 
     'accounts' => [
@@ -23,7 +25,9 @@ return [
         'delete'                => 'Account successfully deleted',
         'ajax_text'             => 'The account will be permanently deleted',
         'equal_accounts'        => 'Source and destination accounts cannot be the same',
-        'transfer_completed'    => 'Transfer completed successfully'
+        'transfer_completed'    => 'Transfer completed successfully',
+        'api_not_found'         => 'Account Not Found',
+        'not_delete'            => 'The card has entries, you cannot delete'
     ],
 
     'cards' => [
@@ -32,6 +36,8 @@ return [
         'update'            => 'Credit Card successfully updated.',
         'delete'            => 'Credit Card successfully deleted',
         'ajax_text'         => 'The credit card will be permanently deleted',
+        'api_not_found'     => 'Card Not Found',
+        'not_delete'        => 'The card has invoices, you cannot delete'
     ],
 
     'invoices' => [
@@ -49,7 +55,10 @@ return [
         'delete'                => 'Entry successfully deleted',
         'ajax_text'             => 'The entry will be permanently deleted',
         'no_open_invoice'       => 'There are no open invoices for this date',
-        'insufficient_limit'    => 'The card limit is insufficient'
+        'insufficient_limit'    => 'The card limit is insufficient',
+        'invalid_card'          => 'The informed card was not found',
+        'invalid_invoice'       => 'The informed invoice was not found',
+        'api_not_found'         => 'Entry Not Found',
     ],
 
     'account_scheduling' => [
@@ -61,12 +70,21 @@ return [
         'payable_deleted'           => 'Accounts payable successfully deleted',
         'receivable_deleted'        => 'Accounts receivable successfully deleted',
         'ajax_text'                 => 'When you confirm, the entry that was generated in the account will be permanently deleted',
-        'payable_is_paid'           => 'Account payable is already paid',
         'receivable_is_paid'        => 'Account receivable is already paid',
+        'payable_paid'              => 'Account successfully paid',
+        'receivable_paid'           => 'Account received successfully',
         'payable_cancel'            => 'Payment cancelled successfully',
         'receivable_cancel'         => 'Receivement cancelled successfully',
         'not_cancel_payment'        => 'Payment could not be canceled',
         'not_cancel_receivement'    => 'Receivement could not be canceled',
+        'installments_created'      => 'Installments successfully created',
+        'api_not_found'             => 'Account not found',
+        'delete_payable_paid'       => 'It is not possible to delete a paid account. Cancel the payment',
+        'delete_receivable_paid'    => 'It is not possible to delete a received account. Cancel the receivement',
+        'update_payable_paid'       => 'It is not possible to update a paid account. Cancel the payment',
+        'update_receivable_paid'    => 'It is not possible to update a received account. Cancel the receivement',
+        'account_is_paid'           => 'It is not possible to process the request because the account is paid. Try canceling payment/receivement for this account',
+        'account_is_not_paid'       => 'It is not possible to process the request because the account is not paid'
     ],
 
     'profile' => [
