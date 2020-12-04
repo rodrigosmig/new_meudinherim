@@ -93,7 +93,3 @@ Route::group([
     Route::get('notifications', 'NotificationController@all_read')->name('notifications.all_read');
     Route::get('notifications/{notification_id}/account/{account_id}', 'NotificationController@show')->name('notifications.as_read');
 });
-
-Route::get('mail', function() {
-    return view('vendor.notifications.email');
-});

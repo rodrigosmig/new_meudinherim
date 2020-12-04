@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use App\Services\AccountService;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\ReceivementRequest;
+use App\Exceptions\AccountIsPaidException;
 use App\Services\AccountsSchedulingService;
+use App\Exceptions\AccountIsNotPaidException;
 use App\Http\Requests\StoreReceivableRequest;
-use App\Exceptions\AccountsPayableIsNotPaidException;
-use App\Exceptions\AccountsPayableIsAlreadyPaidException;
 
 class ReceivableController extends Controller
 {
@@ -181,7 +181,7 @@ class ReceivableController extends Controller
 
         try {
             $entry = $this->service->payment($account, $data);
-        } catch (AccountsPayableIsAlreadyPaidException $exception) {
+        } catch (AccountIsPaidException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->route('receivables.index');
         }
@@ -208,7 +208,7 @@ class ReceivableController extends Controller
 
         try {
             $response = $this->service->cancelPayment($receivable);
-        } catch (AccountsPayableIsNotPaidException $exception) {
+        } catch (AccountIsNotPaidException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->route('receivables.index');
         }

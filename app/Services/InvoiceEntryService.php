@@ -46,10 +46,8 @@ class InvoiceEntryService
 
     /**
      * Create the invoice entry
-     *
-     * @return bool
      */ 
-    public function createEntry(): bool
+    public function createEntry()
     {
         $cardService = app(CardService::class);
 
@@ -68,21 +66,20 @@ class InvoiceEntryService
         $invoiceService = app(InvoiceService::class);
         $invoiceService->updateInvoiceAmount($invoice);
 
-        return true;
+        return $entry;
     }
 
     /**
      * Create the installments
-     *
-     * @return bool
      */ 
-    public function createInstallments(): bool
+    public function createInstallments()
     {
         $date                   = new DateTime($this->data['date']);
         $total                  = $this->data['value'];
         $installments_number    = $this->data['installments_number'];
         $installment_value      = number_format($total / $installments_number, 2);
         $description_default    = $this->data['description'];
+        $installments           = [];
 
         $this->data['value'] = $installment_value;
 
@@ -95,11 +92,13 @@ class InvoiceEntryService
             if (! $entry) {
                 return false;
             }
+            
+            $installments[] = $entry;
 
             $date = $date->modify('+1 month');
         }
 
-        return true;
+        return $installments;
     }
 
     public function update($id, array $data)

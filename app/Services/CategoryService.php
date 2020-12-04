@@ -54,6 +54,7 @@ class CategoryService
     public function getCategoriesByType($type) 
     {
         return $this->category::where('type', $type)
+            ->orderBy('name')
             ->get();
     }
 
@@ -103,38 +104,9 @@ class CategoryService
      */
     public function createDefaultCategories() 
     {
-        $income = [
-            __('global.default_categories.salary'),
-            __('global.default_categories.revenue'),
-            __('global.default_categories.withdraw'),
-            __('global.default_categories.loans'),
-            __('global.default_categories.investments'),
-            __('global.default_categories.credit_on_card'),
-            __('global.default_categories.bank_transfer'),
-            __('global.default_categories.sales'),
-            __('global.default_categories.others'),
-        ];
+        $income = $this->category->getDefaultIncomeCategories();
 
-        $expense = [
-            __('global.default_categories.house'),
-            __('global.default_categories.subscriptions'),
-            __('global.default_categories.personal_expenses'),
-            __('global.default_categories.education'),
-            __('global.default_categories.loans'),
-            __('global.default_categories.electronics'),
-            __('global.default_categories.recreation'),
-            __('global.default_categories.food'),
-            __('global.default_categories.health'),
-            __('global.default_categories.payments'),
-            __('global.default_categories.supermarket'),
-            __('global.default_categories.investments'),
-            __('global.default_categories.bank_transfer'),
-            __('global.default_categories.transport'),
-            __('global.default_categories.withdraw'),
-            __('global.default_categories.clothes'),
-            __('global.default_categories.travels'),
-            __('global.default_categories.others'),
-        ];
+        $expense = $this->category->getDefaultExpenseCategories();
 
         foreach ($income as $name) {
             $data = [
@@ -151,5 +123,43 @@ class CategoryService
             ];
             $this->store($data);
         }
+    }    
+
+    /**
+     * Creates default categories for API
+     *
+     * @return void
+     */
+    public function createDefaultCategoriesForApi() 
+    {
+        $income = $this->category->getDefaultIncomeCategories();
+
+        $expense = $this->category->getDefaultExpenseCategories();
+
+        foreach ($income as $name) {
+            $data = [
+                'name' => $name,
+                'type' => $this->category::INCOME
+            ];
+            $this->category->createWithoutEvents($data);
+        }
+
+        foreach ($expense as $name) {
+            $data = [
+                'name' => $name,
+                'type' => $this->category::EXPENSE
+            ];
+            $this->category->createWithoutEvents($data);
+        }
+    }
+
+    public function getAllCategories()
+    {
+        $categories = [
+            'income'    => $this->getCategoriesByType($this->category::INCOME),
+            'expense'   => $this->getCategoriesByType($this->category::EXPENSE),
+        ];
+
+        return $categories;
     }
 }

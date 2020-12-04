@@ -127,9 +127,9 @@ class CardService
             ->where('due_date', $new_date['due_date'])
             ->where('paid', false)
             ->orderBy('closing_date', 'ASC')
-            ->first();       
-
-        if (! $invoice && (new DateTime($date)) > now()) {
+            ->first();
+        
+        if (! $invoice && (new DateTime($date)) >= (new DateTime('today'))) {
             $invoice = $this->createInvoice($card, $date);
         }
 

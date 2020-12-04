@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.1",
         "realrashid/sweet-alert": "^3.1",
-        "sentry/sentry-laravel": "^2.1"
+        "sentry/sentry-laravel": "^2.1",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.4",

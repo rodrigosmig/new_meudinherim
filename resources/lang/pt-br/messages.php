@@ -13,7 +13,9 @@ return [
         'update'            => 'Categoria atualizada com sucesso',
         'delete'            => 'Categoria deletada com sucesso',
         'ajax_text'         => 'A categoria sera excluída permanentemente',
-        'invalid_type'      => 'O tipo de categoria é inválido'
+        'invalid_type'      => 'O tipo de categoria é inválido',
+        'api_not_found'     => 'Categoria não encontrada',
+        'not_delete'        => 'A categoria está associada com lançamentos, não é possível excluir'
     ],
 
     'accounts' => [
@@ -23,7 +25,9 @@ return [
         'delete'                => 'Conta deletada com sucesso',
         'ajax_text'             => 'A conta será excluída permanentemente',
         'equal_accounts'        => 'As contas de origem e destino não podem ser iguais',
-        'transfer_completed'    => 'Transferência completada com sucesso'
+        'transfer_completed'    => 'Transferência completada com sucesso',
+        'api_not_found'         => 'Conta não encontrada',
+        'not_delete'            => 'A conta possui lançamentos, não é possível excluir'
     ],
 
     'cards' => [
@@ -32,6 +36,8 @@ return [
         'update'            => 'Cartão de Crédito atualizado com sucesso',
         'delete'            => 'Cartão de Crédito deletado com sucesso',
         'ajax_text'         => 'O Cartão de Crédito será excluído permanentemente',
+        'api_not_found'     => 'Cartão não encontrado',
+        'not_delete'        => 'O cartão possui faturas, não é possível excluir'
     ],
 
     'invoices' => [
@@ -49,7 +55,10 @@ return [
         'delete'                => 'Lançamento deletado com sucesso',
         'ajax_text'             => 'O Lançamento será excluído permanentemente',
         'no_open_invoice'       => 'Não existem faturas abertas para esta data',
-        'insufficient_limit'    => 'O limite do cartão é insuficiente'
+        'insufficient_limit'    => 'O limite do cartão é insuficiente',
+        'invalid_card'          => 'O cartão informado não foi encontrado',
+        'invalid_invoice'       => 'A fatura informada não foi encontrado',
+        'api_not_found'         => 'Lançamento não encontrado',
     ],
 
     'account_scheduling' => [
@@ -61,7 +70,6 @@ return [
         'payable_deleted'           => 'Contas a pagar deletado com sucesso',
         'receivable_deleted'        => 'Contas a receber deletado com sucesso',
         'ajax_text'                 => 'Ao confirmar, o lançamento que foi gerado na conta será excluído permanentemente',
-        'payable_is_paid'           => 'Conta a pagar já está paga',
         'receivable_is_paid'        => 'Conta a receber já está paga',
         'payable_paid'              => 'Conta paga com sucesso',
         'receivable_paid'           => 'Conta recebida com sucesso',
@@ -69,6 +77,14 @@ return [
         'receivable_cancel'         => 'Recebimento cancelado com sucesso',
         'not_cancel_payment'        => 'Não foi possível cancelar o pagamento',
         'not_cancel_receivement'    => 'Não foi possível cancelar o recebimento',
+        'installments_created'      => 'Parcelas criadas com sucesso',
+        'api_not_found'             => 'Conta não encontrada',
+        'delete_payable_paid'       => 'Não é possível excluir uma conta paga. Cancele o pagamento',
+        'delete_receivable_paid'    => 'Não é possível excluir uma conta recebida. Cancele o recebimento',
+        'update_payable_paid'       => 'Não é possível alterar uma conta paga. Cancele o pagamento',
+        'update_receivable_paid'    => 'Não é possível alterar uma conta recebida. Cancele o recebimento',
+        'account_is_paid'           => 'Não é possível processar a requisição porque a conta está paga. Tente cancelar o pagamento/recebimento desta conta',
+        'account_is_not_paid'       => 'Não é possível processar a requisição porque a conta não está paga'
     ],
 
     'profile' => [

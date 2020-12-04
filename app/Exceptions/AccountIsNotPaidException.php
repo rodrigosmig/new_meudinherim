@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class AccountsPayableIsNotPaidException extends Exception
+class AccountIsNotPaidException extends Exception
 {
     //
 }

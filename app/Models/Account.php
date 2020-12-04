@@ -61,4 +61,15 @@ class Account extends Model
 
         return $balance->current_balance;
     }
+
+    public static function createWithoutEvents(array $data)
+    {
+        return static::withoutEvents(function() use ($data) {
+            return self::create([
+                'name'      => $data['name'],
+                'type'      => $data['type'],
+                'user_id'   => auth('api')->user()->id
+            ]);
+        });
+    }
 }
