@@ -57,4 +57,19 @@ Route::group([
     Route::apiResource('receivables', 'Api\\ReceivableController');
     Route::post('receivables/{id}/receivement', 'Api\\ReceivableController@payment');
     Route::post('receivables/{id}/cancel-receivement', 'Api\\ReceivableController@cancelPayment');
+
+    //Invoice entries
+    Route::get('cards/{card_id}/invoices/{invoice_id}/entries', 'Api\\InvoiceEntryController@index');
+    Route::post('cards/{card_id}/entries', 'Api\\InvoiceEntryController@store');
+    Route::get('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@show');
+    Route::put('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@update');
+    Route::delete('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@destroy');
+
+    //Account entries
+    Route::get('accounts/{account_id}/entries', 'Api\\AccountEntryController@index');
+    Route::post('accounts/{account_id}/entries', 'Api\\AccountEntryController@store');
+    Route::get('account-entries/{entry_id}', 'Api\\AccountEntryController@show');
+    Route::put('account-entries/{entry_id}', 'Api\\AccountEntryController@update');
+    Route::delete('account-entries/{entry_id}', 'Api\\AccountEntryController@destroy');
+
 });

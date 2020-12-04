@@ -55,7 +55,10 @@ return [
         'delete'                => 'Lançamento deletado com sucesso',
         'ajax_text'             => 'O Lançamento será excluído permanentemente',
         'no_open_invoice'       => 'Não existem faturas abertas para esta data',
-        'insufficient_limit'    => 'O limite do cartão é insuficiente'
+        'insufficient_limit'    => 'O limite do cartão é insuficiente',
+        'invalid_card'          => 'O cartão informado não foi encontrado',
+        'invalid_invoice'       => 'A fatura informada não foi encontrado',
+        'api_not_found'         => 'Lançamento não encontrado',
     ],
 
     'account_scheduling' => [

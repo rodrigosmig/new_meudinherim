@@ -55,7 +55,10 @@ return [
         'delete'                => 'Entry successfully deleted',
         'ajax_text'             => 'The entry will be permanently deleted',
         'no_open_invoice'       => 'There are no open invoices for this date',
-        'insufficient_limit'    => 'The card limit is insufficient'
+        'insufficient_limit'    => 'The card limit is insufficient',
+        'invalid_card'          => 'The informed card was not found',
+        'invalid_invoice'       => 'The informed invoice was not found',
+        'api_not_found'         => 'Entry Not Found',
     ],
 
     'account_scheduling' => [
