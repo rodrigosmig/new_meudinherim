@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -71,5 +72,8 @@ Route::group([
     Route::get('account-entries/{entry_id}', 'Api\\AccountEntryController@show');
     Route::put('account-entries/{entry_id}', 'Api\\AccountEntryController@update');
     Route::delete('account-entries/{entry_id}', 'Api\\AccountEntryController@destroy');
+});
 
+Route::fallback(function () {
+    return response()->json(['message' => 'Not Found.'], Response::HTTP_NOT_FOUND);
 });

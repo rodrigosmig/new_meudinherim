@@ -40,7 +40,7 @@
                 @include('invoice_entries.partials.form')
             </div>        
             <div class="card-footer">
-                <a href="{{ route('invoice_entries.index', [$entry->invoice->id, $entry->invoice->card->id]) }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
+                <a href="{{ route('invoice_entries.index', [$entry->invoice->card->id, $entry->invoice->id]) }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
                 <button class="btn btn-primary" type="submit">{{ __('global.submit') }}</button>
             </div>
         </form>

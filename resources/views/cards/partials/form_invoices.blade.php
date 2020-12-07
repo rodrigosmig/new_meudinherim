@@ -18,7 +18,7 @@
                 @endif
                 <td style="color: red">{{ toBrMoney($invoice->amount) }}</td>
                 <td>
-                    <a class="btn btn-success btn-sm edit" href="{{ route('invoice_entries.index', [$invoice->id, $invoice->card->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.view_entries') }}">
+                    <a class="btn btn-success btn-sm edit" href="{{ route('invoice_entries.index', [$invoice->card->id, $invoice->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.view_entries') }}">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                     @if ($invoice->isClosed() && ! $invoice->payable)

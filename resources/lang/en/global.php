@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'yes'                           => 'Yes',
+    'no'                            => 'No',
     'accounts'                      => 'Accounts',
     'account'                       => 'Account',
     'categories'                    => 'Categories',

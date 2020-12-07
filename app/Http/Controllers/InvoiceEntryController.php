@@ -149,7 +149,7 @@ class InvoiceEntryController extends Controller
         }
 
         if (! $entry) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+            Alert::error(__('global.invalid_request'), __('messages.not_savess'));
             return redirect()->route('cards.index');
         }
         
@@ -158,7 +158,7 @@ class InvoiceEntryController extends Controller
 
         Alert::success(__('global.success'), __('messages.entries.update'));
 
-        return redirect()->route('invoice_entries.index', [$entry->invoice->id, $entry->invoice->card->id]);
+        return redirect()->route('invoice_entries.index', [$entry->invoice->card->id, $entry->invoice->id]);
     }
 
     /**
