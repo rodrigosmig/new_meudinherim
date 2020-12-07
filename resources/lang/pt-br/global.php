@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'yes'                           => 'Sim',
+    'no'                            => 'Não',
     'accounts'                      => 'Contas',
     'account'                       => 'Conta',
     'categories'                    => 'Categorias',
@@ -50,8 +52,8 @@ return [
     'incomes'                       => 'Entradas',
     'select_category'               => 'Selecione uma categoria',
     'select_accounts'               => 'Selecione uma conta',
-    'due_date'                      => 'Data de Vencimento',
-    'paid_date'                     => 'Data de Pagamento',
+    'due_date'                      => 'Vencimento',
+    'paid_date'                     => 'Pagamento',
     'amount'                        => 'Valor Total',
     'invoices'                      => 'Faturas',
     'invoice'                       => 'Fatura',
