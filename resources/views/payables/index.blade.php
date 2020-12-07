@@ -42,7 +42,8 @@
                     <th>{{ __('global.description') }}</th>
                     <th>{{ __('global.category') }}</th>
                     <th>{{ __('global.value') }}</th>
-                    <th>{{ __('global.status') }}</th>
+                    <th>{{ __('global.monthly') }}</th>
+                    <th>{{ __('global.paid') }}</th>
                     <th>{{ __('global.actions') }}</th>
                 </thead>
                 <tbody>
@@ -71,11 +72,19 @@
                             <td>
                                 {{ toBrMoney($payable->value) }}
                             </td>
-                            <td>
-                                @if ($payable->isPaid())
-                                    <span style="color: green">{{ __('global.paid') }}</span>
+                            <td align="center">
+                                @if ($payable->monthly)
+                                    <i class="fas fa-check" style="color: green"></i>
                                 @else
-                                    <span style="color: red">{{ __('global.open') }}</span>
+                                    <i class="fas fa-times" style="color: red"></i>
+                                @endif
+                                
+                            </td>
+                            <td align="center">
+                                @if ($payable->isPaid())
+                                    <i class="fas fa-check" style="color: green"></i>
+                                @else
+                                    <i class="fas fa-times" style="color: red"></i>
                                 @endif
                             </td>
                             <td class="table-actions">

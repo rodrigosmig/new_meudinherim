@@ -95,15 +95,24 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <label for="payable-monthly" class="col-sm-2 col-form-label">{{ __('global.monthly') }}</label>
+                    <div class="col-sm-10">
+                        @if ($receivable->monthly)
+                            <i class="fas fa-check" style="color: green"></i>
+                        @else
+                            <i class="fas fa-times" style="color: red"></i>
+                        @endif
+                    </div>
+                </div>
             </div>
 
             <div class="card-footer">
                 <a href="{{ route('receivables.index') }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>
                 @if (! $receivable->isPaid())
-                    <button class="btn btn-primary" type="submit">{{ __('global.pay') }}</button>
+                    <button class="btn btn-primary" type="submit">{{ __('global.receive') }}</button>
                 @endif
-            </div>
-            
+            </div>            
         </form>
     </div>
 @stop

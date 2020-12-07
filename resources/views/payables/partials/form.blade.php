@@ -39,12 +39,14 @@
     </div>
 </div>
 
-<div class="form-group row">
-    <label for="payables-installment" class="col-sm-2 col-form-label">{{ __('global.installment') }}</label>
-    <div class="col-sm-10">
-        <input id="payables-installment" type="checkbox" name="installment" data-bootstrap-switch data-off-color="danger" data-on-color="success">
+@if (! isset($payable))
+    <div class="form-group row">
+        <label for="payables-installment" class="col-sm-2 col-form-label">{{ __('global.installment') }}</label>
+        <div class="col-sm-10">
+            <input id="payables-installment" type="checkbox" name="installment" data-bootstrap-switch data-off-color="danger" data-on-color="success">
+        </div>
     </div>
-</div>
+@endif
 
 
 <div id="installments" style="display: none">
