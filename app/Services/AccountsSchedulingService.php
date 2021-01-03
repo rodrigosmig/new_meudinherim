@@ -5,6 +5,7 @@ namespace App\Services;
 use DateTime;
 use App\Models\User;
 use App\Models\Account;
+use App\Services\CardService;
 use App\Models\AccountsScheduling;
 use App\Services\AccountEntryService;
 use App\Exceptions\AccountIsPaidException;
@@ -170,9 +171,7 @@ class AccountsSchedulingService
         $entry->accountScheduling()->associate($account_scheduling);
 
         if ($account_scheduling->invoice) {
-            $account_scheduling->invoice()->update([
-                'paid' => true
-            ]);
+            $this->updateInvoice($account_scheduling);
         }
 
         if ($account_scheduling->monthly) {
@@ -181,6 +180,8 @@ class AccountsSchedulingService
 
         $entry->save();
         $account_scheduling->save();
+
+        $this->updateAccountBalance($account, $entry->date);
         
         return true;
     }
@@ -212,36 +213,45 @@ class AccountsSchedulingService
      * @return bool
      * @throws AccountIsNotPaidException
      */
-    public function cancelPayment($payable): bool
+    public function cancelPayment($account_scheduling): bool
     {
-        if (! $payable->isPaid()) {
+        if (! $account_scheduling->isPaid()) {
             throw new AccountIsNotPaidException(__('messages.account_scheduling.account_is_not_paid'));
         }
 
-        $account        = $payable->accountEntry->account;
-        $payment_date   = $payable->paid_date;
+        $account        = $account_scheduling->accountEntry->account;
+        $payment_date   = $account_scheduling->paid_date;
 
-        $payable->accountEntry()->delete();
-        $payable->paid_date = null;
-        $payable->paid = false;
+        $account_scheduling->accountEntry()->delete();
+        $account_scheduling->paid_date = null;
+        $account_scheduling->paid = false;
 
-        if ($payable->invoice) {
-            $payable->invoice()->update([
-                'paid' => false
-            ]);
+        if ($account_scheduling->invoice) {
+            $this->updateInvoice($account_scheduling, false);
         } 
 
-        $payable->save();
+        $account_scheduling->save();
 
         $this->updateAccountBalance($account, $payment_date);
                
         return true;
     }
 
-    private function updateAccountBalance($account, $date) 
+    private function updateAccountBalance($account, $date): void
     {
         $service = app(AccountService::class);
         $service->updateBalance($account, $date);
+    }
+
+    private function updateInvoice(AccountsScheduling $account_scheduling, $payment = true): void
+    {
+        $account_scheduling->invoice()->update([
+            'paid' => $payment ? true : false
+        ]);
+
+        $service = app(CardService::class);
+
+        $service->updateCardBalance($account_scheduling->invoice->card);
     }
 
     /**

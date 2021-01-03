@@ -155,8 +155,6 @@ class PayableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $this->accountService->updateBalance($account, $data['paid_date']);
-
         return response()->json(['message' => __('messages.account_scheduling.payable_paid')], Response::HTTP_OK);
     }
 
