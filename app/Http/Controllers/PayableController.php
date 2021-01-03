@@ -190,8 +190,6 @@ class PayableController extends Controller
             return redirect()->route('payables.index');
         }
 
-        $this->accountService->updateBalance($account, $data['paid_date']);
-
         Alert::success(__('global.success'), __('messages.account_scheduling.payable_paid'));
 
         return redirect()->route('payables.index');
