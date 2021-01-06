@@ -2,71 +2,42 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\AccountService;
+use App\Services\ProfileService;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\UserStoreRequest;
-use App\Services\ProfileService;
 
 class AuthController extends Controller
 {
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->only(['email', 'password']);
+        $credentials = $request->validated();
 
-        if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['error' => 'Unauthorized'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->respondWithToken($token);
+        $token = $user->createToken($credentials['device'])->plainTextToken;
+
+        return response()->json(['token' => $token]);
     }
 
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function logout()
+    public function logout(Request $request)
     {
-        auth('api')->logout();
+        $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Successfully logged out']);
-    }
-
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh()
-    {
-        return $this->respondWithToken(auth('api')->refresh());
-    }
-
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
-        ]);
+        return response()->json([], 204);
     }
 
     /**
@@ -84,16 +55,15 @@ class AuthController extends Controller
 
         $user = $userService->createUser($data);
 
-        auth('api')->login($user);
+        auth()->login($user);
+
+        $categoryService->createDefaultCategories();
         
-        $categoryService->createDefaultCategoriesForApi();
-        
-        Account::createWithoutEvents([
+        Account::create([
             'name'      => __('global.money'),
             'type'      => Account::MONEY,
-            'user_id'   => auth('api')->user()->id
         ]);
 
-        return response()->json($user, Response::HTTP_CREATED);
+        return new UserResource($user);
     }
 }
