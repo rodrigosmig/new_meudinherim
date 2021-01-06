@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +19,7 @@ Route::post('auth/login', 'Api\\AuthController@login');
 Route::post('/auth/register', 'Api\\AuthController@register');
 
 Route::group([
-    'middleware' => ['apiJwt']
+    'middleware' => ['auth:sanctum']
 ], function() {
     //Auth
     Route::prefix('auth')
