@@ -14,7 +14,7 @@ class AddMonthlyFieldToAccountsSchedulings extends Migration
     public function up()
     {
         Schema::table('accounts_schedulings', function (Blueprint $table) {
-            $table->boolean('monthly')->after('paid')->nullable(false);
+            $table->boolean('monthly')->after('paid')->default(false);
         });
     }
 
