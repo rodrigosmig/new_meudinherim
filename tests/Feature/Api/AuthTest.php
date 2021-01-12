@@ -10,15 +10,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthTest extends TestCase
 {
-    /**
-     * Setup the test environment.
-     *
-     * @return void
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
     public function testInvalidEmailWhenCreateUser()
     {       
         $data = [
