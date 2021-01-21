@@ -304,6 +304,7 @@ class AccountService
 
         foreach ($accounts as $account) {
             $balances[] = [
+                'account_id'    => $account->id,
                 'account_name'  => $account->name,
                 'balance'       => $account->balance
             ];
