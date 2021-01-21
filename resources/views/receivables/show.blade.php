@@ -99,9 +99,9 @@
                     <label for="payable-monthly" class="col-sm-2 col-form-label">{{ __('global.monthly') }}</label>
                     <div class="col-sm-10">
                         @if ($receivable->monthly)
-                            <i class="fas fa-check" style="color: green"></i>
+                            {{ __('global.yes') }}
                         @else
-                            <i class="fas fa-times" style="color: red"></i>
+                            {{ __('global.no') }}
                         @endif
                     </div>
                 </div>
