@@ -50,6 +50,7 @@ class AccountEntryController extends Controller
             'title'     => $this->title,
             'account'   => $account,
             'entries'   => $this->service->getEntriesByAccount($account->id, $range_date),
+            'filter'    => $range_date
         ];
 
         return view('account_entries.index', $data);

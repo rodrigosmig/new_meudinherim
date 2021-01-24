@@ -43,8 +43,8 @@
                 <form action="{{ route('accounts.entries', $account->id) }}" method="POST">
                     @csrf
                     <div class="table-margin-bottom">    
-                        <input id="filter_from" class="form-control" type="text" name="filter_from" placeholder="{{ __('global.initial_date') }}">
-                        <input id="filter_to" class="form-control" type="text" name="filter_to" placeholder="{{ __('global.final_date') }}">
+                        <input id="filter_from" class="form-control" type="text" name="filter_from" placeholder="{{ __('global.initial_date') }}" value="{{ isset($filter['from']) ? $filter['from'] : '' }}">
+                        <input id="filter_to" class="form-control" type="text" name="filter_to" placeholder="{{ __('global.final_date') }}" value="{{ isset($filter['to']) ? $filter['to'] : '' }}">
                         <button type="submit" class="btn btn-primary waves-effect">
                             {{ __('global.filter') }}
                         </button>
