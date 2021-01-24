@@ -36,18 +36,21 @@ class PayableController extends Controller
             && $request->filter_from
             && isset($request->filter_to)
             && $request->filter_to
-            && $request->filter_status
         ) {
             $filter = [
                 'from'      => $request->filter_from,
                 'to'        => $request->filter_to,
-                'status'    => $request->filter_status
             ];
+        }
+
+        if (isset($request->filter_status) && $request->filter_status) {
+            $filter['status'] = $request->filter_status;
         }
 
         $data = [
             'title'         => $this->title,
-            'payables'      => $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter)
+            'payables'      => $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter),
+            'filter'        => $filter
         ];
 
         return view('payables.index', $data);
