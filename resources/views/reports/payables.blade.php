@@ -48,11 +48,8 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
-                @else
-                    
-                @endif
-                
+                    </table>                  
+                @endif                
             @endisset
         </div>
 
@@ -64,14 +61,18 @@
                     </h6>
                     <div class="table-responsive table-borderless">
                         <table class="table">
-                            <tr>
-                                <th style="width:30%">{{ __('global.total_opens') }}:</th>
-                                <td>{{ toBrMoney($total['open']) }}</td>
-                            </tr>
-                            <tr>
-                                <th>{{ __('global.total_paids') }}:</th>
-                                <td>{{ toBrMoney($total['paid']) }}</td>
-                            </tr>
+                            @if ($filter['status'] !== 'paid' )
+                                <tr>
+                                    <th style="width:30%">{{ __('global.total_opens') }}:</th>
+                                    <td>{{ toBrMoney($total['open']) }}</td>
+                                </tr>
+                            @endif
+                            @if ($filter['status'] !== 'open' )
+                                <tr>
+                                    <th>{{ __('global.total_paids') }}:</th>
+                                    <td>{{ toBrMoney($total['paid']) }}</td>
+                                </tr>
+                            @endif
                         </table>
                     </div>
                 </div>
