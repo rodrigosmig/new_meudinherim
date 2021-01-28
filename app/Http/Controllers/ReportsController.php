@@ -47,10 +47,11 @@ class ReportsController extends Controller
                 'status'    => $request->filter_status
             ];
 
-            $data['payables'] = $this->accountsSchedulingService->getAccountsSchedulingsByType(Category::EXPENSE, $filter);
-            $data['total'] = $this->accountsSchedulingService->getTotalForReportByCategoryType($data['payables']);
-            $data['from'] = $filter['from'];
-            $data['to'] = $filter['to'];
+            $data['payables']   = $this->accountsSchedulingService->getAccountsSchedulingsByType(Category::EXPENSE, $filter);
+            $data['total']      = $this->accountsSchedulingService->getTotalForReportByCategoryType($data['payables']);
+            $data['from']       = $filter['from'];
+            $data['to']         = $filter['to'];
+            $data['filter']     = $filter;
         }
 
         return view('reports.payables', $data);
@@ -76,10 +77,11 @@ class ReportsController extends Controller
                 'status'    => $request->filter_status
             ];
 
-            $data['receivables'] = $this->accountsSchedulingService->getAccountsSchedulingsByType(Category::INCOME, $filter);
-            $data['total'] = $this->accountsSchedulingService->getTotalForReportByCategoryType($data['receivables']);
-            $data['from'] = $filter['from'];
-            $data['to'] = $filter['to'];
+            $data['receivables']    = $this->accountsSchedulingService->getAccountsSchedulingsByType(Category::INCOME, $filter);
+            $data['total']          = $this->accountsSchedulingService->getTotalForReportByCategoryType($data['receivables']);
+            $data['from']           = $filter['from'];
+            $data['to']             = $filter['to'];
+            $data['filter']         = $filter;
         }
 
         return view('reports.receivables', $data);
