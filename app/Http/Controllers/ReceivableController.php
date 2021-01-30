@@ -37,18 +37,21 @@ class ReceivableController extends Controller
             && $request->filter_from
             && isset($request->filter_to)
             && $request->filter_to
-            && $request->filter_status
         ) {
             $filter = [
                 'from'      => $request->filter_from,
                 'to'        => $request->filter_to,
-                'status'    => $request->filter_status
             ];
+        }
+
+        if (isset($request->filter_status) && $request->filter_status) {
+            $filter['status'] = $request->filter_status;
         }
 
         $data = [
             'title'         => $this->title,
-            'receivables'   => $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter)
+            'receivables'   => $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter),
+            'filter'        => $filter
         ];
 
         return view('receivables.index', $data);

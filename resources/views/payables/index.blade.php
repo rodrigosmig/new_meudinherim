@@ -72,15 +72,15 @@
                             <td>
                                 {{ toBrMoney($payable->value) }}
                             </td>
-                            <td align="center">
+                            <td>
                                 @if ($payable->monthly)
-                                    <i class="fas fa-check" style="color: green"></i>
+                                    {{ __('global.yes') }}
                                 @else
-                                    <i class="fas fa-times" style="color: red"></i>
+                                    {{ __('global.no') }}
                                 @endif
                                 
                             </td>
-                            <td align="center">
+                            <td>
                                 @if ($payable->isPaid())
                                     <i class="fas fa-check" style="color: green"></i>
                                 @else

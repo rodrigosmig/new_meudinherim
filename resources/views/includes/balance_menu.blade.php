@@ -8,7 +8,7 @@
         @foreach ($all_account_balances as $key => $balance)
         
             @if($key !== 'total')
-                <a href="#" class="dropdown-item">
+                <a href="{{ route('accounts.entries', $balance['account_id']) }}" class="dropdown-item">
                     <div class="media">                
                         <div class="media-body">
                             <h3 class="dropdown-item-title">
@@ -17,15 +17,7 @@
                             <p class="text-sm text-muted">Saldo:
                                 <span style="color: {{ $balance['balance'] < 0 ? 'red' : 'blue' }}">
                                     {{ toBrMoney($balance['balance']) }}
-                                </span>
-                                {{-- @if ($balance['balance'] < 0)
-                                    <span style="color: red">
-                                        {{ toBrMoney($balance['balance']) }}
-                                    </span>
-                                @else
-                                    
-                                @endif --}}
-                                
+                                </span>                               
                             </p>
                         </div>
                     </div>
