@@ -407,8 +407,8 @@ return [
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => true,
-                    'location' => asset('js/plugins/sweetalert.min.js'),
+                    'asset' => false,
+                    'location' => '//unpkg.com/sweetalert/dist/sweetalert.min.js',
                 ],
             ],
         ],
