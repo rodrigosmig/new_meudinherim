@@ -148,7 +148,8 @@ class CategoryTest extends TestCase
 
         $response = $this->putJson("/api/categories/{$category}", []);
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
     }
 
     public function testUpdateNonExistentCategory()
@@ -169,7 +170,7 @@ class CategoryTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testErrorValidationWhenUpdateACategory()
+    public function testValidationErrorWhenUpdateACategory()
     {
         Sanctum::actingAs(
             $this->user
@@ -218,7 +219,8 @@ class CategoryTest extends TestCase
 
         $response = $this->putJson("/api/categories/{$category}");
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
     }
 
     public function testDeleteNonExistentCategory()

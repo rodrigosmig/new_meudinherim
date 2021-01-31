@@ -23,7 +23,7 @@ class CardTest extends TestCase
         parent::setUp();
 
         $this->user = factory(User::class)->create();
-    }   
+    }
 
     public function testCreateCardWhenUnauthenticatedUser()
     {
@@ -74,7 +74,7 @@ class CardTest extends TestCase
         ];
 
         $response = $this->postJson('/api/cards', $data);
-        //dd($response->dump());
+
         $response->assertStatus(201)
             ->assertJsonPath('data.name', $data['name'])
             ->assertJsonPath('data.pay_day', $data['pay_day'])
@@ -96,9 +96,12 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $response = $this->getJson('api/cards', []);
+        factory(Card::class, 2)->create();
 
-        $response->assertStatus(200);
+        $response = $this->getJson('api/cards');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'data');
     }
 
     public function testGetNonExistentCard()
@@ -153,9 +156,10 @@ class CardTest extends TestCase
     {
         $card = 'card';
 
-        $response = $this->putJson("/api/cards/{$card}", []);
+        $response = $this->putJson("/api/cards/{$card}");
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
     }
 
     public function testUpdateNonExistentCard()
@@ -178,7 +182,7 @@ class CardTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testErrorValidationWhenUpdateACard()
+    public function testValidationErrorWhenUpdateACard()
     {
         Sanctum::actingAs(
             $this->user
