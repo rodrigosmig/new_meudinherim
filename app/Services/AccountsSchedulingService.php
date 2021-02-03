@@ -111,7 +111,7 @@ class AccountsSchedulingService
      */
     public function getAccountsSchedulingsByType($categoryType, array $filter = null)
     {
-        $from = date('Y-m-1');
+        $from = date('Y-m-01');
         $to = date('Y-m-t');
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {

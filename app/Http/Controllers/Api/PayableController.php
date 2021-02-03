@@ -11,6 +11,8 @@ use App\Http\Requests\Api\PaymentRequest;
 use App\Exceptions\AccountIsPaidException;
 use App\Services\AccountsSchedulingService;
 use App\Exceptions\AccountIsNotPaidException;
+use App\Http\Requests\Api\PayableStoreRequest;
+use App\Http\Requests\Api\PayableUpdateRequest;
 use App\Http\Resources\AccountsSchedulingResource;
 use App\Http\Requests\Api\PayableUpdateStoreRequest;
 
@@ -58,7 +60,7 @@ class PayableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PayableUpdateStoreRequest $request)
+    public function store(PayableStoreRequest $request)
     {
         $data = $request->validated();
 
@@ -101,7 +103,7 @@ class PayableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PayableUpdateStoreRequest $request, $id)
+    public function update(PayableUpdateRequest $request, $id)
     {
         try {
             $payable = $this->service->update($id, $request->validated());
@@ -136,7 +138,7 @@ class PayableController extends Controller
 
         $this->service->delete($id);
 
-        return response()->json();
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     public function payment(PaymentRequest $request, $id)

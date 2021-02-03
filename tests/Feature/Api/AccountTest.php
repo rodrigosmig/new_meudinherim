@@ -156,7 +156,7 @@ class AccountTest extends TestCase
             ->assertJsonPath('message', 'Unauthenticated.');
     }
 
-    public function testUpdateNonExistentaccount()
+    public function testUpdateNonExistentAccount()
     {
         Sanctum::actingAs(
             $this->user
@@ -223,7 +223,8 @@ class AccountTest extends TestCase
 
         $response = $this->putJson("/api/accounts/{$account}");
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
     }
 
     public function testDeleteNonExistentAccount()
