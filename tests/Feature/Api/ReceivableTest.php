@@ -1,18 +1,18 @@
 <?php
 
-namespace Tests\Feature\Api;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Account;
-use App\Models\AccountEntry;
 use App\Models\Category;
+use App\Models\AccountEntry;
 use Laravel\Sanctum\Sanctum;
 use App\Models\AccountsScheduling;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class PayableTest extends TestCase
+class ReceivableTest extends TestCase
 {
     protected $user;
 
@@ -28,15 +28,15 @@ class PayableTest extends TestCase
         $this->user = factory(User::class)->create();
     }
 
-    public function testCreatePayableWhenUnauthenticatedUser()
+    public function testCreateReceivableWhenUnauthenticatedUser()
     {
-        $response = $this->postJson('/api/payables');
+        $response = $this->postJson('/api/receivables');
 
         $response->assertStatus(401)
             ->assertJsonPath('message', 'Unauthenticated.');
     }
 
-    public function testValidationErrorWhenCreatingAPayable()
+    public function testValidationErrorWhenCreatingAReceivable()
     {
         Sanctum::actingAs(
             $this->user
@@ -54,18 +54,42 @@ class PayableTest extends TestCase
         $message_value                  = __('validation.gt.numeric', ['attribute' => 'value', 'value' => 0]);
         $message_category_id            = __('validation.exists', ['attribute' => 'category id']);
 
-        $response = $this->postJson('/api/payables', $data);
+        $response = $this->postJson('/api/receivables', $data);
 
         $response->assertStatus(422)
                 ->assertExactJson([
-                    'due_date' =>[$message_due_date],
-                    'description' =>[$message_description],
-                    'value' =>[$message_value],
-                    'category_id' =>[$message_category_id],
+                    'due_date'      => [$message_due_date],
+                    'description'   => [$message_description],
+                    'value'         => [$message_value],
+                    'category_id'   => [$message_category_id],
                 ]);
     }
 
-    public function testFailedWhenCreatePayableWithIncomeCategory()
+    public function testFailedWhenCreateReceivableWithExpenseCategory()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+
+        $message = __('validation.exists', ['attribute' => 'category id']);
+
+        $data = [
+            'due_date'      => now()->format('Y-m-d'),
+            'description'   => 'Receivable test',
+            'value'         => 100,
+            'category_id'   => $category->id
+        ];
+
+        $response = $this->postJson('/api/receivables', $data);
+
+        $response->assertStatus(422)
+            ->assertExactJson(['category_id' => [$message]]);
+
+    }
+
+    public function testCreateReceivableWithInstallmentsSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
@@ -73,33 +97,9 @@ class PayableTest extends TestCase
 
         $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
-        $message = __('validation.exists', ['attribute' => 'category id']);
-
-        $data = [
-            'due_date'      => now()->format('Y-m-d'),
-            'description'   => 'Payable test',
-            'value'         => 100,
-            'category_id'   => $category->id
-        ];
-
-        $response = $this->postJson('/api/payables', $data);
-
-        $response->assertStatus(422)
-            ->assertExactJson(['category_id' => [$message]]);
-
-    }
-
-    public function testCreatePayableWithInstallmentsSuccessfully()
-    {
-        Sanctum::actingAs(
-            $this->user
-        );
-
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
-
         $data = [
             'due_date'              => now()->format('Y-m-d'),
-            'description'           => 'Payable test',
+            'description'           => 'Receivable test',
             'value'                 => 100,
             'category_id'           => $category->id,
             'installment'           => 'on',
@@ -107,23 +107,23 @@ class PayableTest extends TestCase
             'installment_value'     => 50,
         ];
 
-        $response = $this->postJson('/api/payables', $data);
+        $response = $this->postJson('/api/receivables', $data);
 
         $response->assertStatus(200)
             ->assertExactJson(['message' => __('messages.account_scheduling.installments_created')]);
     }
 
-    public function testValidationErrorWhenCreatePayableWithInstallments()
+    public function testValidationErrorWhenCreateReceivableWithInstallments()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
         $data = [
             'due_date'              => now()->format('Y-m-d'),
-            'description'           => 'Payable test',
+            'description'           => 'Receivable test',
             'value'                 => 100,
             'category_id'           => $category->id,
             'installment'           => 'on',
@@ -134,7 +134,7 @@ class PayableTest extends TestCase
         $message_installments_number    = __('validation.gt.numeric', ['attribute' => 'installments number', 'value' => 0]);
         $message_installments_value     = __('validation.gt.numeric', ['attribute' => 'installment value', 'value' => 0]);
 
-        $response = $this->postJson('/api/payables', $data);
+        $response = $this->postJson('/api/receivables', $data);
 
         $response->assertStatus(422)
             ->assertExactJson([
@@ -143,100 +143,75 @@ class PayableTest extends TestCase
             ]);            
     }
 
-    public function testCreatePayableSuccessfully()
+    public function testGetReceivablesWithUnauthenticatedUser()
     {
-        Sanctum::actingAs(
-            $this->user
-        );
-
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
-
-        $data = [
-            'due_date'      => now()->format('Y-m-d'),
-            'description'   => 'Payable test',
-            'value'         => 100,
-            'category_id'   => $category->id
-        ];
-
-        $response = $this->postJson('/api/payables', $data);
-
-        $response->assertStatus(201)
-            ->assertJsonPath('data.due_date', $data['due_date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value'])
-            ->assertJsonPath('data.category_id', $category->id);
-    }
-
-    public function testGetPayablesWithUnauthenticatedUser()
-    {
-        $response = $this->getJson('api/payables');
+        $response = $this->getJson('api/receivables');
 
         $response->assertStatus(401)
                 ->assertJsonPath('message', 'Unauthenticated.');
     }
 
-    public function testGetPayablesSuccessfully()
+    public function testGetReceivableSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
         
         factory(AccountsScheduling::class, 2)->create(['category_id' => $category->id]);
 
-        $response = $this->getJson('api/payables');
+        $response = $this->getJson('api/receivables');
 
         $response->assertStatus(200)
             ->assertJsonCount(2, 'data');
     }
 
-    public function testGetAPayableByRangeDate()
+    public function testGetAReceivableByRangeDate()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
-        $older_payable = factory(AccountsScheduling::class)->create([
+        $older_receivable = factory(AccountsScheduling::class)->create([
             'due_date'      => now()->format('Y-m-01'),
             'category_id'   => $category->id
         ]);
 
-        $new_payable = factory(AccountsScheduling::class)->create([
+        $new_receivable = factory(AccountsScheduling::class)->create([
             'due_date'      => now()->format('Y-m-15'),
             'category_id'   => $category->id
         ]);
 
-        $response = $this->getJson("/api/payables?from={$new_payable->due_date}&to={$new_payable->due_date}");
+        $response = $this->getJson("/api/receivables?from={$new_receivable->due_date}&to={$new_receivable->due_date}");
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data');
-
     }
 
-    public function testGetNonExistentPayable()
+    public function testGetNonExistentReceivable()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = 'Invalid Payable';
+        $receivable = 'Invalid Receivables';
 
         $message = __('messages.account_scheduling.api_not_found');
 
-        $response = $this->getJson("api/payables/{$payable}");
+        $response = $this->getJson("api/receivables/{$receivable}");
 
         $response->assertStatus(404)
             ->assertJsonPath('message', $message);
     }
 
-    public function testGetPayableFromAnotherUser()
+    public function testGetReceivableFromAnotherUser()
     {
         $testUser = factory(User::class)->create();
 
-        $payable = AccountsScheduling::withoutEvents(function () use ($testUser) {
+        $receivable = AccountsScheduling::withoutEvents(function () use ($testUser) {
             return factory(AccountsScheduling::class)->create([
                 'user_id' => $testUser->id
             ]);
@@ -246,47 +221,47 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $response = $this->getJson("/api/payables/{$payable->id}");
+        $response = $this->getJson("/api/receivables/{$receivable->id}");
 
         $response->assertStatus(404);
     }
 
-    public function testGetAPayableSuccessfully()
+    public function testGetAReceivableSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
-        $payable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);        
+        $receivable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);        
 
-        $response = $this->getJson("/api/payables/{$payable->id}");
+        $response = $this->getJson("/api/receivables/{$receivable->id}");
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.id', $payable->id)
-                ->assertJsonPath('data.name', $payable->name);
+                ->assertJsonPath('data.id', $receivable->id)
+                ->assertJsonPath('data.name', $receivable->name);
     }
 
-    public function testUpdatePayableWithUnauthenticatedUser()
+    public function testUpdateReceivableWithUnauthenticatedUser()
     {
-        $payable = 'payable';
+        $receivable = 'receivable';
 
-        $response = $this->putJson("/api/payables/{$payable}");
+        $response = $this->putJson("/api/receivables/{$receivable}");
 
         $response->assertStatus(401)
             ->assertJsonPath('message', 'Unauthenticated.');
     }
 
-    public function testUpdateNonExistentPayable()
+    public function testUpdateNonExistentReceivable()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = 'payable';
+        $receivable = 'receivable';
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
         $data = [
             'due_date'      => now()->format('Y-m-d'),
@@ -295,18 +270,19 @@ class PayableTest extends TestCase
             'category_id'   => $category->id
         ];
 
-        $response = $this->putJson("/api/payables/{$payable}", $data);
+        $response = $this->putJson("/api/receivables/{$receivable}", $data);
 
         $response->assertStatus(404);
     }
 
-    public function testValidationErrorWhenUpdateAPayable()
+    
+    public function testValidationErrorWhenUpdateAReceivable()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = factory(AccountsScheduling::class)->create();
+        $receivable = factory(AccountsScheduling::class)->create();
         
         $data = [
             'due_date'      => 'Invalid date',
@@ -321,7 +297,7 @@ class PayableTest extends TestCase
         $message_category_id            = __('validation.exists', ['attribute' => 'category id']);
 
 
-        $response = $this->putJson("/api/payables/{$payable->id}", $data);
+        $response = $this->putJson("/api/receivables/{$receivable->id}", $data);
 
         $response->assertStatus(422)
             ->assertExactJson([
@@ -332,24 +308,24 @@ class PayableTest extends TestCase
             ]);
     }
 
-    public function testUpdateAPayableSuccessfully()
+    public function testUpdateAReceivableSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
-        $payable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
 
         $data = [
             'due_date'      => now()->modify('+7 days')->format('Y-m-d'),
-            'description'   => 'Payable updated',
+            'description'   => 'Receivable updated',
             'value'         => 200,
-            'category_id'   => (factory(Category::class)->create(['type' => Category::EXPENSE]))->id
+            'category_id'   => (factory(Category::class)->create(['type' => Category::INCOME]))->id
         ];
 
-        $response = $this->putJson("/api/payables/{$payable->id}", $data);
+        $response = $this->putJson("/api/receivables/{$receivable->id}", $data);
 
         $response->assertStatus(200)
             ->assertJsonPath('data.due_date', $data['due_date'])
@@ -358,43 +334,43 @@ class PayableTest extends TestCase
             ->assertJsonPath('data.category_id', (string) $data['category_id']);
     }
 
-    public function testDeletePayableWithUnauthenticatedUser()
+    public function testDeleteReceivableWithUnauthenticatedUser()
     {
-        $payable = 'payable';
+        $receivable = 'receivable';
 
-        $response = $this->putJson("/api/payables/{$payable}");
+        $response = $this->putJson("/api/receivables/{$receivable}");
 
         $response->assertStatus(401)
             ->assertJsonPath('message', 'Unauthenticated.');
     }
 
-    public function testDeleteNonExistentPayable()
+    public function testDeleteNonExistentReceivable()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = 'payable';
+        $receivable = 'receivable';
 
-        $response = $this->deleteJson("/api/payables/{$payable}");
+        $response = $this->deleteJson("/api/receivables/{$receivable}");
 
         $response->assertStatus(404);
     }
 
-    public function testDeletePayableSuccessfully()
+    public function testDeleteReceivableSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = factory(AccountsScheduling::class)->create();
+        $receivables = factory(AccountsScheduling::class)->create();
 
-        $response = $this->deleteJson("/api/payables/{$payable->id}");
+        $response = $this->deleteJson("/api/receivables/{$receivables->id}");
 
         $response->assertStatus(204);
     }
 
-    public function testPaymentSuccessfully()
+    public function testReceivementSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
@@ -404,30 +380,30 @@ class PayableTest extends TestCase
 
         $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
 
-        $payable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivables  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
 
         $data = [
             'paid_date'     => now()->modify('+1 days')->format('Y-m-d'),
             'account_id'    => $account->id
         ];
 
-        $response = $this->postJson("/api/payables/{$payable->id}/payment", $data);
+        $response = $this->postJson("/api/receivables/{$receivables->id}/receivement", $data);
 
         $response->assertStatus(200)
             ->assertExactJson([
-                'message' =>__('messages.account_scheduling.payable_paid'),
+                'message' =>__('messages.account_scheduling.receivable_paid'),
             ]);
     }
 
-    public function testValidationErrorWhenMakingPayment()
+    public function testValidationErrorWhenMakingReceivement()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
-        $payable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
 
         $message_paid_date  = __('validation.date_format', ['attribute' => 'paid date', 'format' => 'Y-m-d']);
         $message_account_id = __('validation.exists', ['attribute' => 'account id']);
@@ -437,7 +413,7 @@ class PayableTest extends TestCase
             'account_id'    => 'Invalid account'
         ];
 
-        $response = $this->postJson("/api/payables/{$payable}/payment", $data);
+        $response = $this->postJson("/api/receivables/{$receivable}/receivement", $data);
 
         $response->assertStatus(422)
             ->assertExactJson([
@@ -446,7 +422,7 @@ class PayableTest extends TestCase
             ]);
     }
 
-    public function testCancelPaymentSuccessfully()
+    public function testCancelReceivementSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
@@ -455,38 +431,39 @@ class PayableTest extends TestCase
         $account = factory(Account::class)->create();
         $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
 
-        $payable = factory(AccountsScheduling::class)->create([
+        $receivable = factory(AccountsScheduling::class)->create([
             'category_id'   => $category->id,
             'paid_date'     => now(),
             'paid'          => true
         ]);
         
         $entry = factory(AccountEntry::class)->create([
-            'date'                  => $payable->paid_date,
-            'value'                 => $payable->value,
+            'date'                  => $receivable->paid_date,
+            'value'                 => $receivable->value,
             'account_id'            => $account->id,
-            'category_id'           => $payable->category_id,
-            'account_scheduling_id' => $payable->id
+            'category_id'           => $receivable->category_id,
+            'account_scheduling_id' => $receivable->id
         ]);
 
-        $response = $this->postJson("/api/payables/{$payable->id}/cancel-payment");
+        $response = $this->postJson("/api/receivables/{$receivable->id}/cancel-receivement");
 
         $response->assertStatus(200)
             ->assertExactJson([
-                'message' =>__('messages.account_scheduling.payable_cancel'),
+                'message' =>__('messages.account_scheduling.receivable_cancel'),
             ]);
     }
 
-    public function testFailedWhenCancelNonExistentPayable()
+    public function testFailedWhenCancelNonExistentReceivable()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = 'Payable';
+        $receivable = 'Receivable';
 
-        $response = $this->postJson("/api/payables/{$payable}/cancel-payment");
+        $response = $this->postJson("/api/receivables/{$receivable}/cancel-receivement");
 
         $response->assertStatus(404);
     }
+
 }
