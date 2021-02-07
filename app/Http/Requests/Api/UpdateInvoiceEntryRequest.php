@@ -35,8 +35,8 @@ class UpdateInvoiceEntryRequest extends FormRequest
                         ->where('user_id', auth()->user()->id);
                 })
             ],
-            'description'           => 'required|min:3',
-            'value'                 => 'required|numeric',
+            'description'   => 'required|min:3',
+            'value'         => 'required|numeric|gt:0',
         ];
     }
 
