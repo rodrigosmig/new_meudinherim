@@ -4,15 +4,15 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ develop ]
-
+    branches: [ master, develop ]
+    
 jobs:
   laravel-tests:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: shivammathur/setup-php@b7d1d9c9a92d8d8463ce36d7f60da34d461724f8
+    - uses: shivammathur/setup-php@v2
       with:
         php-version: 7.4'
     - uses: actions/checkout@v2
