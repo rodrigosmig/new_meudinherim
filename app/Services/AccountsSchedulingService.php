@@ -82,18 +82,8 @@ class AccountsSchedulingService
         return $account_scheduling;
     }
 
-    public function delete($id)
+    public function delete(AccountsScheduling $account_scheduling)
     {
-        $account_scheduling = $this->findById($id);
-
-        if (! $account_scheduling) {
-            return false;
-        }
-
-        if ($account_scheduling->isPaid()) {
-            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
-        }
-
         return $account_scheduling->delete();
     }
 

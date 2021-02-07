@@ -126,15 +126,21 @@ class ReceivableController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $receivable = $this->service->delete($id);
-        } catch (AccountIsPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $receivable = $this->service->findById($id);
 
         if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        if ($receivable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($receivable->isExpenseCategory()) {
+            return response()->json(['message' => __('messages.account_scheduling.not_receivable')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->service->delete($receivable);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }

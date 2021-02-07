@@ -357,13 +357,35 @@ class ReceivableTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testFailedWhenDeleteReceivableWithInvalidCategory()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+
+        $receivables = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+
+        $message = __('messages.account_scheduling.not_receivable');
+
+        $response = $this->deleteJson("/api/receivables/{$receivables->id}");
+
+        $response->assertStatus(422)
+        ->assertExactJson([
+            'message' =>$message,
+        ]);
+    }
+
     public function testDeleteReceivableSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $receivables = factory(AccountsScheduling::class)->create();
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+
+        $receivables = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
 
         $response = $this->deleteJson("/api/receivables/{$receivables->id}");
 

@@ -84,7 +84,9 @@ return [
         'update_payable_paid'       => 'It is not possible to update a paid account. Cancel the payment',
         'update_receivable_paid'    => 'It is not possible to update a received account. Cancel the receivement',
         'account_is_paid'           => 'It is not possible to process the request because the account is paid. Try canceling payment/receivement for this account',
-        'account_is_not_paid'       => 'It is not possible to process the request because the account is not paid'
+        'account_is_not_paid'       => 'It is not possible to process the request because the account is not paid',
+        'not_payable'               => 'This account is not an Accounts Payable',
+        'not_receivable'            => 'This account is not an Accounts Receivable'
     ],
 
     'profile' => [

@@ -381,13 +381,35 @@ class PayableTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testFailedWhenDeletePayableWithInvalidCategory()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+
+        $payable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+
+        $message = __('messages.account_scheduling.not_payable');
+
+        $response = $this->deleteJson("/api/payables/{$payable->id}");
+
+        $response->assertStatus(422)
+        ->assertExactJson([
+            'message' =>$message,
+        ]);
+    }
+
     public function testDeletePayableSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $payable = factory(AccountsScheduling::class)->create();
+        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+
+        $payable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
 
         $response = $this->deleteJson("/api/payables/{$payable->id}");
 
