@@ -213,7 +213,6 @@ class PayableTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data');
-
     }
 
     public function testGetNonExistentPayable()

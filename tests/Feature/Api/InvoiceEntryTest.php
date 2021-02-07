@@ -30,7 +30,7 @@ class InvoiceEntryTest extends TestCase
 
     public function testCreateInvoiceEntryWhenUnauthenticatedUser()
     {
-        $card       = 'Card';
+        $card = 'Card';
 
         $response = $this->postJson("/api/cards/{$card}/entries");
 
@@ -77,7 +77,7 @@ class InvoiceEntryTest extends TestCase
 
         $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
 
-        $card = 'Invalid Account';
+        $card = 'Invalid Card';
 
         $data = [
             'date'                  => now()->format('Y-m-d'),
@@ -178,7 +178,7 @@ class InvoiceEntryTest extends TestCase
             ->assertJsonPath('data.value', $data['value']);
     }
 
-    public function testGetAccountEntryWithUnauthenticatedUser()
+    public function testGetInvoiceEntryWithUnauthenticatedUser()
     {
         $card = 'Invalid Card';
 

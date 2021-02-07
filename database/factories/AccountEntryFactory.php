@@ -10,7 +10,7 @@ use Faker\Generator as Faker;
 
 $factory->define(AccountEntry::class, function (Faker $faker) {
     return [
-        'date'          => $faker->name,
+        'date'          => now()->format('Y-m-d'),
         'description'   => $faker->randomElement(Account::TYPES),
         'value'         => 10,
         'category_id'   => factory(Category::class),
