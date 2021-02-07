@@ -63,18 +63,8 @@ class AccountsSchedulingService
         return true;
     }
 
-    public function update($id, array $data)
+    public function update(AccountsScheduling $account_scheduling, $data)
     {
-        $account_scheduling = $this->findById($id);
-
-        if (! $account_scheduling) {
-            return false;
-        }
-
-        if ($account_scheduling->isPaid()) {
-            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
-        }
-
         $data['monthly'] = isset($data['monthly']) ? true : false;
         
         $account_scheduling->update($data);

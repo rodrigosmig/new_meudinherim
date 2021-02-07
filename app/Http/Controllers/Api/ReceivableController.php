@@ -105,17 +105,24 @@ class ReceivableController extends Controller
      */
     public function update(ReceivableUpdateRequest $request, $id)
     {
-        try {
-            $receivable = $this->service->update($id, $request->validated());
-        } catch (AccountIsPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $data       = $request->validated();
+        $receivable = $this->service->findById($id);
 
         if (! $receivable) {
-            return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return (new AccountsSchedulingResource($this->service->findById($id)));
+        if ($receivable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($receivable->isExpenseCategory()) {
+            return response()->json(['message' => __('messages.account_scheduling.not_receivable')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $receivable_updated = $this->service->update($receivable, $data);
+
+        return (new AccountsSchedulingResource($receivable_updated));
     }
 
     /**

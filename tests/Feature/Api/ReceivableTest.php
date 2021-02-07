@@ -331,7 +331,7 @@ class ReceivableTest extends TestCase
             ->assertJsonPath('data.due_date', $data['due_date'])
             ->assertJsonPath('data.description', $data['description'])
             ->assertJsonPath('data.value', $data['value'])
-            ->assertJsonPath('data.category_id', (string) $data['category_id']);
+            ->assertJsonPath('data.category_id', $data['category_id']);
     }
 
     public function testDeleteReceivableWithUnauthenticatedUser()
