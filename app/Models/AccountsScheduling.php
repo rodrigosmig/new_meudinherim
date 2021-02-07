@@ -53,7 +53,7 @@ class AccountsScheduling extends Model
      */
     public function isExpenseCategory()
     {
-        return $this->category->type === $this->category::EXPENSE;
+        return $this->category->type == $this->category::EXPENSE;
     }
 
     /**

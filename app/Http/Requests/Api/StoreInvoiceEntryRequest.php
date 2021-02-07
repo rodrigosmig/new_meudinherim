@@ -38,10 +38,10 @@ class StoreInvoiceEntryRequest extends FormRequest
             ],
             'date'                  => 'required|date_format:Y-m-d',
             'description'           => 'required|min:3',
-            'value'                 => 'required|numeric',
+            'value'                 => 'required|numeric|gt:0',
             'installment'           => 'nullable',
-            'installments_number'   => 'nullable|numeric',
-            'installment_value'     => 'nullable|numeric'
+            'installments_number'   => 'nullable|numeric|gt:0',
+            'installment_value'     => 'nullable|numeric|gt:0'
         ];
     }
 
