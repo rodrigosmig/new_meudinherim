@@ -11,6 +11,8 @@ use App\Http\Requests\Api\PaymentRequest;
 use App\Exceptions\AccountIsPaidException;
 use App\Services\AccountsSchedulingService;
 use App\Exceptions\AccountIsNotPaidException;
+use App\Http\Requests\Api\PayableStoreRequest;
+use App\Http\Requests\Api\PayableUpdateRequest;
 use App\Http\Resources\AccountsSchedulingResource;
 use App\Http\Requests\Api\PayableUpdateStoreRequest;
 
@@ -58,7 +60,7 @@ class PayableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PayableUpdateStoreRequest $request)
+    public function store(PayableStoreRequest $request)
     {
         $data = $request->validated();
 
@@ -101,19 +103,26 @@ class PayableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PayableUpdateStoreRequest $request, $id)
+    public function update(PayableUpdateRequest $request, $id)
     {
-        try {
-            $payable = $this->service->update($id, $request->validated());
-        } catch (AccountIsPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
+        $data       = $request->validated();
+        $payable    = $this->service->findById($id);
+        
         if (! $payable) {
-            return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return (new AccountsSchedulingResource($this->service->findById($id)));
+        if ($payable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (! $payable->isExpenseCategory()) {
+            return response()->json(['message' => __('messages.account_scheduling.not_payable')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $payable_updated = $this->service->update($payable, $data);
+
+        return (new AccountsSchedulingResource($payable_updated));
     }
 
     /**
@@ -134,9 +143,13 @@ class PayableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $this->service->delete($id);
+        if (! $payable->isExpenseCategory()) {
+            return response()->json(['message' => __('messages.account_scheduling.not_payable')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-        return response()->json();
+        $this->service->delete($payable);
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     public function payment(PaymentRequest $request, $id)

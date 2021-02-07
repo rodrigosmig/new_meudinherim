@@ -101,6 +101,6 @@ class CategoryController extends Controller
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json();
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }

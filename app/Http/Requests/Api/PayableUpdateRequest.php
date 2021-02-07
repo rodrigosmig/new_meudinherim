@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateInvoiceEntryRequest extends FormRequest
+class PayableUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,15 +28,18 @@ class UpdateInvoiceEntryRequest extends FormRequest
     public function rules()
     {
         return [
+            'due_date'      => 'required|date_format:Y-m-d',
+            'description'   => 'required|min:3',
+            'value'         => 'required|numeric',
+            'monthly'       => 'nullable',
             'category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {
                     $query->where('id', $this->category_id)
-                        ->where('user_id', auth()->user()->id);
+                        ->where('user_id', auth()->user()->id)
+                        ->where('type', Category::EXPENSE);
                 })
             ],
-            'description'   => 'required|min:3',
-            'value'         => 'required|numeric|gt:0',
         ];
     }
 

@@ -63,18 +63,8 @@ class AccountsSchedulingService
         return true;
     }
 
-    public function update($id, array $data)
+    public function update(AccountsScheduling $account_scheduling, $data)
     {
-        $account_scheduling = $this->findById($id);
-
-        if (! $account_scheduling) {
-            return false;
-        }
-
-        if ($account_scheduling->isPaid()) {
-            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
-        }
-
         $data['monthly'] = isset($data['monthly']) ? true : false;
         
         $account_scheduling->update($data);
@@ -82,18 +72,8 @@ class AccountsSchedulingService
         return $account_scheduling;
     }
 
-    public function delete($id)
+    public function delete(AccountsScheduling $account_scheduling)
     {
-        $account_scheduling = $this->findById($id);
-
-        if (! $account_scheduling) {
-            return false;
-        }
-
-        if ($account_scheduling->isPaid()) {
-            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
-        }
-
         return $account_scheduling->delete();
     }
 
@@ -111,7 +91,7 @@ class AccountsSchedulingService
      */
     public function getAccountsSchedulingsByType($categoryType, array $filter = null)
     {
-        $from = date('Y-m-1');
+        $from = date('Y-m-01');
         $to = date('Y-m-t');
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {

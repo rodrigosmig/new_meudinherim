@@ -30,13 +30,13 @@ class Category extends Model
         return $this->type == static::EXPENSE;
     }
 
-    public function createWithoutEvents(array $data)
+    public static function createWithoutEvents(array $data)
     {
-        return $this::withoutEvents(function() use ($data) {
-            return $this->create([
+        return static::withoutEvents(function() use ($data) {
+            return self::create([
                 'name'      => $data['name'],
                 'type'      => $data['type'],
-                'user_id'   => auth('api')->user()->id
+                'user_id'   => $data['user_id']
             ]);
         });
     }

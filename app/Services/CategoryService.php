@@ -153,7 +153,7 @@ class CategoryService
         }
     }
 
-    public function getAllCategories()
+    public function getAllCategories(): array
     {
         $categories = [
             'income'    => $this->getCategoriesByType($this->category::INCOME),

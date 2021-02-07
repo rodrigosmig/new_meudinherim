@@ -84,7 +84,9 @@ return [
         'update_payable_paid'       => 'Não é possível alterar uma conta paga. Cancele o pagamento',
         'update_receivable_paid'    => 'Não é possível alterar uma conta recebida. Cancele o recebimento',
         'account_is_paid'           => 'Não é possível processar a requisição porque a conta está paga. Tente cancelar o pagamento/recebimento desta conta',
-        'account_is_not_paid'       => 'Não é possível processar a requisição porque a conta não está paga'
+        'account_is_not_paid'       => 'Não é possível processar a requisição porque a conta não está paga',
+        'not_payable'               => 'Esta conta não é um Contas a Pagar',
+        'not_receivable'            => 'Esta conta não é um Contas a Receber'
     ],
 
     'profile' => [

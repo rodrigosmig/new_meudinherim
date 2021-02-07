@@ -41,15 +41,9 @@ class AccountEntryService
         return $account_entry;
     }
 
-    public function delete($id)
+    public function delete(AccountEntry $entry)
     {
-        $account_entry = $this->findById($id);
-
-        if (! $account_entry) {
-            return false;
-        }
-
-        return $account_entry->delete();
+        return $entry->delete();
     }
 
     public function findById($id)
@@ -66,7 +60,7 @@ class AccountEntryService
      */  
     public function getEntriesByAccount($account_id, array $range_date = null)
     {
-        $from = date('Y-m-1');
+        $from = date('Y-m-01');
         $to = date('Y-m-t');
 
         if ($range_date && isset($range_date['from']) && isset($range_date['to'])) {

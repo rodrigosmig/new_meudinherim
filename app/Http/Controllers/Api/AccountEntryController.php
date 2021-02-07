@@ -119,10 +119,14 @@ class AccountEntryController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->entryService->delete($id)) {
+        $entry = $this->entryService->findById($id);
+
+        if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json();
+        $this->entryService->delete($entry);
+
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }
