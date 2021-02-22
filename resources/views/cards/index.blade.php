@@ -37,7 +37,7 @@
 <div class="card">
     <div class="card-body">        
         @if ($cards->isNotEmpty())
-            <table class="table datatable">
+            <table class="table table-responsive datatable">
                 <thead>
                     <th>{{ __('global.name') }}</th>
                     <th>{{ __('global.credit_limit') }}</th>

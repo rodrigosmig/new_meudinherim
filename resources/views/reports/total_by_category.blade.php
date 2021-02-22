@@ -27,7 +27,7 @@
 
                     <h4 id="no-entries"></h4>
 
-                    <table id="table-entries" class="table table-striped" style="display: none">
+                    <table id="table-entries" class="table table-responsive table-striped" style="display: none">
                         <caption>{{ __("global.category") }}: <span id="table-caption"></span></caption>
                         <thead>
                             <th>{{ __('global.date') }}</th>
