@@ -20,7 +20,7 @@
 
             @isset($payables)
                 @if ($payables->isNotEmpty())
-                    <table class="table table-margin-top">
+                    <table class="table table-responsive table-margin-top">
                         <thead>
                             <th width="12%">{{ __('global.due_date') }}</th>
                             <th width="12%">{{ __('global.paid_date') }}</th>

@@ -50,7 +50,7 @@
         </div>
         <div class="card-body">        
             @if ($entries->isNotEmpty())
-                <table class="table datatable">
+                <table class="table table-responsive datatable">
                     <thead>
                         <th>{{ __('global.date') }}</th>
                         <th>{{ __('global.category') }}</th>

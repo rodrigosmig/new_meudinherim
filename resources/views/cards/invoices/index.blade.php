@@ -40,7 +40,7 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="nav-opens">
                     @if ($open_invoices->isNotEmpty())
-                        <table class="table datatable">
+                        <table class="table table-responsive datatable">
                             <thead>
                                 <th>{{ __('global.due_date') }}</th>
                                 <th>{{ __('global.closing_date') }}</th>

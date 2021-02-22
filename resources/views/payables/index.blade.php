@@ -35,7 +35,7 @@
                 </form>
             </div>
 
-            <table class="table datatable">
+            <table class="table table-responsive datatable">
                 <thead>
                     <th>{{ __('global.due_date') }}</th>
                     <th>{{ __('global.paid_date') }}</th>
