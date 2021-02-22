@@ -53,7 +53,7 @@
             </div>
 
             @if ($entries->isNotEmpty())
-                <table class="table datatable table-margin-top">
+                <table class="table table-responsive datatable table-margin-top">
                     <thead>
                         <th>{{ __('global.date') }}</th>
                         <th>{{ __('global.description') }}</th>

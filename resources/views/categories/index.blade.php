@@ -46,7 +46,7 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
                 @if ($incoming->isNotEmpty())
-                    <table class="table datatable">
+                    <table class="table table-responsive datatable">
                         <thead>
                             <th>{{ __('global.name') }}</th>
                             <th>{{ __('global.actions') }}</th>
@@ -63,7 +63,7 @@
             </div>
             <div class="tab-pane fade" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
                 @if ($outgoing->isNotEmpty())
-                    <table class="table datatable">
+                    <table class="table table-responsive datatable">
                         <thead>
                             <th>{{ __('global.name') }}</th>
                             <th>{{ __('global.actions') }}</th>
