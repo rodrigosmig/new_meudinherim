@@ -2,6 +2,9 @@
 
 @push('js')
     <script src="{{ asset('js/cards/index.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('js')
@@ -15,12 +18,6 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
         })
     </script>
 @stop
@@ -37,40 +34,42 @@
 <div class="card">
     <div class="card-body">        
         @if ($cards->isNotEmpty())
-            <table class="table table-responsive datatable">
-                <thead>
-                    <th>{{ __('global.name') }}</th>
-                    <th>{{ __('global.credit_limit') }}</th>
-                    <th>{{ __('global.available_limit') }}</th>
-                    <th>{{ __('global.closing_day') }}</th>
-                    <th>{{ __('global.pay_day') }}</th>
-                    <th>{{ __('global.actions') }}</th>
-                </thead>
-                <tbody>
-                    @foreach ($cards as $card)
-                        <tr>
-                            <td>{{ $card->name }}</td>
-                            <td>{{ toBrMoney($card->credit_limit) }}</td>
-                            <td>{{ toBrMoney($card->balance) }}</td>
-                            <td>{{ $card->closing_day }}</td>
-                            <td>{{ $card->pay_day }}</td>
-                            <td class="table-actions">
-                                <div class="row">
-                                    <a class="btn btn-info btn-sm edit" href="{{ route('cards.edit', $card->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
-                                    <button class="btn btn-danger btn-sm delete" data-card="{{ $card->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <a class="btn btn-success btn-sm invoices" href="{{ route('cards.invoices.index', $card->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.invoices') }}">
-                                        <i class="fas fa-file-invoice-dollar"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach 
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table datatable">
+                    <thead>
+                        <th>{{ __('global.name') }}</th>
+                        <th>{{ __('global.credit_limit') }}</th>
+                        <th>{{ __('global.available_limit') }}</th>
+                        <th>{{ __('global.closing_day') }}</th>
+                        <th>{{ __('global.pay_day') }}</th>
+                        <th>{{ __('global.actions') }}</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($cards as $card)
+                            <tr>
+                                <td>{{ $card->name }}</td>
+                                <td>{{ toBrMoney($card->credit_limit) }}</td>
+                                <td>{{ toBrMoney($card->balance) }}</td>
+                                <td>{{ $card->closing_day }}</td>
+                                <td>{{ $card->pay_day }}</td>
+                                <td class="table-actions">
+                                    <div class="row">
+                                        <a class="btn btn-info btn-sm edit" href="{{ route('cards.edit', $card->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <button class="btn btn-danger btn-sm delete" data-card="{{ $card->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <a class="btn btn-success btn-sm invoices" href="{{ route('cards.invoices.index', $card->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.invoices') }}">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach 
+                    </tbody>
+                </table>
+            </div>
         @else
             <h5 style="margin-top:20px">{{__("messages.cards.not_found")}}</h5>
         @endif

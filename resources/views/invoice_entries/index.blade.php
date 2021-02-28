@@ -2,6 +2,9 @@
 
 @push('js')
     <script src="{{ asset('js/invoice_entries/index.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('js')
@@ -14,12 +17,6 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
         })
     </script>
 @stop

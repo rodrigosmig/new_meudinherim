@@ -20,42 +20,44 @@
 
             @isset($payables)
                 @if ($payables->isNotEmpty())
-                    <table class="table table-responsive table-margin-top">
-                        <thead>
-                            <th width="12%">{{ __('global.due_date') }}</th>
-                            <th width="12%">{{ __('global.paid_date') }}</th>
-                            <th>{{ __('global.description') }}</th>
-                            <th>{{ __('global.category') }}</th>
-                            <th>{{ __('global.value') }}</th>
-                            <th>{{ __('global.status') }}</th>
-                        </thead>
+                    <div class="table-responsive">
+                        <table class="table table-margin-top">
+                            <thead>
+                                <th width="12%">{{ __('global.due_date') }}</th>
+                                <th width="12%">{{ __('global.paid_date') }}</th>
+                                <th>{{ __('global.description') }}</th>
+                                <th>{{ __('global.category') }}</th>
+                                <th>{{ __('global.value') }}</th>
+                                <th>{{ __('global.status') }}</th>
+                            </thead>
 
-                        <tbody>
-                            @foreach ($payables as $payable)
-                                <tr>
-                                    <td>{{ toBrDate($payable->due_date) }}</td>
-                                    <td>{{ isset($payable->paid_date) ? toBrDate($payable->paid_date) : '' }}</td>
-                                    <td>{{ $payable->description }}</td>
-                                    <td>{{ $payable->category->name }}</td>
-                                    <td>{{ toBrMoney($payable->value) }}</td>
-                                    <td>
-                                        @if($payable->isPaid())
-                                            {{ __('global.paid') }}
-                                        @else
-                                            {{ __('global.open') }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>                  
+                            <tbody>
+                                @foreach ($payables as $payable)
+                                    <tr>
+                                        <td>{{ toBrDate($payable->due_date) }}</td>
+                                        <td>{{ isset($payable->paid_date) ? toBrDate($payable->paid_date) : '' }}</td>
+                                        <td>{{ $payable->description }}</td>
+                                        <td>{{ $payable->category->name }}</td>
+                                        <td>{{ toBrMoney($payable->value) }}</td>
+                                        <td>
+                                            @if($payable->isPaid())
+                                                {{ __('global.paid') }}
+                                            @else
+                                                {{ __('global.open') }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>                                      
                 @endif                
             @endisset
         </div>
 
         @isset($total)
             <div class="card-footer">
-                <div class="col-6">
+                <div class="col-10">
                     <h5>
                         {{ __('global.initial_date') }}: <b>{{ toBrDate($from) }}</b> - {{ __('global.final_date') }}: <b>{{ toBrDate($to) }}</b>
                     </h6>

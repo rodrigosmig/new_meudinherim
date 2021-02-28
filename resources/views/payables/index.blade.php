@@ -35,82 +35,84 @@
                 </form>
             </div>
 
-            <table class="table table-responsive datatable">
-                <thead>
-                    <th>{{ __('global.due_date') }}</th>
-                    <th>{{ __('global.paid_date') }}</th>
-                    <th>{{ __('global.description') }}</th>
-                    <th>{{ __('global.category') }}</th>
-                    <th>{{ __('global.value') }}</th>
-                    <th>{{ __('global.monthly') }}</th>
-                    <th>{{ __('global.paid') }}</th>
-                    <th>{{ __('global.actions') }}</th>
-                </thead>
-                <tbody>
-                    @foreach ($payables as $payable)
-                        <tr>
-                            <td>
-                                {{ toBrDate($payable->due_date) }}
-                            </td>
-                            <td>
-                                @if ($payable->isPaid())
-                                    {{ toBrDate($payable->paid_date) }}
-                                @endif
-                            </td>
-                            <td>
-                                @if ($payable->invoice)
-                                    <a href="{{ route('invoice_entries.index', [$payable->invoice->card->id, $payable->invoice->id]) }}" title="{{ __('global.show_invoice') }}">
-                                        {{ $payable->description }}
-                                    </a>
-                                @else
-                                    {{ $payable->description }}
-                                @endif
-                            </td>
-                            <td>
-                                {{ $payable->category->name }}
-                            </td>
-                            <td>
-                                {{ toBrMoney($payable->value) }}
-                            </td>
-                            <td>
-                                @if ($payable->monthly)
-                                    {{ __('global.yes') }}
-                                @else
-                                    {{ __('global.no') }}
-                                @endif
-                                
-                            </td>
-                            <td>
-                                @if ($payable->isPaid())
-                                    <i class="fas fa-check" style="color: green"></i>
-                                @else
-                                    <i class="fas fa-times" style="color: red"></i>
-                                @endif
-                            </td>
-                            <td class="table-actions">
-                                <div class="row">
-                                    @if (! $payable->isPaid())
-                                        <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        
-                                        <a class="btn btn-success btn-sm edit" href="{{ route('payables.show', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
-                                            <i class="fas fa-money-bill-alt"></i>
+            <div class="table-responsive">
+                <table class="table datatable datatable">
+                    <thead>
+                        <th>{{ __('global.due_date') }}</th>
+                        <th>{{ __('global.paid_date') }}</th>
+                        <th>{{ __('global.description') }}</th>
+                        <th>{{ __('global.category') }}</th>
+                        <th>{{ __('global.value') }}</th>
+                        <th>{{ __('global.monthly') }}</th>
+                        <th>{{ __('global.paid') }}</th>
+                        <th>{{ __('global.actions') }}</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($payables as $payable)
+                            <tr>
+                                <td>
+                                    {{ toBrDate($payable->due_date) }}
+                                </td>
+                                <td>
+                                    @if ($payable->isPaid())
+                                        {{ toBrDate($payable->paid_date) }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($payable->invoice)
+                                        <a href="{{ route('invoice_entries.index', [$payable->invoice->card->id, $payable->invoice->id]) }}" title="{{ __('global.show_invoice') }}">
+                                            {{ $payable->description }}
                                         </a>
                                     @else
-                                        <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_payment') }}">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
+                                        {{ $payable->description }}
                                     @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                </td>
+                                <td>
+                                    {{ $payable->category->name }}
+                                </td>
+                                <td>
+                                    {{ toBrMoney($payable->value) }}
+                                </td>
+                                <td>
+                                    @if ($payable->monthly)
+                                        {{ __('global.yes') }}
+                                    @else
+                                        {{ __('global.no') }}
+                                    @endif
+                                    
+                                </td>
+                                <td>
+                                    @if ($payable->isPaid())
+                                        <i class="fas fa-check" style="color: green"></i>
+                                    @else
+                                        <i class="fas fa-times" style="color: red"></i>
+                                    @endif
+                                </td>
+                                <td class="table-actions">
+                                    <div class="row">
+                                        @if (! $payable->isPaid())
+                                            <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            
+                                            <a class="btn btn-success btn-sm edit" href="{{ route('payables.show', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
+                                                <i class="fas fa-money-bill-alt"></i>
+                                            </a>
+                                        @else
+                                            <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_payment') }}">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 @stop

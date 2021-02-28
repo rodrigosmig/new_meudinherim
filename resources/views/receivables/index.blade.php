@@ -35,76 +35,78 @@
                 </form>
             </div>
 
-            <table class="table table-responsive datatable">
-                <thead>
-                    <th>{{ __('global.due_date') }}</th>
-                    <th>{{ __('global.paid_date') }}</th>
-                    <th>{{ __('global.description') }}</th>
-                    <th>{{ __('global.category') }}</th>
-                    <th>{{ __('global.value') }}</th>
-                    <th>{{ __('global.monthly') }}</th>
-                    <th>{{ __('global.received') }}</th>
-                    <th>{{ __('global.actions') }}</th>
-                </thead>
-                <tbody>
-                    @foreach ($receivables as $receivable)
-                        <tr>
-                            <td>
-                                {{ toBrDate($receivable->due_date) }}
-                            </td>
-                            <td>
-                                @if ($receivable->isPaid())
-                                    {{ toBrDate($receivable->paid_date) }}
-                                @endif
-                            </td>
-                            <td>
-                                {{ $receivable->description }}
-                            </td>
-                            <td>
-                                {{ $receivable->category->name }}
-                            </td>
-                            <td>
-                                {{ toBrMoney($receivable->value) }}
-                            </td>
-                            <td>
-                                @if ($receivable->monthly)
-                                    {{ __('global.yes') }}
-                                @else
-                                    {{ __('global.no') }}
-                                @endif
-                                
-                            </td>
-                            <td>
-                                @if ($receivable->isPaid())
-                                    <i class="fas fa-check" style="color: green"></i>
-                                @else
-                                    <i class="fas fa-times" style="color: red"></i>
-                                @endif
-                            </td>
-                            <td class="table-actions">
-                                <div class="row">
-                                    @if (! $receivable->isPaid())
-                                        <a class="btn btn-info btn-sm edit" href="{{ route('receivables.edit', $receivable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <button class="btn btn-danger btn-sm delete" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        
-                                        <a class="btn btn-success btn-sm edit" href="{{ route('receivables.show', $receivable->id) }}" data-toggle="tooltip" data-placement="top"  title="{{ __('global.receive') }}">
-                                            <i class="fas fa-money-bill-alt"></i>
-                                        </a>
-                                    @else
-                                        <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_receivement') }}">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
+            <div class="table-responsive">
+                <table class="table datatable datatable">
+                    <thead>
+                        <th>{{ __('global.due_date') }}</th>
+                        <th>{{ __('global.paid_date') }}</th>
+                        <th>{{ __('global.description') }}</th>
+                        <th>{{ __('global.category') }}</th>
+                        <th>{{ __('global.value') }}</th>
+                        <th>{{ __('global.monthly') }}</th>
+                        <th>{{ __('global.received') }}</th>
+                        <th>{{ __('global.actions') }}</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($receivables as $receivable)
+                            <tr>
+                                <td>
+                                    {{ toBrDate($receivable->due_date) }}
+                                </td>
+                                <td>
+                                    @if ($receivable->isPaid())
+                                        {{ toBrDate($receivable->paid_date) }}
                                     @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                </td>
+                                <td>
+                                    {{ $receivable->description }}
+                                </td>
+                                <td>
+                                    {{ $receivable->category->name }}
+                                </td>
+                                <td>
+                                    {{ toBrMoney($receivable->value) }}
+                                </td>
+                                <td>
+                                    @if ($receivable->monthly)
+                                        {{ __('global.yes') }}
+                                    @else
+                                        {{ __('global.no') }}
+                                    @endif
+                                    
+                                </td>
+                                <td>
+                                    @if ($receivable->isPaid())
+                                        <i class="fas fa-check" style="color: green"></i>
+                                    @else
+                                        <i class="fas fa-times" style="color: red"></i>
+                                    @endif
+                                </td>
+                                <td class="table-actions">
+                                    <div class="row">
+                                        @if (! $receivable->isPaid())
+                                            <a class="btn btn-info btn-sm edit" href="{{ route('receivables.edit', $receivable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm delete" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            
+                                            <a class="btn btn-success btn-sm edit" href="{{ route('receivables.show', $receivable->id) }}" data-toggle="tooltip" data-placement="top"  title="{{ __('global.receive') }}">
+                                                <i class="fas fa-money-bill-alt"></i>
+                                            </a>
+                                        @else
+                                            <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_receivement') }}">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 @stop
