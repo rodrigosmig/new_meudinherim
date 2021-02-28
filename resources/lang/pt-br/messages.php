@@ -71,6 +71,7 @@ return [
         'receivable_deleted'        => 'Contas a receber deletado com sucesso',
         'ajax_text'                 => 'Ao confirmar, o lançamento que foi gerado na conta será excluído permanentemente',
         'receivable_is_paid'        => 'Conta a receber já está paga',
+        'payable_is_paid'           => 'Conta a pagar já está paga',
         'payable_paid'              => 'Conta paga com sucesso',
         'receivable_paid'           => 'Conta recebida com sucesso',
         'payable_cancel'            => 'Pagamento cancelado com sucesso',

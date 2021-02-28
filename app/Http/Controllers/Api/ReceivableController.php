@@ -116,10 +116,6 @@ class ReceivableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if ($receivable->isExpenseCategory()) {
-            return response()->json(['message' => __('messages.account_scheduling.not_receivable')], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
         $receivable_updated = $this->service->update($receivable, $data);
 
         return (new AccountsSchedulingResource($receivable_updated));

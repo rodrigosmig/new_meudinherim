@@ -148,13 +148,22 @@ class ReceivableController extends Controller
      */
     public function update(StoreReceivableRequest $request, $id)
     {
-        if (! $this->service->update($id, $request->all())) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+        $data       = $request->validated();
+        $receivable = $this->service->findById($id);
 
+        if (! $receivable) {
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_found'));
             return redirect()->route('receivables.index');
         }
 
-        Alert::success(__('global.success'), __('messages.account_scheduling.payable_updated'));
+        if ($receivable->isPaid()) {
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.receivable_is_paid'));
+            return redirect()->route('receivables.index');
+        }
+
+        $this->service->update($receivable, $data);
+
+        Alert::success(__('global.success'), __('messages.account_scheduling.receivable_updated'));
 
         return redirect()->route('receivables.index');
     }
@@ -167,11 +176,25 @@ class ReceivableController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->service->delete($id)) {
+        $receivable = $this->service->findById($id);
+
+        if (! $receivable) {
             return response()
-                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.not_found')]);
         }
 
+        if ($receivable->isPaid()) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.receivable_is_paid')]);
+        }
+
+        if ($receivable->isExpenseCategory()) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.not_receivable')]);
+        }
+
+        $this->service->delete($receivable);
+        
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.account_scheduling.receivable_deleted')]);
     }

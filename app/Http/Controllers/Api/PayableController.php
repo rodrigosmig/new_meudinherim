@@ -116,10 +116,6 @@ class PayableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (! $payable->isExpenseCategory()) {
-            return response()->json(['message' => __('messages.account_scheduling.not_payable')], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
         $payable_updated = $this->service->update($payable, $data);
 
         return (new AccountsSchedulingResource($payable_updated));
