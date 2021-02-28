@@ -2,6 +2,9 @@
 
 @push('js')
     <script src="{{ asset('js/categories/index.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('js')
@@ -15,12 +18,6 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
         })
     </script>
 @stop
@@ -46,34 +43,38 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="incoming" role="tabpanel" aria-labelledby="incoming-tab">
                 @if ($incoming->isNotEmpty())
-                    <table class="table table-responsive datatable">
-                        <thead>
-                            <th>{{ __('global.name') }}</th>
-                            <th>{{ __('global.actions') }}</th>
-                        </thead>
-                        <tbody>
-                            @foreach ($incoming as $category)
-                                @include('categories.partials.status-table')
-                            @endforeach 
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table datatable">
+                            <thead>
+                                <th>{{ __('global.name') }}</th>
+                                <th>{{ __('global.actions') }}</th>
+                            </thead>
+                            <tbody>
+                                @foreach ($incoming as $category)
+                                    @include('categories.partials.status-table')
+                                @endforeach 
+                            </tbody>
+                        </table>
+                    </div>
                 @else
                     <h5 style="margin-top:20px">{{__("messages.categories.not_found")}}</h5>
                 @endif
             </div>
             <div class="tab-pane fade" id="outgoing" role="tabpanel" aria-labelledby="outgoing-tab">
                 @if ($outgoing->isNotEmpty())
-                    <table class="table table-responsive datatable">
-                        <thead>
-                            <th>{{ __('global.name') }}</th>
-                            <th>{{ __('global.actions') }}</th>
-                        </thead>
-                        <tbody>
-                            @foreach ($outgoing as $category)
-                                @include('categories.partials.status-table')
-                            @endforeach 
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table datatable">
+                            <thead>
+                                <th>{{ __('global.name') }}</th>
+                                <th>{{ __('global.actions') }}</th>
+                            </thead>
+                            <tbody>
+                                @foreach ($outgoing as $category)
+                                    @include('categories.partials.status-table')
+                                @endforeach 
+                            </tbody>
+                        </table>
+                    </div>
                 @else
                     <h5 style="margin-top:20px">{{__("messages.categories.not_found")}}</h5>
                 @endif

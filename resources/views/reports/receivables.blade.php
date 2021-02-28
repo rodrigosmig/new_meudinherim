@@ -20,35 +20,37 @@
 
             @isset($receivables)
                 @if ($receivables->isNotEmpty())
-                    <table class="table table-responsive table-margin-top">
-                        <thead>
-                            <th width="12%">{{ __('global.due_date') }}</th>
-                            <th width="12%">{{ __('global.paid_date') }}</th>
-                            <th>{{ __('global.description') }}</th>
-                            <th>{{ __('global.category') }}</th>
-                            <th>{{ __('global.value') }}</th>
-                            <th>{{ __('global.status') }}</th>
-                        </thead>
-
-                        <tbody>
-                            @foreach ($receivables as $receivable)
-                                <tr>
-                                    <td>{{ toBrDate($receivable->due_date) }}</td>
-                                    <td>{{ isset($receivable->paid_date) ? toBrDate($receivable->paid_date) : '' }}</td>
-                                    <td>{{ $receivable->description }}</td>
-                                    <td>{{ $receivable->category->name }}</td>
-                                    <td>{{ toBrMoney($receivable->value) }}</td>
-                                    <td>
-                                        @if($receivable->isPaid())
-                                            {{ __('global.received') }}
-                                        @else
-                                            {{ __('global.open') }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-margin-top">
+                            <thead>
+                                <th width="12%">{{ __('global.due_date') }}</th>
+                                <th width="12%">{{ __('global.paid_date') }}</th>
+                                <th>{{ __('global.description') }}</th>
+                                <th>{{ __('global.category') }}</th>
+                                <th>{{ __('global.value') }}</th>
+                                <th>{{ __('global.status') }}</th>
+                            </thead>
+    
+                            <tbody>
+                                @foreach ($receivables as $receivable)
+                                    <tr>
+                                        <td>{{ toBrDate($receivable->due_date) }}</td>
+                                        <td>{{ isset($receivable->paid_date) ? toBrDate($receivable->paid_date) : '' }}</td>
+                                        <td>{{ $receivable->description }}</td>
+                                        <td>{{ $receivable->category->name }}</td>
+                                        <td>{{ toBrMoney($receivable->value) }}</td>
+                                        <td>
+                                            @if($receivable->isPaid())
+                                                {{ __('global.received') }}
+                                            @else
+                                                {{ __('global.open') }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>                    
                 @else
                     
                 @endif
@@ -58,7 +60,7 @@
 
         @isset($total)
             <div class="card-footer">
-                <div class="col-6">
+                <div class="col-10">
                     <h5>
                         {{ __('global.initial_date') }}: <b>{{ toBrDate($from) }}</b> - {{ __('global.final_date') }}: <b>{{ toBrDate($to) }}</b>
                     </h6>

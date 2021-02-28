@@ -53,52 +53,54 @@
             </div>
 
             @if ($entries->isNotEmpty())
-                <table class="table table-responsive datatable table-margin-top">
-                    <thead>
-                        <th>{{ __('global.date') }}</th>
-                        <th>{{ __('global.description') }}</th>
-                        <th>{{ __('global.category') }}</th>
-                        <th>{{ __('global.value') }}</th>
-                        <th>{{ __('global.actions') }}</th>
-                    </thead>
-                    <tbody>
-                        @foreach ($entries as $entry)
-                            <tr>
-                                <td>{{ toBrDate($entry->date) }}</td>
-                                <td>{{ $entry->description }}</td>
-                                <td>{{ $entry->category->name }}</td>
-                                @if ($entry->isExpenseCategory())
-                                    <td style="color: red">{{ toBrMoney($entry->value) }}</td>
-                                @else
-                                    <td style="color: blue">{{ toBrMoney($entry->value) }}</td>
-                                @endif
-                                
-                                <td class="table-actions">
-                                    <div class="row">
-                                        @if ($entry->isPayable())
-                                            <a href="{{ route('payables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_payment') }}">
-                                                <i class="fas fa-receipt"></i>
-                                            </a>
-                                        @elseif($entry->isReceivable())
-                                            <a href="{{ route('receivables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_receivement') }}">
-                                                <i class="fas fa-receipt"></i>
-                                            </a>
-                                        @else
-                                            <a class="btn btn-info btn-sm edit" href="{{ route('account_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        @endif
-
-
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table datatable table-margin-top">
+                        <thead>
+                            <th>{{ __('global.date') }}</th>
+                            <th>{{ __('global.description') }}</th>
+                            <th>{{ __('global.category') }}</th>
+                            <th>{{ __('global.value') }}</th>
+                            <th>{{ __('global.actions') }}</th>
+                        </thead>
+                        <tbody>
+                            @foreach ($entries as $entry)
+                                <tr>
+                                    <td>{{ toBrDate($entry->date) }}</td>
+                                    <td>{{ $entry->description }}</td>
+                                    <td>{{ $entry->category->name }}</td>
+                                    @if ($entry->isExpenseCategory())
+                                        <td style="color: red">{{ toBrMoney($entry->value) }}</td>
+                                    @else
+                                        <td style="color: blue">{{ toBrMoney($entry->value) }}</td>
+                                    @endif
+                                    
+                                    <td class="table-actions">
+                                        <div class="row">
+                                            @if ($entry->isPayable())
+                                                <a href="{{ route('payables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_payment') }}">
+                                                    <i class="fas fa-receipt"></i>
+                                                </a>
+                                            @elseif($entry->isReceivable())
+                                                <a href="{{ route('receivables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_receivement') }}">
+                                                    <i class="fas fa-receipt"></i>
+                                                </a>
+                                            @else
+                                                <a class="btn btn-info btn-sm edit" href="{{ route('account_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            @endif
+    
+    
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
                 <h5 style="margin-top:20px">{{__("messages.entries.not_found")}}</h5>
             @endif
