@@ -147,11 +147,20 @@ class PayableController extends Controller
      */
     public function update(StorePayableRequest $request, $id)
     {
-        if (! $this->service->update($id, $request->all())) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+        $data       = $request->validated();
+        $payable = $this->service->findById($id);
 
-            return redirect()->route('payables.index');
+        if (! $payable) {
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_found'));
+            return redirect()->route('receivables.index');
         }
+
+        if ($payable->isPaid()) {
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.payable_is_paid'));
+            return redirect()->route('receivables.index');
+        }
+
+        $this->service->update($payable, $data);
 
         Alert::success(__('global.success'), __('messages.account_scheduling.payable_updated'));
 
@@ -166,10 +175,24 @@ class PayableController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->service->delete($id)) {
+        $payable = $this->service->findById($id);
+
+        if (! $payable) {
             return response()
-                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.not_found')]);
         }
+
+        if ($payable->isPaid()) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.payable_is_paid')]);
+        }
+
+        if (! $payable->isExpenseCategory()) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.not_payable')]);
+        }
+
+        $this->service->delete($payable);
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.account_scheduling.payable_deleted')]);
