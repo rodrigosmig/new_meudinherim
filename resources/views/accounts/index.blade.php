@@ -2,6 +2,9 @@
 
 @push('js')
     <script src="{{ asset('js/accounts/index.js') }}"></script>
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datetime-moment.js') }}"></script>
+    <script src="{{ asset('js/plugins/init-datatable.js') }}"></script>
 @endpush
 
 @section('js')
@@ -15,12 +18,6 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-
-            $('.datatable').DataTable({
-                "language": {
-                    "url": "{{ asset('js/plugins/datatable-portuguese.json') }}"
-                }
-            });
         })
     </script>
 @stop
@@ -37,31 +34,33 @@
 <div class="card">
     <div class="card-body">        
         @if ($accounts->isNotEmpty())
-            <table class="table datatable">
-                <thead>
-                    <th>{{ __('global.name') }}</th>
-                    <th>{{ __('global.type') }}</th>
-                    <th>{{ __('global.actions') }}</th>
-                </thead>
-                <tbody>
-                    @foreach ($accounts as $account)
-                        <tr>
-                            <td>{{ $account->name }}</td>
-                            <td>{{ toCategoryType($account->type) }}</td>
-                            <td class="table-actions">
-                                <div class="row">
-                                    <a class="btn btn-info btn-sm edit" href="{{ route('accounts.edit', $account->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
-                                    <button class="btn btn-danger btn-sm delete-account" data-account="{{ $account->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach 
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table datatable">
+                    <thead>
+                        <th>{{ __('global.name') }}</th>
+                        <th>{{ __('global.type') }}</th>
+                        <th>{{ __('global.actions') }}</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($accounts as $account)
+                            <tr>
+                                <td>{{ $account->name }}</td>
+                                <td>{{ toCategoryType($account->type) }}</td>
+                                <td class="table-actions">
+                                    <div class="row">
+                                        <a class="btn btn-info btn-sm edit" href="{{ route('accounts.edit', $account->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <button class="btn btn-danger btn-sm delete-account" data-account="{{ $account->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach 
+                    </tbody>
+                </table>
+            </div>
         @else
             <h5 style="margin-top:20px">{{__("messages.accounts.not_found")}}</h5>
         @endif
