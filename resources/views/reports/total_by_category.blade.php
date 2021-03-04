@@ -27,20 +27,22 @@
 
                     <h4 id="no-entries"></h4>
 
-                    <table id="table-entries" class="table table-responsive table-striped" style="display: none">
-                        <caption>{{ __("global.category") }}: <span id="table-caption"></span></caption>
-                        <thead>
-                            <th>{{ __('global.date') }}</th>
-                            <th>{{ __('global.description') }}</th>
-                            <th>{{ __('global.value') }}</th>
-                            <th>{{ __('global.source') }}</th>
-                        </thead>
-
-                        <tbody id="table-body">
-
-                        </tbody>
-                                                
-                    </table>
+                    <div class="table-responsive">
+                        <table id="table-entries" class="table table-striped" style="display: none">
+                            <caption>{{ __("global.category") }}: <span id="table-caption"></span></caption>
+                            <thead>
+                                <th>{{ __('global.date') }}</th>
+                                <th>{{ __('global.description') }}</th>
+                                <th>{{ __('global.value') }}</th>
+                                <th>{{ __('global.source') }}</th>
+                            </thead>
+    
+                            <tbody id="table-body">
+    
+                            </tbody>
+                                                    
+                        </table>
+                    </div>                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -47,47 +47,49 @@
         </div>
         <div class="card-body">        
             @if ($entries->isNotEmpty())
-                <table class="table table-responsive datatable">
-                    <thead>
-                        <th>{{ __('global.date') }}</th>
-                        <th>{{ __('global.category') }}</th>
-                        <th>{{ __('global.description') }}</th>
-                        <th>{{ __('global.value') }}</th>
-                        @if (! $invoice->isPaid())
-                            <th>{{ __('global.actions') }}</th>
-                        @endif
-                    </thead>
-                    <tbody>
-                        @foreach ($entries as $entry)
-                            <tr>
-                                <td>{{ toBrDate($entry->date) }}</td>
-                                <td>{{ $entry->category->name }}</td>
-                                <td>{{ $entry->description }}</td>
-                                @if ($entry->isExpenseCategory())
-                                    <td style="color: red">
-                                        {{ toBrMoney($entry->value) }}
-                                    </td>
-                                @else
-                                    <td style="color: blue">
-                                        {{ toBrMoney($entry->value) }}
-                                    </td>
-                                @endif
-                                @if (! $invoice->isPaid())
-                                    <td class="table-actions">
-                                        <div class="row">
-                                            <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                @endif
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table datatable">
+                        <thead>
+                            <th>{{ __('global.date') }}</th>
+                            <th>{{ __('global.category') }}</th>
+                            <th>{{ __('global.description') }}</th>
+                            <th>{{ __('global.value') }}</th>
+                            @if (! $invoice->isPaid())
+                                <th>{{ __('global.actions') }}</th>
+                            @endif
+                        </thead>
+                        <tbody>
+                            @foreach ($entries as $entry)
+                                <tr>
+                                    <td>{{ toBrDate($entry->date) }}</td>
+                                    <td>{{ $entry->category->name }}</td>
+                                    <td>{{ $entry->description }}</td>
+                                    @if ($entry->isExpenseCategory())
+                                        <td style="color: red">
+                                            {{ toBrMoney($entry->value) }}
+                                        </td>
+                                    @else
+                                        <td style="color: blue">
+                                            {{ toBrMoney($entry->value) }}
+                                        </td>
+                                    @endif
+                                    @if (! $invoice->isPaid())
+                                        <td class="table-actions">
+                                            <div class="row">
+                                                <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>                
             @else
                 <h5 style="margin-top:20px">{{__("messages.entries.not_found")}}</h5>
             @endif
