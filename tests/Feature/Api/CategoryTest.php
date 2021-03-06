@@ -210,7 +210,7 @@ class CategoryTest extends TestCase
 
         $response->assertStatus(200)
                 ->assertJsonPath('data.name', $data['name'])
-                ->assertJsonPath('data.type', (string) $data['type']);
+                ->assertJsonPath('data.type', $data['type']);
     }
 
     public function testDeleteCategoryWithUnauthenticatedUser()

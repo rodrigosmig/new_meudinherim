@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('auth/login', 'Api\\AuthController@login');
-//Route::post('/users', 'Api\\UserController@store');
 Route::post('/auth/register', 'Api\\AuthController@register');
 
 Route::group([
@@ -40,21 +39,21 @@ Route::group([
     );
 
     //Categories
-    Route::apiResource('categories', 'Api\\CategoryController');
+    Route::apiResource('categories', 'Api\\CategoryController', ["as" => "api"]);
 
     //Accounts
-    Route::apiResource('accounts', 'Api\\AccountController');
+    Route::apiResource('accounts', 'Api\\AccountController', ["as" => "api"]);
 
     //Cards
-    Route::apiResource('cards', 'Api\\CardController');
+    Route::apiResource('cards', 'Api\\CardController', ["as" => "api"]);
 
     //Payables
-    Route::apiResource('payables', 'Api\\PayableController');
+    Route::apiResource('payables', 'Api\\PayableController', ["as" => "api"]);
     Route::post('payables/{id}/payment', 'Api\\PayableController@payment');
     Route::post('payables/{id}/cancel-payment', 'Api\\PayableController@cancelPayment');
 
     //Receivables
-    Route::apiResource('receivables', 'Api\\ReceivableController');
+    Route::apiResource('receivables', 'Api\\ReceivableController', ["as" => "api"]);
     Route::post('receivables/{id}/receivement', 'Api\\ReceivableController@payment');
     Route::post('receivables/{id}/cancel-receivement', 'Api\\ReceivableController@cancelPayment');
 
@@ -73,6 +72,4 @@ Route::group([
     Route::delete('account-entries/{entry_id}', 'Api\\AccountEntryController@destroy');
 });
 
-Route::fallback(function () {
-    return response()->json(['message' => 'Not Found.'], Response::HTTP_NOT_FOUND);
-});
+Route::fallback('Api\\FallbackController@fallback');
