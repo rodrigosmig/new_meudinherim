@@ -159,7 +159,7 @@ class AccountEntryController extends Controller
         $date = $entry->date;
         $account = $entry->account;
 
-        if (! $this->service->delete($id)) {
+        if (! $this->service->delete($entry)) {
             return response()
                 ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
         }
