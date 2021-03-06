@@ -176,7 +176,7 @@ class InvoiceEntryController extends Controller
             return redirect()->route('cards.index');
         }
 
-        $invoice    = $entry->invoice;
+        $invoice = $entry->invoice;
 
         if (! $this->service->delete($id)) {
             return response()
@@ -184,6 +184,7 @@ class InvoiceEntryController extends Controller
         }
 
         $this->invoiceService->updateInvoiceAmount($invoice);
+        $this->cardService->updateCardBalance($invoice->card);
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.entries.delete')]);
