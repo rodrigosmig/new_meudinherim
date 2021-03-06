@@ -33,6 +33,11 @@ class DashboardController extends Controller
         $this->invoiceEntryService  = $invoiceEntryService;
     }
 
+    public function home() 
+    {
+        return redirect()->route('dashboard.index');
+    }
+
     /**
      * Show the application dashboard.
      *
