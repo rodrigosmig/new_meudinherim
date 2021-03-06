@@ -22,7 +22,17 @@ class InvoiceEntrySeeder extends Seeder
             'date'          => now()->modify('-1 days')->format('Y-m-d'),
             'description'   => 'Lunch',
             'value'         => 22.50,
-            'category_id'   => $jon->categories()->where('type', 2)->first()->id,
+            'category_id'   => $jon->categories()->find(17)->id,
+            'user_id'       => $jon->id,
+        ];
+
+        $entryservice->make($jon_card, $data);
+
+        $data = [
+            'date'          => now()->modify('-1 days')->format('Y-m-d'),
+            'description'   => 'Hotel',
+            'value'         => 80,
+            'category_id'   => $jon->categories()->find(26)->id,
             'user_id'       => $jon->id,
         ];
 
@@ -30,9 +40,9 @@ class InvoiceEntrySeeder extends Seeder
 
         $data = [
             'date'          => now()->format('Y-m-d'),
-            'description'   => 'Hotel',
-            'value'         => 80,
-            'category_id'   => $jon->categories()->where('type', 2)->first()->id,
+            'description'   => 'Xbox',
+            'value'         => 499,
+            'category_id'   => $jon->categories()->find(15)->id,
             'user_id'       => $jon->id,
         ];
 

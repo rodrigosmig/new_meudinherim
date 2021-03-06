@@ -21,7 +21,7 @@ class InvoiceEntryService
     }
 
     public function make(Card $card, array $data)
-    {
+    {   //dd($data);
         $this->card = $card;
         $this->data = $data;
         

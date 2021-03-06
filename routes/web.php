@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return redirect()->route('dashboard.index');
-});
+Route::get('/', 'DashboardController@home');
 
 Auth::routes();
 
@@ -36,7 +34,7 @@ Route::group([
     Route::post('accounts/transfer', 'AccountController@transferStore')->name('accounts.transfer_store');
     Route::resource('accounts', 'AccountController');
     Route::get('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
-    Route::post('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
+    Route::post('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries.filter');
 
     //Credit-Card
     Route::resource('cards', 'CardController');

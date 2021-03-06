@@ -21,23 +21,8 @@ class AccountSeeder extends Seeder
         ]);
 
         $jon->accounts()->create([
-            'name'      => 'C1',
-            'type'      => Account::SAVINGS,
-        ]);
-
-        $jon->accounts()->create([
             'name'      => 'C2',
             'type'      => Account::CHECKING_ACCOUNT,
-        ]);
-
-        $jon->accounts()->create([
-            'name'      => 'C3',
-            'type'      => Account::CHECKING_ACCOUNT,
-        ]);
-
-        $jon->accounts()->create([
-            'name'      => 'C4',
-            'type'      => Account::SAVINGS,
         ]);
     }
 }

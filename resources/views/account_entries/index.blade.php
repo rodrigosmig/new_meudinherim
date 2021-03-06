@@ -40,7 +40,7 @@
         <div class="card-body">
             <label>{{ __('global.filter_by_range') }}:</label>
             <div class="form-inline">
-                <form action="{{ route('accounts.entries', $account->id) }}" method="POST">
+                <form action="{{ route('accounts.entries.filter', $account->id) }}" method="POST">
                     @csrf
                     <div class="table-margin-bottom">    
                         <input id="filter_from" class="form-control" type="text" name="filter_from" placeholder="{{ __('global.initial_date') }}" value="{{ isset($filter['from']) ? $filter['from'] : '' }}">
