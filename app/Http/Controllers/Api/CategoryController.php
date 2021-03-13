@@ -41,7 +41,7 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $category = $this->service->store($data);
+        $category = $this->service->create($data);
 
         return (new CategoryResource($category))
                     ->response()
@@ -74,13 +74,17 @@ class CategoryController extends Controller
      */
     public function update(CategoryUpdateStoreRequest $request, $id)
     {
-        $category = $this->service->update($id, $request->validated());
+        $data = $request->validated();
+
+        $category = $this->service->findById($id);
 
         if (! $category) {
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return (new CategoryResource($this->service->findById($id)));
+        $this->service->update($category, $data);
+
+        return (new CategoryResource($category));
     }
 
     /**
@@ -91,15 +95,17 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $category = $this->service->delete($id);
-        } catch (QueryException $e) {
-            return response()->json(['message' => __('messages.categories.not_delete')], Response::HTTP_BAD_REQUEST);
-        }
+        $category = $this->service->findById($id);
 
         if (! $category) {
             return response()->json(['message' => __('messages.categories.api_not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        try {
+            $category = $this->service->delete($category);
+        } catch (QueryException $e) {
+            return response()->json(['message' => __('messages.categories.not_delete')], Response::HTTP_BAD_REQUEST);
+        } 
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
