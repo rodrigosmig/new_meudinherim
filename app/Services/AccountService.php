@@ -7,47 +7,36 @@ use App\Models\Account;
 use App\Models\Category;
 use App\Models\AccountBalance;
 use App\Services\AccountEntryService;
+use App\Repositories\Core\Eloquent\AccountRepository;
 
 class AccountService
 {
-    protected $account;
+    protected $repository;
 
-    public function __construct(Account $account)
+    public function __construct(AccountRepository $repository)
     {
-        $this->account = $account;
+        $this->repository = $repository;
     }
 
-    public function store(array $data)
+    public function create(array $data)
     {
-        return $this->account->create($data);
+        return $this->repository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update(Account $account, array $data)
     {
-        $account = $this->findById($id);
-
-        if (! $account) {
-            return false;
-        }
-
-        return $account->update($data);
+        return $this->repository->update($account, $data);
     }
 
 
-    public function delete($id)
+    public function delete(Account $account)
     {
-        $account = $this->findById($id);
-
-        if (! $account) {
-            return false;
-        }
-
-        return $account->delete();
+        return $this->repository->delete($account);
     }
 
     public function findById($id)
     {
-        return $this->account->find($id);
+        return $this->repository->findById($id);
     }
 
     /**
@@ -57,7 +46,7 @@ class AccountService
      */
     public function getAccountsForForm()
     {
-        return auth()->user()->accounts()->pluck('name', 'id');
+        return $this->repository->getAccountsForForm();
     }
 
     /**
@@ -67,7 +56,7 @@ class AccountService
      */
     public function getAccounts() 
     {
-        return auth()->user()->accounts;
+        return $this->repository->getAccounts();
     }
 
     /**
@@ -77,13 +66,7 @@ class AccountService
      */
     public function getTypeList(): array
     {
-        $types = [];
-
-        foreach ($this->account::ARRAY_TYPES as $key => $type) {
-            $types[$key] = __('global.' . $type);
-        }
-
-        return $types;
+        return $this->repository->getTypeList();
     }
 
     /**
@@ -95,30 +78,28 @@ class AccountService
      */  
     public function updateBalance(Account $account, $date)
     {
-        $this->account = $account;
-
-        $entries = $this->getEntriesFromDate($date);
+        $entries = $this->repository->getEntriesFromDate($account, $date);
         $balances = $this->getTotalBalanceOfDay($entries);
 
-        $last_balance = $this->getLastBalance($date);
+        $last_balance = $this->repository->getLastBalance($account, $date);
        
         $previous_balance = $last_balance->current_balance;
 
         if ($entries->isEmpty()) {
-            $balance = $this->findBalanceByDate($date);
+            $balance = $this->repository->findBalanceByDate($account, $date);
             if ($balance) {
                 $balance->delete();
             }
         }
 
-        $this->deleteNextBalances($date);
+        $this->repository->deleteNextBalances($account, $date);
 
         foreach ($balances as $date => $value) {
-            $balance = $this->findBalanceByDate($date);
+            $balance = $this->repository->findBalanceByDate($account, $date);
             $current_balance = $previous_balance + $value;
 
             if (!$balance) {                
-                $balance = $this->createBalance($date, $current_balance, $previous_balance);
+                $balance = $this->repository->createBalance($account, $date, $current_balance, $previous_balance);
             } else {
                 $balance->current_balance = $current_balance;
             }
@@ -136,10 +117,10 @@ class AccountService
      * @param string $date
      * @return Illuminate\Database\Eloquent\Collection
      */  
-    private function getEntriesFromDate($date)
+    /* private function getEntriesFromDate($date)
     {
         return $this->account->entries()->where('date', '>=', $date)->get();
-    }
+    } */
 
     /**
      * Returns an array with balances separated by day
@@ -174,7 +155,7 @@ class AccountService
      * @param Account $account
      * @return AccountBalance
      */  
-    private function findBalanceByDate($date): AccountBalance
+    /* private function findBalanceByDate($date): AccountBalance
     {
         $balance = $this->account->balances()->where('date', $date)->first();
 
@@ -183,7 +164,7 @@ class AccountService
         }
 
         return $balance;
-    }
+    } */
 
     /**
      * Returns the last balance before the given date
@@ -191,7 +172,7 @@ class AccountService
      * @param string $date
      * @return AccountBalance
      */  
-    private function getLastBalance($date): AccountBalance
+    /* private function getLastBalance($date): AccountBalance
     {
         $balance = $this->account->balances()
             ->where('date', '<', $date)
@@ -204,14 +185,14 @@ class AccountService
 
         return $balance;
     }
-
+ */
     /**
      * Returns the last balance before the given date
      *
      * @param string $date
      * @return void
      */  
-    private function deleteNextBalances($date)
+    /* private function deleteNextBalances($date)
     {
         $balances = $this->account->balances()
             ->where('date', '>=', $date)
@@ -224,7 +205,7 @@ class AccountService
         }
 
         $this->account->balances()->whereIn('id', $ids)->delete();
-    }
+    } */
 
     /**
      * Creates an account balance
@@ -234,14 +215,14 @@ class AccountService
      * @param int $previous_balance
      * @return AccountBalance
      */  
-    private function createBalance($date, $current_balance, $previous_balance = 0): AccountBalance
+    /* private function createBalance($date, $current_balance, $previous_balance = 0): AccountBalance
     {
         return $this->account->balances()->create([
             'date'              => $date,
             'previous_balance'  => $previous_balance,
             'current_balance'   => $current_balance
         ]);
-    }
+    } */
 
     /**
      * Transfers an amount between bank accounts
@@ -252,8 +233,8 @@ class AccountService
      */  
     public function accountTransfer($data)
     {
-        $source_account     = $this->findById($data['source_account_id']);
-        $destination_account    = $this->findById($data['destination_account_id']);
+        $source_account     = $this->repository->findById($data['source_account_id']);
+        $destination_account    = $this->repository->findById($data['destination_account_id']);
 
         if ($source_account->id === $destination_account->id) {
             throw new Exception(__('messages.accounts.equal_accounts'));
@@ -298,7 +279,7 @@ class AccountService
      */  
     public function getAllAccountBalances(): array
     {
-        $accounts   = $this->account->get();
+        $accounts   = $this->repository->getAccounts();
         $balances   = [];
         $total      = 0; 
 
