@@ -66,6 +66,12 @@ class AccountService
      */
     public function getTypeList(): array
     {
+        $types = [];
+
+        foreach ($this->account::ARRAY_TYPES as $key => $type) {
+            $types[$key] = __('global.' . $type);
+        }
+
         return $this->repository->getTypeList();
     }
 
@@ -112,17 +118,6 @@ class AccountService
     }
 
     /**
-     * Returns all entries from a given date
-     *
-     * @param string $date
-     * @return Illuminate\Database\Eloquent\Collection
-     */  
-    /* private function getEntriesFromDate($date)
-    {
-        return $this->account->entries()->where('date', '>=', $date)->get();
-    } */
-
-    /**
      * Returns an array with balances separated by day
      *
      * @param Illuminate\Database\Eloquent\Collection $entries
@@ -148,81 +143,6 @@ class AccountService
 
         return $total;
     }
-
-    /**
-     * Returns the balance for the given date
-     *
-     * @param Account $account
-     * @return AccountBalance
-     */  
-    /* private function findBalanceByDate($date): AccountBalance
-    {
-        $balance = $this->account->balances()->where('date', $date)->first();
-
-        if (!$balance) {
-            $balance = $this->createBalance($date, 0);
-        }
-
-        return $balance;
-    } */
-
-    /**
-     * Returns the last balance before the given date
-     *
-     * @param string $date
-     * @return AccountBalance
-     */  
-    /* private function getLastBalance($date): AccountBalance
-    {
-        $balance = $this->account->balances()
-            ->where('date', '<', $date)
-            ->orderByDesc('date')
-            ->first();
-        
-        if (!$balance) {
-            $balance = $this->createBalance($date, 0);
-        }
-
-        return $balance;
-    }
- */
-    /**
-     * Returns the last balance before the given date
-     *
-     * @param string $date
-     * @return void
-     */  
-    /* private function deleteNextBalances($date)
-    {
-        $balances = $this->account->balances()
-            ->where('date', '>=', $date)
-            ->get();
-        
-        $ids = [];
-
-        foreach ($balances as $balance) {
-            $ids[] = $balance->id;
-        }
-
-        $this->account->balances()->whereIn('id', $ids)->delete();
-    } */
-
-    /**
-     * Creates an account balance
-     *
-     * @param string $date
-     * @param int $current_balance
-     * @param int $previous_balance
-     * @return AccountBalance
-     */  
-    /* private function createBalance($date, $current_balance, $previous_balance = 0): AccountBalance
-    {
-        return $this->account->balances()->create([
-            'date'              => $date,
-            'previous_balance'  => $previous_balance,
-            'current_balance'   => $current_balance
-        ]);
-    } */
 
     /**
      * Transfers an amount between bank accounts
