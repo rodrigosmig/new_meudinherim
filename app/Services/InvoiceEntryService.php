@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\InvoiceEntry;
 use App\Services\CardService;
 use App\Exceptions\InsufficientLimitException;
+use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceEntryService
 {
@@ -49,9 +50,9 @@ class InvoiceEntryService
      */ 
     public function createEntry()
     {
-        $cardService = app(CardService::class);
+        $invoiceRepository = app(InvoiceRepository::class);
 
-        $invoice = $cardService->getInvoiceByDate($this->card, $this->data['date']);
+        $invoice = $invoiceRepository->getInvoiceByDate($this->card, $this->data['date']);
 
         if (! $invoice) {
             return false;

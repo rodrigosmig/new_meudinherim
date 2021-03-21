@@ -65,7 +65,7 @@ class AccountController extends Controller
     {
         $data = $request->validated();
 
-        $account = $account = $this->service->create($data);
+        $account = $this->service->create($data);
 
         if (! $account) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));

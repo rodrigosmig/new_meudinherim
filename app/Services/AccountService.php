@@ -66,12 +66,6 @@ class AccountService
      */
     public function getTypeList(): array
     {
-        $types = [];
-
-        foreach ($this->account::ARRAY_TYPES as $key => $type) {
-            $types[$key] = __('global.' . $type);
-        }
-
         return $this->repository->getTypeList();
     }
 

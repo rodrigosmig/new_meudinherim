@@ -11,47 +11,13 @@ class CardRepository extends BaseEloquentRepository implements CardRepositoryInt
 {
     protected $model = Card::class;
 
-    public function store(array $data)
+    public function getCards() 
     {
-        $data['credit_limit'] *= 100;
-        $data['user_id'] = auth()->user()->id;
-        
-        return parent::store($data);
+        return auth()->user()->cards;
     }
 
-    public function update($id, array $data)
+    public function getCardsForForm()
     {
-        $data['credit_limit'] *= 100;
-
-        return parent::update($id, $data);
-    }
-
-    public function getCardsByUser() 
-    {
-        return $this->model::where('user_id', auth()->user()->id)->get();
-    }
-
-    public function getCardsForForm() 
-    {
-        return $this->model::where('user_id', auth()->user()->id)->pluck('name', 'id');
-    }
-
-    public function createInvoice($card, $data)
-    {
-        return $card->invoices()->create($data);
-    }
-
-    public function getInvoiceByDate($card, $date) 
-    {
-        return $card->invoices()
-            ->where('closing_date', '>=', $date)
-            ->first();
-    }
-
-    public function getInvoiceById($card, $invoice_id) 
-    {
-        return $card->invoices()
-            ->where('id', $invoice_id)
-            ->first();
+        return auth()->user()->cards()->pluck('name', 'id');
     }
 }

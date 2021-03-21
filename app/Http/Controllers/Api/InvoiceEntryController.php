@@ -12,18 +12,20 @@ use App\Http\Resources\InvoiceEntryResource;
 use App\Exceptions\InsufficientLimitException;
 use App\Http\Requests\Api\StoreInvoiceEntryRequest;
 use App\Http\Requests\Api\UpdateInvoiceEntryRequest;
+use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceEntryController extends Controller
 {
     private $entryService;
-    private $invoiceService;
+    private $invoiceRepository;
     private $cardService;
 
-    public function __construct(InvoiceEntryService $entryService, CardService $cardService, InvoiceService $invoiceService)
+    public function __construct(InvoiceEntryService $entryService, CardService $cardService, InvoiceRepository $invoiceRepository, InvoiceService $invoiceService)
     {
-        $this->entryService     = $entryService;
-        $this->cardService      = $cardService;
-        $this->invoiceService   = $invoiceService;
+        $this->entryService         = $entryService;
+        $this->cardService          = $cardService;
+        $this->invoiceRepository    = $invoiceRepository;
+        $this->invoiceService       = $invoiceService;
 
         $this->title = __('global.invoice_entry');
     }
@@ -40,7 +42,7 @@ class InvoiceEntryController extends Controller
             return response()->json(['message' => __('messages.entries.invalid_card')], Response::HTTP_NOT_FOUND);
         }
         
-        $invoice = $this->cardService->getInvoiceById($card, $invoice_id);
+        $invoice = $this->invoiceRepository->getInvoiceById($card, $invoice_id);
 
         if (! $invoice) {
             return response()->json(['message' => __('messages.entries.invalid_invoice')], Response::HTTP_NOT_FOUND);

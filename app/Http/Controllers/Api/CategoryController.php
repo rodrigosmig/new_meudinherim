@@ -102,7 +102,7 @@ class CategoryController extends Controller
         }
 
         try {
-            $category = $this->service->delete($category);
+            $this->service->delete($category);
         } catch (QueryException $e) {
             return response()->json(['message' => __('messages.categories.not_delete')], Response::HTTP_BAD_REQUEST);
         } 
