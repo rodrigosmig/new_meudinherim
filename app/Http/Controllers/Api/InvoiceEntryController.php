@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Services\CardService;
 use Illuminate\Http\Response;
-use App\Services\InvoiceService;
 use App\Http\Controllers\Controller;
 use App\Services\InvoiceEntryService;
 use App\Http\Resources\InvoiceEntryResource;
@@ -20,12 +19,14 @@ class InvoiceEntryController extends Controller
     private $invoiceRepository;
     private $cardService;
 
-    public function __construct(InvoiceEntryService $entryService, CardService $cardService, InvoiceRepository $invoiceRepository, InvoiceService $invoiceService)
-    {
+    public function __construct(
+        InvoiceEntryService $entryService, 
+        CardService $cardService, 
+        InvoiceRepository $invoiceRepository
+    ) {
         $this->entryService         = $entryService;
         $this->cardService          = $cardService;
         $this->invoiceRepository    = $invoiceRepository;
-        $this->invoiceService       = $invoiceService;
 
         $this->title = __('global.invoice_entry');
     }
@@ -67,7 +68,7 @@ class InvoiceEntryController extends Controller
         }
 
         try {
-            $entry = $this->entryService->make($card, $data);
+            $entry = $this->entryService->create($card, $data);
         } catch (InsufficientLimitException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -111,22 +112,23 @@ class InvoiceEntryController extends Controller
      */
     public function update(UpdateInvoiceEntryRequest $request, $id)
     {
-        $data = $request->validated();
-
-        try {
-            $entry = $this->entryService->update($id, $data);
-        } catch (InsufficientLimitException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $data   = $request->validated();
+        $entry  = $this->entryService->findById($id);
 
         if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $this->invoiceService->updateInvoiceAmount($entry->invoice);
+        try {
+            $this->entryService->update($entry, $data);
+        } catch (InsufficientLimitException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->invoiceRepository->updateInvoiceAmount($entry->invoice);
         $this->cardService->updateCardBalance($entry->invoice->card);
 
-        return (new InvoiceEntryResource($this->entryService->findById($id)));
+        return (new InvoiceEntryResource($entry));
     }
 
     /**
@@ -137,9 +139,13 @@ class InvoiceEntryController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->entryService->delete($id)) {
+        $entry = $this->entryService->findById($id);
+
+        if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        $this->entryService->delete($entry);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }

@@ -11,10 +11,4 @@ interface InvoiceRepositoryInterface
     public function getInvoiceByDate($card, $date): ?Model;
     public function getInvoiceById($card, $invoice_id): ?Model;
     public function getInvoiceTotalAmount($invoice): float;
-
-
-    public function createEntries($invoice, array $data);
-    public function getAllInvoicesByStatus($paid = false);
-    public function getInvoicesByStatus($card, $paid = false);
-
 }

@@ -126,53 +126,16 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
         return $total;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function createEntries($invoice, array $data)
+    /**
+     * Updates invoice amount
+     *
+     * @param Invoice $invoice
+     * @return bool
+     */  
+    public function updateInvoiceAmount(Invoice $invoice): bool
     {
-        return $invoice->entries()->create($data);
+        $total = $this->getInvoiceTotalAmount($invoice);
+
+        return $invoice->update(['amount' => $total]);
     }
-
-    public function getAllInvoicesByStatus($paid = false)
-    {
-        return $this->model::where('paid', $paid)
-                    ->where('user_id', auth()->user()->id)
-                    ->get();
-    }
-
-    /* public function getInvoicesByStatus($card_id, $paid = false)
-    {
-        return $this->model::where('paid', $paid)
-                    ->where('card_id', $card_id)
-                    ->where('user_id', auth()->user()->id)
-                    ->get();
-    } */
-
-    /* public function getInvoiceByDate($card, $date) 
-    {
-        return $card->invoices()
-            ->where('closing_date', '>=', $date)
-            ->first();
-    }    */ 
 }

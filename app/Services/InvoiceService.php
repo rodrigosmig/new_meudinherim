@@ -90,14 +90,14 @@ class InvoiceService
      * @param Invoice $invoice
      * @return bool
      */  
-    public function updateInvoiceAmount(Invoice $invoice): bool
+    /* public function updateInvoiceAmount(Invoice $invoice): bool
     {
         $total = $this->getInvoiceTotalAmount($invoice);
 
         return $invoice->update(['amount' => $total]);
-    }
+    } */
 
-    public function getInvoiceTotalAmount(Invoice $invoice): float
+    /* public function getInvoiceTotalAmount(Invoice $invoice): float
     {
         $total = 0;
 
@@ -110,7 +110,7 @@ class InvoiceService
         }
 
         return $total;
-    }
+    } */
 
     /**
      * Returns an array with the total invoices of the lasts six months
