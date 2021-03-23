@@ -26,7 +26,7 @@ class InvoiceEntrySeeder extends Seeder
             'user_id'       => $jon->id,
         ];
 
-        $entryservice->make($jon_card, $data);
+        $entryservice->create($jon_card, $data);
 
         $data = [
             'date'          => now()->modify('-1 days')->format('Y-m-d'),
@@ -36,7 +36,7 @@ class InvoiceEntrySeeder extends Seeder
             'user_id'       => $jon->id,
         ];
 
-        $entryservice->make($jon_card, $data);
+        $entryservice->create($jon_card, $data);
 
         $data = [
             'date'          => now()->format('Y-m-d'),
@@ -46,7 +46,7 @@ class InvoiceEntrySeeder extends Seeder
             'user_id'       => $jon->id,
         ];
 
-        $entryservice->make($jon_card, $data);
+        $entryservice->create($jon_card, $data);
 
         $cardService->updateCardBalance($jon_card);
     }

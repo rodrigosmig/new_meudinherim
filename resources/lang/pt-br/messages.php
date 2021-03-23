@@ -5,6 +5,7 @@ return [
     'not_delete'            => 'Não foi possível deletar. Tente novamente',
     'ajax_title'            => 'Tem certeza?',
     'not_found'             => 'Nenhum registro encontrado',
+    'parcel_title'           => 'Deseja excluir todas as parcelas?',
 
     'categories' => [
         'select_type'       => 'Selecione um tipo de categoria',
@@ -59,6 +60,7 @@ return [
         'invalid_card'          => 'O cartão informado não foi encontrado',
         'invalid_invoice'       => 'A fatura informada não foi encontrado',
         'api_not_found'         => 'Lançamento não encontrado',
+        'delete_parcel'         => 'Ao confirmar, todas as parcelas serão excluídas',
     ],
 
     'account_scheduling' => [

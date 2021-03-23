@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Response;
 use App\Services\AccountService;
 use App\Http\Requests\TransferRequest;
+use Illuminate\Database\QueryException;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\StoreUpdateAccountRequest;
 
@@ -61,7 +63,14 @@ class AccountController extends Controller
      */
     public function store(StoreUpdateAccountRequest $request)
     {
-        $this->service->store($request->all());
+        $data = $request->validated();
+
+        $account = $this->service->create($data);
+
+        if (! $account) {
+            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+            return redirect()->route('accounts.index');
+        }
 
         Alert::success(__('global.success'), __('messages.accounts.create'));
 
@@ -99,11 +108,15 @@ class AccountController extends Controller
      */
     public function update(StoreUpdateAccountRequest $request, $id)
     {
-        if (! $this->service->update($id, $request->all())) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+        $data       = $request->validated();
+        $account    = $this->service->findById($id);
 
+        if (! $account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.not_found'));
             return redirect()->route('accounts.index');
         }
+
+        $this->service->update($account, $data);
 
         Alert::success(__('global.success'), __('messages.accounts.update'));
 
@@ -118,9 +131,18 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->service->delete($id)) {
+        $account = $this->service->findById($id);
+
+        if (! $account) {
             return response()
-                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
+                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.accounts.not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $account = $this->service->delete($account);
+        } catch (QueryException $e) {
+            return response()
+                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.accounts.not_delete')], Response::HTTP_BAD_REQUEST);
         }
 
         return response()

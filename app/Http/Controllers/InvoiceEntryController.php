@@ -4,38 +4,35 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CardService;
-use App\Services\InvoiceService;
 use App\Services\InvoiceEntryService;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Exceptions\InsufficientLimitException;
 use App\Http\Requests\StoreInvoiceEntryRequest;
 use App\Http\Requests\UpdateInvoiceEntryRequest;
+use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 
 class InvoiceEntryController extends Controller
 {
-    /* The InvoiceService instance.
+    /* The InvoiceEntryService instance.
 	 *
 	 * @var InvoiceEntryService
 	 */
     private $service;
 
-    /* The InvoiceService instance.
-	 *
-	 * @var InvoiceService
-	 */
-    private $invoiceService;
-    
     /* The CardService instance.
 	 *
 	 * @var CardService
 	 */
     private $cardService;
 
-    public function __construct(InvoiceEntryService $service, CardService $cardService, InvoiceService $invoiceService)
-    {
-        $this->service          = $service;
-        $this->cardService      = $cardService;
-        $this->invoiceService   = $invoiceService;
+    public function __construct(
+        InvoiceEntryService $service, 
+        CardService $cardService, 
+        InvoiceRepositoryInterface $invoiceRepository
+    ) {
+        $this->service              = $service;
+        $this->cardService          = $cardService;
+        $this->invoiceRepository    = $invoiceRepository;
 
         $this->title = __('global.invoice_entry');
     }
@@ -63,7 +60,7 @@ class InvoiceEntryController extends Controller
 
         $data = [
             'title'     => __('global.invoice'),
-            'entries'   => $invoice->entries,
+            'entries'   => $this->service->getAllEntriesForInvoice($invoice),
             'invoice'   => $invoice
         ];
 
@@ -92,18 +89,18 @@ class InvoiceEntryController extends Controller
      */
     public function store(StoreInvoiceEntryRequest $request)
     {
-        $data = $request->except('_token');
+        $data = $request->validated();
         $card = $this->cardService->findById($data['card_id']);
 
-        try {
-            $entry = $this->service->make($card, $data);
-        } catch (InsufficientLimitException $exception) {
-            Alert::error(__('global.invalid_request'), $exception->getMessage());
-            return redirect()->back();
+        if (!$card) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('cards.index');
         }
 
-        if (! $entry) {
-            Alert::warning(__('global.invalid'), __('messages.not_save'));
+        try {
+            $this->service->create($card, $data);
+        } catch (InsufficientLimitException $exception) {
+            Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->back();
         }
 
@@ -141,19 +138,22 @@ class InvoiceEntryController extends Controller
      */
     public function update(UpdateInvoiceEntryRequest $request, $id)
     {
+        $data   = $request->validated();
+        $entry  = $this->service->findById($id);
+
+        if (! $entry) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            return redirect()->route('cards.index');
+        }
+
         try {
-            $entry = $this->service->update($id, $request->all());
+            $this->service->update($entry, $data);
         } catch (InsufficientLimitException $exception) {
             Alert::error(__('global.invalid_request'), $exception->getMessage());
             return redirect()->back();
         }
 
-        if (! $entry) {
-            Alert::error(__('global.invalid_request'), __('messages.not_savess'));
-            return redirect()->route('cards.index');
-        }
-        
-        $this->invoiceService->updateInvoiceAmount($entry->invoice);
+        $this->invoiceRepository->updateInvoiceAmount($entry->invoice);
         $this->cardService->updateCardBalance($entry->invoice->card);
 
         Alert::success(__('global.success'), __('messages.entries.update'));
@@ -169,7 +169,7 @@ class InvoiceEntryController extends Controller
      */
     public function destroy($id)
     {
-        $entry      = $this->service->findById($id);
+        $entry = $this->service->findById($id);
 
         if (! $entry) {
             Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
@@ -178,12 +178,12 @@ class InvoiceEntryController extends Controller
 
         $invoice = $entry->invoice;
 
-        if (! $this->service->delete($id)) {
+        if (! $this->service->delete($entry)) {
             return response()
                     ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
         }
 
-        $this->invoiceService->updateInvoiceAmount($invoice);
+        $this->invoiceRepository->updateInvoiceAmount($entry->invoice);
         $this->cardService->updateCardBalance($invoice->card);
 
         return response()

@@ -2,29 +2,30 @@
 
 namespace App\Models;
 
+use App\Models\Invoice;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
-use App\Models\AccountEntry;
 use Illuminate\Database\Eloquent\Model;
 
-class AccountsScheduling extends Model
+class Parcel extends Model
 {
     use UserTrait, HasCategory;
     
     public $fillable =  [
-        'due_date', 
-        'paid_date', 
+        'date',
+        'paid_date',
         'description', 
-        'value', 
-        'category_id', 
-        'invoice_id', 
+        'value',
+        'category_id',
+        'parcel_number', 
+        'parcel_total',
         'paid',
-        'monthly',
-        'user_id'
-    ];
+        'invoice_id',
+        'user_id'];
 
-    public function accountEntry(){
-        return $this->hasOne(AccountEntry::class, 'account_scheduling_id');
+    public function parcelable()
+    {
+        return $this->morphTo();
     }
 
     public function invoice()
@@ -40,15 +41,5 @@ class AccountsScheduling extends Model
     public function setValueAttribute($value)
     {
         $this->attributes['value'] = $value * 100;
-    }
-
-    /**
-     * Checks if the account is paid
-     *
-     * @return bool
-     */
-    public function isPaid()
-    {
-        return $this->paid;
     }
 }

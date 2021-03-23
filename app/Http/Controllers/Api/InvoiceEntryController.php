@@ -5,25 +5,29 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Services\CardService;
 use Illuminate\Http\Response;
-use App\Services\InvoiceService;
 use App\Http\Controllers\Controller;
 use App\Services\InvoiceEntryService;
 use App\Http\Resources\InvoiceEntryResource;
 use App\Exceptions\InsufficientLimitException;
 use App\Http\Requests\Api\StoreInvoiceEntryRequest;
 use App\Http\Requests\Api\UpdateInvoiceEntryRequest;
+use App\Models\InvoiceEntry;
+use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceEntryController extends Controller
 {
     private $entryService;
-    private $invoiceService;
+    private $invoiceRepository;
     private $cardService;
 
-    public function __construct(InvoiceEntryService $entryService, CardService $cardService, InvoiceService $invoiceService)
-    {
-        $this->entryService     = $entryService;
-        $this->cardService      = $cardService;
-        $this->invoiceService   = $invoiceService;
+    public function __construct(
+        InvoiceEntryService $entryService, 
+        CardService $cardService, 
+        InvoiceRepository $invoiceRepository
+    ) {
+        $this->entryService         = $entryService;
+        $this->cardService          = $cardService;
+        $this->invoiceRepository    = $invoiceRepository;
 
         $this->title = __('global.invoice_entry');
     }
@@ -40,7 +44,7 @@ class InvoiceEntryController extends Controller
             return response()->json(['message' => __('messages.entries.invalid_card')], Response::HTTP_NOT_FOUND);
         }
         
-        $invoice = $this->cardService->getInvoiceById($card, $invoice_id);
+        $invoice = $this->invoiceRepository->getInvoiceById($card, $invoice_id);
 
         if (! $invoice) {
             return response()->json(['message' => __('messages.entries.invalid_invoice')], Response::HTTP_NOT_FOUND);
@@ -65,7 +69,7 @@ class InvoiceEntryController extends Controller
         }
 
         try {
-            $entry = $this->entryService->make($card, $data);
+            $entry = $this->entryService->create($card, $data);
         } catch (InsufficientLimitException $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -74,7 +78,7 @@ class InvoiceEntryController extends Controller
             return response()->json(['message' => __('messages.not_save')], Response::HTTP_BAD_REQUEST);
         }
 
-        if (is_array($entry)) {
+        if (get_class($entry) !== InvoiceEntry::class) {
             return InvoiceEntryResource::collection($entry);
         }
 
@@ -109,22 +113,23 @@ class InvoiceEntryController extends Controller
      */
     public function update(UpdateInvoiceEntryRequest $request, $id)
     {
-        $data = $request->validated();
-
-        try {
-            $entry = $this->entryService->update($id, $data);
-        } catch (InsufficientLimitException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $data   = $request->validated();
+        $entry  = $this->entryService->findById($id);
 
         if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $this->invoiceService->updateInvoiceAmount($entry->invoice);
+        try {
+            $this->entryService->update($entry, $data);
+        } catch (InsufficientLimitException $e) {
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->invoiceRepository->updateInvoiceAmount($entry->invoice);
         $this->cardService->updateCardBalance($entry->invoice->card);
 
-        return (new InvoiceEntryResource($this->entryService->findById($id)));
+        return (new InvoiceEntryResource($entry));
     }
 
     /**
@@ -135,9 +140,13 @@ class InvoiceEntryController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->entryService->delete($id)) {
+        $entry = $this->entryService->findById($id);
+
+        if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        $this->entryService->delete($entry);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }

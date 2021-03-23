@@ -41,7 +41,7 @@ class Category extends Model
         });
     }
 
-    public function getDefaultIncomeCategories()
+    public static function getDefaultIncomeCategories()
     {
         return [
             __('global.default_categories.salary'),
@@ -56,7 +56,7 @@ class Category extends Model
         ];
     }
 
-    public function getDefaultExpenseCategories()
+    public static function getDefaultExpenseCategories()
     {
         return [
             __('global.default_categories.house'),

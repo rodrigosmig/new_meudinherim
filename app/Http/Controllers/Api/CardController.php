@@ -41,7 +41,7 @@ class CardController extends Controller
     {
         $data = $request->validated();
 
-        $card = $this->service->make($data);
+        $card = $this->service->create($data);
 
         return (new CardResource($card))
                     ->response()
@@ -74,13 +74,16 @@ class CardController extends Controller
      */
     public function update(CardUpdateStoreRequest $request, $id)
     {
-        $card = $this->service->update($id, $request->validated());
+        $data = $request->validated();
+        $card = $this->service->findById($id);
 
         if (! $card) {
             return response()->json(['message' => __('messages.cards.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return (new CardResource($this->service->findById($id)));
+        $this->service->update($card, $data);
+
+        return (new CardResource($card));
     }
 
     /**
@@ -91,14 +94,16 @@ class CardController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $card = $this->service->delete($id);
-        } catch (QueryException $e) {
-            return response()->json(['message' => __('messages.cards.not_delete')], Response::HTTP_BAD_REQUEST);
-        }
+        $card = $this->service->findById($id);
 
         if (! $card) {
             return response()->json(['message' => __('messages.cards.api_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $this->service->delete($card);
+        } catch (QueryException $e) {
+            return response()->json(['message' => __('messages.cards.not_delete')], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([], Response::HTTP_NO_CONTENT);
