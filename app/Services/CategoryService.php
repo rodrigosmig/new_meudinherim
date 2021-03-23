@@ -3,47 +3,36 @@
 namespace App\Services;
 
 use App\Models\Category;
+use App\Repositories\Core\Eloquent\CategoryRepository;
 
 class CategoryService
 {
-    protected $category;
+    protected $repository;
 
-    public function __construct(Category $category)
+    public function __construct(CategoryRepository $repository)
     {
-        $this->category = $category;
+        $this->repository = $repository;
     }
 
-    public function store(array $data)
+    public function create(array $data)
     {
-        return $this->category->create($data);
+        return $this->repository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update(Category $category, array $data)
     {
-        $category = $this->findById($id);
-
-        if (! $category) {
-            return false;
-        }
-
-        return $category->update($data);
+        return $this->repository->update($category, $data);
     }
 
 
-    public function delete($id)
+    public function delete(Category $category)
     {
-        $category = $this->findById($id);
-
-        if (! $category) {
-            return false;
-        }
-
-        return $category->delete();
+        return $this->repository->delete($category);
     }
 
     public function findById($id)
     {
-        return $this->category->find($id);
+        return $this->repository->findById($id);
     }
 
     /**
@@ -53,9 +42,7 @@ class CategoryService
      */
     public function getCategoriesByType($type) 
     {
-        return $this->category::where('type', $type)
-            ->orderBy('name')
-            ->get();
+        return $this->repository->getCategoriesByType($type);
     }
 
     /**
@@ -65,9 +52,7 @@ class CategoryService
      */
     public function getIncomeCategoriesForForm()
     {
-        return $this->category::where('type', $this->category::INCOME)
-                    ->orderBy('name')
-                    ->pluck('name', 'id'); 
+        return $this->repository->getIncomeCategoriesForForm();
     }
 
     /**
@@ -77,9 +62,7 @@ class CategoryService
      */
     public function getExpenseCategoriesForForm() 
     {
-        return $this->category::where('type', $this->category::EXPENSE)
-                    ->orderBy('name')
-                    ->pluck('name', 'id');
+        return $this->repository->getExpenseCategoriesForForm();
     }
 
     /**
@@ -104,24 +87,26 @@ class CategoryService
      */
     public function createDefaultCategories() 
     {
-        $income = $this->category->getDefaultIncomeCategories();
+        $income = Category::getDefaultIncomeCategories();
 
-        $expense = $this->category->getDefaultExpenseCategories();
+        $expense = Category::getDefaultExpenseCategories();
 
         foreach ($income as $name) {
             $data = [
                 'name' => $name,
-                'type' => $this->category::INCOME
+                'type' => Category::INCOME
             ];
-            $this->store($data);
+
+            $this->repository->create($data);
         }
 
         foreach ($expense as $name) {
             $data = [
                 'name' => $name,
-                'type' => $this->category::EXPENSE
+                'type' => Category::EXPENSE
             ];
-            $this->store($data);
+
+            $this->repository->create($data);
         }
     }    
 
@@ -132,32 +117,32 @@ class CategoryService
      */
     public function createDefaultCategoriesForApi() 
     {
-        $income = $this->category->getDefaultIncomeCategories();
+        $income = Category::getDefaultIncomeCategories();
 
-        $expense = $this->category->getDefaultExpenseCategories();
+        $expense = Category::getDefaultExpenseCategories();
 
         foreach ($income as $name) {
             $data = [
                 'name' => $name,
-                'type' => $this->category::INCOME
+                'type' => Category::INCOME
             ];
-            $this->category->createWithoutEvents($data);
+            $this->repository->createWithoutEvents($data);
         }
 
         foreach ($expense as $name) {
             $data = [
                 'name' => $name,
-                'type' => $this->category::EXPENSE
+                'type' => Category::EXPENSE
             ];
-            $this->category->createWithoutEvents($data);
+            $this->repository->createWithoutEvents($data);
         }
     }
 
     public function getAllCategories(): array
     {
         $categories = [
-            'income'    => $this->getCategoriesByType($this->category::INCOME),
-            'expense'   => $this->getCategoriesByType($this->category::EXPENSE),
+            'income'    => $this->getCategoriesByType(Category::INCOME),
+            'expense'   => $this->getCategoriesByType(Category::EXPENSE),
         ];
 
         return $categories;

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CardService;
+use Illuminate\Http\Response;
+use Illuminate\Database\QueryException;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\StoreUpdateCardRequest;
 
@@ -59,7 +61,9 @@ class CardController extends Controller
      */
     public function store(StoreUpdateCardRequest $request)
     {
-        $card = $this->service->make($request->all());
+        $data = $request->validated();
+
+        $card = $this->service->create($data);
 
         if (! $card) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
@@ -101,11 +105,15 @@ class CardController extends Controller
      */
     public function update(StoreUpdateCardRequest $request, $id)
     {
-        if (! $this->service->update($id, $request->all())) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+        $data       = $request->validated();
+        $card    = $this->service->findById($id);
 
-            return redirect()->route('cards.index');
+        if (! $card) {
+            Alert::error(__('global.invalid_request'), __('messages.cards.not_found'));
+            return redirect()->route('accounts.index');
         }
+
+        $this->service->update($card, $data);
 
         Alert::success(__('global.success'), __('messages.cards.update'));
 
@@ -120,9 +128,18 @@ class CardController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->service->delete($id)) {
+        $card = $this->service->findById($id);
+
+        if (! $card) {
             return response()
-                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
+                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.cards.not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $this->service->delete($card);
+        } catch (QueryException $e) {
+            return response()
+                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.cards.not_delete')], Response::HTTP_BAD_REQUEST);
         }
 
         return response()

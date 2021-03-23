@@ -4,42 +4,43 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\Card;
+use App\Models\Invoice;
 use App\Models\Category;
 use App\Models\InvoiceEntry;
 use App\Services\CardService;
 use App\Exceptions\InsufficientLimitException;
+use App\Repositories\Interfaces\ParcelRepositoryInterface;
+use App\Repositories\Interfaces\InvoiceRepositoryInterface;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
 
 class InvoiceEntryService
 {
-    protected $entry;
-    protected $card;
-    protected $data;
+    protected $repository;
 
-    public function __construct(InvoiceEntry $entry)
+    public function __construct(InvoiceEntryRepositoryInterface $repository, InvoiceRepositoryInterface $invoiceRepository)
     {
-        $this->entry = $entry;
+        $this->repository           = $repository;
+        $this->invoiceRepository    = $invoiceRepository;
     }
 
-    public function make(Card $card, array $data)
-    {   //dd($data);
-        $this->card = $card;
-        $this->data = $data;
-        
-        $categoryService = app(CategoryService::class);
-        $category = $categoryService->findById($data['category_id']);
+    public function create(Card $card, array $data)
+    {      
+        $categoryRepository = app(CategoryRepositoryInterface::class);
+        $category = $categoryRepository->findById($data['category_id']);
 
-        if ($this->data['value'] > $this->card->balance && $category->isExpense()) {
+        if ($data['value'] > $card->balance && $category->isExpense()) {
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
 
-        if (isset($this->data['installment']) && isset($this->data['installments_number']) && $this->data['installments_number'] > 1) {
-            $entry =  $this->createInstallments();
+        if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
+            $entry =  $this->createInvoiceEntryParcels($card, $data);
         } else {
-            $entry = $this->createEntry();
+            $entry = $this->createEntry($card, $data);
         }
 
-        $entryservice = app(CardService::class);
-        $entryservice->updateCardBalance($card);
+        $cardService = app(CardService::class);
+        $cardService->updateCardBalance($card);
 
         return $entry;
     }
@@ -47,120 +48,119 @@ class InvoiceEntryService
     /**
      * Create the invoice entry
      */ 
-    public function createEntry()
+    public function createEntry(Card $card, $data)
     {
-        $cardService = app(CardService::class);
-
-        $invoice = $cardService->getInvoiceByDate($this->card, $this->data['date']);
+        $invoice = $this->invoiceRepository->getInvoiceByDate($card, $data['date']);
 
         if (! $invoice) {
             return false;
         }
 
-        $entry = $invoice->entries()->create($this->data);
+        $data['invoice_id'] = $invoice->id;
 
-        if (! $entry) {
-            return false;
+        $entry = $this->repository->create($data);
+
+        if (! $entry->hasParcels()) {
+            $this->invoiceRepository->updateInvoiceAmount($invoice);
         }
-
-        $invoiceService = app(InvoiceService::class);
-        $invoiceService->updateInvoiceAmount($invoice);
 
         return $entry;
     }
 
     /**
-     * Create the installments
+     * Creates all the invoice entry parcels
      */ 
-    public function createInstallments()
+    public function createInvoiceEntryParcels(Card $card, array $data)
     {
-        $date                   = new DateTime($this->data['date']);
-        $total                  = $this->data['value'];
-        $installments_number    = $this->data['installments_number'];
-        $installment_value      = number_format($total / $installments_number, 2);
-        $description_default    = $this->data['description'];
-        $installments           = [];
+        $data['has_parcels'] = true;
 
-        $this->data['value'] = $installment_value;
+        $entry = $this->createEntry($card, $data);
 
-        for ($i = 1; $i <= $installments_number; $i++) {
-            $this->data['date']           = $date->format('Y-m-d');
-            $this->data['description']    = $description_default . " {$i}/{$installments_number}" ;           
+        $parcels        = [];
+        $total_parcels  = $data['installments_number'];
 
-            $entry = $this->createEntry();
+        $parcel_data = [
+            'total_parcels' => $total_parcels,
+            'parcel_value'  => number_format($entry->value / $data['installments_number'], 2),
+            'category_id'   => $entry->category->id,
+        ];
 
-            if (! $entry) {
-                return false;
-            }
-            
-            $installments[] = $entry;
+        $date = new DateTime($entry->date);
+
+        for ($parceling = 1; $parceling <= $total_parcels; $parceling++) {
+            $invoice = $this->invoiceRepository->getInvoiceByDate($card, $date->format('Y-m-d'));
+
+            $parcel_data['date']            = $date->format('Y-m-d');
+            $parcel_data['description']     = $entry->description . " {$parceling}/{$total_parcels}" ;           
+            $parcel_data['parcel_number']   = $parceling;
+            $parcel_data['invoice_id']      = $invoice->id;
+
+            $parcel = $this->repository->createInvoiceEntryParcel($entry, $parcel_data);
+
+            $this->invoiceRepository->updateInvoiceAmount($invoice);
+
+            $parcels[] = $parcel;
 
             $date = $date->modify('+1 month');
+
         }
 
-        return $installments;
+        return $entry->parcels;
     }
 
-    public function update($id, array $data)
+    public function update(InvoiceEntry $entry, array $data)
     {
         $data['monthly'] = isset($data['monthly']) && $data['monthly'] === 'on' ? true : false;
-
-        $entry = $this->findById($id);
-
-        if(! $entry) {
-            return false;
-        }
 
         if ($data['value'] > $entry->invoice->card->balance) {
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
 
-        $result = $entry->update($data);
-
-        if (! $result) {
-            return false;
-        }
-
-        return $entry;
+        return $this->repository->update($entry, $data);
     }
 
-    public function delete($id)
+    public function delete(InvoiceEntry $entry)
     {
-        $entry = $this->findById($id);
-
-        if(! $entry) {
-            return false;
+        if ($entry->hasParcels()) {
+            $this->deleteParcels($entry);
         }
+        return $this->repository->delete($entry);
+    }
 
-        return $entry->delete();
+    public function deleteParcels(InvoiceEntry $entry): void
+    {
+        foreach ($entry->parcels as $parcel) {
+            $invoice = $parcel->invoice;
+
+            $parcel->delete();
+
+            $this->invoiceRepository->updateInvoiceAmount($invoice);
+        }
     }
 
     public function findById($id)
     {
-        return $this->entry->find($id);
+        return $this->repository->findById($id);
     }
 
     /**
      * Returns an array with the total grouped by category for a given date
      *
      * @param string $date
+     * @param int $category_type
      * @return array
      */ 
-    public function getTotalByCategoryForChart($date): array
+    public function getTotalByCategoryForChart($date, $category_type = Category::EXPENSE): array
     {
         $new_date   = new DateTime($date);
-        $month      = $new_date->format('m');
-        $year       = $new_date->format('Y');
-        $result     = [];
+        $filter     = [
+            'month' => $new_date->format('m'),
+            'year'  => $new_date->format('Y')
+        ];
+
+        $result = [];
         
-        $total = $this->entry::selectRaw('categories.name, SUM(invoice_entries.value) as total')
-            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
-            ->where('categories.type', Category::EXPENSE)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->groupBy('categories.name')
-            ->get()
-            ->toArray();
+        $total = $this->repository->getTotalByCategoryForChart($filter, $category_type);
 
         foreach ($total as $value) {
             $result[] = [
@@ -181,15 +181,7 @@ class InvoiceEntryService
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
     {       
-        return $this->entry::selectRaw('categories.name as category, categories.id, SUM(invoice_entries.value) / 100 as total, count(*) as quantity')
-            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
-            ->where('categories.type', $categoryType)
-            ->where('date', '>=', $filter['from'])
-            ->where('date', '<=', $filter['to'])
-            ->orderByDesc('total')
-            ->groupBy('categories.name', 'categories.id')
-            ->get()
-            ->toArray();
+        return $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
     }
 
     /**
@@ -201,15 +193,7 @@ class InvoiceEntryService
      */ 
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
     {       
-        return $this->entry
-            ->with('invoice.card')
-            ->with('category')
-            ->where('category_id', $category_id)
-            ->where('date', '>=', $from)
-            ->where('date', '<=', $to)
-            ->orderBy('date')
-            ->get()
-            ->toArray();
+        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
     }
 
     /**
@@ -222,16 +206,28 @@ class InvoiceEntryService
     public function getTotalMonthlyByCategory($categoryType, $date): float
     {
         $new_date   = new DateTime($date);
-        $month      = $new_date->format('m');
-        $year       = $new_date->format('Y');
+        $filter     = [
+            'month' => $new_date->format('m'),
+            'year' => $new_date->format('Y')
+        ];
 
-        $total = $this->entry
-            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
-            ->where('categories.type', $categoryType)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->sum('value');
-               
-        return $total / 100;
+        return $this->repository->getTotalMonthlyByCategory($categoryType, $filter);
+    }
+
+    /**
+     * Returns entries for a given invoice
+     *
+     * @param Invoice $invoice
+     * @return Illuminate\Database\Eloquent\Collection
+     */ 
+    public function getAllEntriesForInvoice(Invoice $invoice)
+    {
+        $entries = $this->repository->getEntries($invoice);
+
+        $parcelRepository = app(ParcelRepositoryInterface::class);
+        
+        $parcels = $parcelRepository->getParcelsOfInvoice($invoice);
+        
+        return $entries->concat($parcels);
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Http\Response;
 use App\Services\CategoryService;
+use Illuminate\Database\QueryException;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Requests\StoreUpdateCategoryRequest;
 
@@ -57,7 +59,9 @@ class CategoryController extends Controller
      */
     public function store(StoreUpdateCategoryRequest $request)
     {
-        $category = $this->service->store($request->all());
+        $data = $request->validated();
+
+        $category = $category = $this->service->create($data);
 
         if (! $category) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
@@ -101,11 +105,16 @@ class CategoryController extends Controller
      */
     public function update(StoreUpdateCategoryRequest $request, $id)
     {
-        if (! $this->service->update($id, $request->all())) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+        $data       = $request->validated();
+        $category   = $this->service->findById($id);
+
+        if (! $category) {
+            Alert::error(__('global.invalid_request'), __('messages.categories.not_found'));
 
             return redirect()->route('categories.index');
         }
+
+        $this->service->update($category, $data);
 
         Alert::success(__('global.success'), __('messages.categories.update'));
 
@@ -120,10 +129,18 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        if (! $this->service->delete($id)) {
+        $category = $this->service->findById($id);
+
+        if (! $category) {
             return response()
-                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
+                    ->json(['title' => __('global.invalid_request'), 'text' => __('messages.categories.not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        try {
+            $category = $this->service->delete($category);
+        } catch (QueryException $e) {
+            return response()->json(['title' => __('global.invalid_request'), 'text' => __('messages.categories.not_delete')], Response::HTTP_NOT_FOUND);
+        } 
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.categories.delete')]);

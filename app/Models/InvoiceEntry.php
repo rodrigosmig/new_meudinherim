@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasParcel;
 use App\Traits\UserTrait;
+use App\Traits\HasCategory;
 use Illuminate\Database\Eloquent\Model;
 
 class InvoiceEntry extends Model
 {
-    use UserTrait;
+    use UserTrait, HasCategory, HasParcel;
     
     /**
      * The table associated with the model.
@@ -16,16 +18,15 @@ class InvoiceEntry extends Model
      */
     protected $table = 'invoice_entries';
     
-    public $fillable =  ['date', 'description', 'value', 'monthly', 'category_id', 'invoice_id', 'user_id'];
+    public $fillable =  ['date', 'description', 'value', 'monthly', 'has_parcels', 'category_id', 'invoice_id', 'user_id'];
+
+    protected $casts = [
+        'has_parcels' => 'boolean'
+    ];
 
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
-    }
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
     }
 
     public function getValueAttribute($value)
@@ -46,15 +47,5 @@ class InvoiceEntry extends Model
     public function isExpenseCategory()
     {
         return $this->category->type === $this->category::EXPENSE;
-    }
-
-    /**
-     * Checks if the authenticated user is invoice entry owner
-     *
-     * @return bool
-     */
-    public function isOwner(): bool
-    {
-        return $this->user_id === auth()->user()->id;
     }
 }

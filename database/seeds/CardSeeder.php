@@ -25,6 +25,6 @@ class CardSeeder extends Seeder
             'user_id'       => $jon->id
         ];
 
-        $service->make($data);
+        $service->create($data);
     }
 }

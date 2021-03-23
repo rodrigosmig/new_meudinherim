@@ -39,7 +39,7 @@ class AccountController extends Controller
     {
         $data = $request->validated();
 
-        $account = $this->service->store($data);
+        $account = $this->service->create($data);
 
         return (new AccountResource($account))
                     ->response()
@@ -72,13 +72,17 @@ class AccountController extends Controller
      */
     public function update(AccountUpdateStoreRequest $request, $id)
     {
-        $account = $this->service->update($id, $request->validated());
+        $data = $request->validated();
+
+        $account = $this->service->findById($id);
 
         if (! $account) {
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        return (new AccountResource($this->service->findById($id)));
+        $this->service->update($account, $data);
+
+        return (new AccountResource($account));
     }
 
     /**
@@ -89,14 +93,16 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $account = $this->service->delete($id);
-        } catch (QueryException $e) {
-            return response()->json(['message' => __('messages.accounts.not_delete')], Response::HTTP_BAD_REQUEST);
-        }
+        $account = $this->service->findById($id);
 
         if (! $account) {
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $account = $this->service->delete($account);
+        } catch (QueryException $e) {
+            return response()->json(['message' => __('messages.accounts.not_delete')], Response::HTTP_BAD_REQUEST);
         }
 
         return response()->json([], Response::HTTP_NO_CONTENT);

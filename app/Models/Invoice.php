@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use DateTime;
 use App\Models\Card;
 use App\Models\User;
+use App\Models\Parcel;
 use App\Traits\UserTrait;
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
@@ -27,6 +28,11 @@ class Invoice extends Model
     public function entries()
     {
         return $this->hasMany(InvoiceEntry::class);
+    }
+
+    public function parcels()
+    {
+        return $this->hasMany(Parcel::class);
     }
 
     public function payable(){
