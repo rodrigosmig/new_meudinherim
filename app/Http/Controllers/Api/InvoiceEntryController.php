@@ -11,6 +11,7 @@ use App\Http\Resources\InvoiceEntryResource;
 use App\Exceptions\InsufficientLimitException;
 use App\Http\Requests\Api\StoreInvoiceEntryRequest;
 use App\Http\Requests\Api\UpdateInvoiceEntryRequest;
+use App\Models\InvoiceEntry;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceEntryController extends Controller
@@ -77,7 +78,7 @@ class InvoiceEntryController extends Controller
             return response()->json(['message' => __('messages.not_save')], Response::HTTP_BAD_REQUEST);
         }
 
-        if (is_array($entry)) {
+        if (get_class($entry) !== InvoiceEntry::class) {
             return InvoiceEntryResource::collection($entry);
         }
 

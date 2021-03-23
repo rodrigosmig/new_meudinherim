@@ -5,6 +5,7 @@ return [
     'not_delete'            => 'Could not be deleted. Try again.',
     'ajax_title'            => 'Are you sure?',
     'not_found'             => 'No records found',
+    'parcel_text'           => 'Do you wish delete all parcels?',
 
     'categories' => [
         'select_type'       => 'Select a category type',
@@ -59,6 +60,7 @@ return [
         'invalid_card'          => 'The informed card was not found',
         'invalid_invoice'       => 'The informed invoice was not found',
         'api_not_found'         => 'Entry Not Found',
+        'delete_parcel'         => 'When confirming, all installments will be excluded',
     ],
 
     'account_scheduling' => [

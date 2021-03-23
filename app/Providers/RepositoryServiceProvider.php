@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Core\Eloquent\CardRepository;
+use App\Repositories\Core\Eloquent\ParcelRepository;
 use App\Repositories\Core\Eloquent\AccountRepository;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 use App\Repositories\Core\Eloquent\CategoryRepository;
 use App\Repositories\Interfaces\CardRepositoryInterface;
 use App\Repositories\Core\Eloquent\InvoiceEntryRepository;
+use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\AccountRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
@@ -46,6 +48,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             InvoiceEntryRepositoryInterface::class,
             InvoiceEntryRepository::class
+        );
+
+        $this->app->bind(
+            ParcelRepositoryInterface::class,
+            ParcelRepository::class
         );
     }
 

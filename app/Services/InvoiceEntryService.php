@@ -4,10 +4,12 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\Card;
+use App\Models\Invoice;
 use App\Models\Category;
 use App\Models\InvoiceEntry;
 use App\Services\CardService;
 use App\Exceptions\InsufficientLimitException;
+use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
@@ -32,7 +34,7 @@ class InvoiceEntryService
         }
 
         if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
-            $entry =  $this->createInstallments($card, $data);
+            $entry =  $this->createInvoiceEntryParcels($card, $data);
         } else {
             $entry = $this->createEntry($card, $data);
         }
@@ -58,45 +60,52 @@ class InvoiceEntryService
 
         $entry = $this->repository->create($data);
 
-        if (! $entry) {
-            return false;
+        if (! $entry->hasParcels()) {
+            $this->invoiceRepository->updateInvoiceAmount($invoice);
         }
-
-        $this->invoiceRepository->updateInvoiceAmount($invoice);
 
         return $entry;
     }
 
     /**
-     * Create the installments
+     * Creates all the invoice entry parcels
      */ 
-    public function createInstallments(Card $card, array $data)
+    public function createInvoiceEntryParcels(Card $card, array $data)
     {
-        $date                   = new DateTime($data['date']);
-        $total                  = $data['value'];
-        $installments_number    = $data['installments_number'];
-        $installment_value      = number_format($total / $installments_number, 2);
-        $description_default    = $data['description'];
-        $installments           = [];
+        $data['has_parcels'] = true;
 
-        $data['value'] = $installment_value;
+        $entry = $this->createEntry($card, $data);
 
-        for ($i = 1; $i <= $installments_number; $i++) {
-            $data['date']           = $date->format('Y-m-d');
-            $data['description']    = $description_default . " {$i}/{$installments_number}" ;           
+        $parcels        = [];
+        $total_parcels  = $data['installments_number'];
 
-            $entry = $this->createEntry($card, $data);
+        $parcel_data = [
+            'total_parcels' => $total_parcels,
+            'parcel_value'  => number_format($entry->value / $data['installments_number'], 2),
+            'category_id'   => $entry->category->id,
+        ];
 
-            if (! $entry) {
-                return false;
-            }
-            
-            $installments[] = $entry;
+        $date = new DateTime($entry->date);
+
+        for ($parceling = 1; $parceling <= $total_parcels; $parceling++) {
+            $invoice = $this->invoiceRepository->getInvoiceByDate($card, $date->format('Y-m-d'));
+
+            $parcel_data['date']            = $date->format('Y-m-d');
+            $parcel_data['description']     = $entry->description . " {$parceling}/{$total_parcels}" ;           
+            $parcel_data['parcel_number']   = $parceling;
+            $parcel_data['invoice_id']      = $invoice->id;
+
+            $parcel = $this->repository->createInvoiceEntryParcel($entry, $parcel_data);
+
+            $this->invoiceRepository->updateInvoiceAmount($invoice);
+
+            $parcels[] = $parcel;
 
             $date = $date->modify('+1 month');
+
         }
 
-        return $installments;
+        return $entry->parcels;
     }
 
     public function update(InvoiceEntry $entry, array $data)
@@ -189,5 +198,22 @@ class InvoiceEntryService
         ];
 
         return $this->repository->getTotalMonthlyByCategory($categoryType, $filter);
+    }
+
+    /**
+     * Returns entries for a given invoice
+     *
+     * @param Invoice $invoice
+     * @return Illuminate\Database\Eloquent\Collection
+     */ 
+    public function getAllEntriesForInvoice(Invoice $invoice)
+    {
+        $entries = $this->repository->getEntries($invoice);
+
+        $parcelRepository = app(ParcelRepositoryInterface::class);
+        
+        $parcels = $parcelRepository->getParcelsOfInvoice($invoice);
+        
+        return $entries->concat($parcels);
     }
 }

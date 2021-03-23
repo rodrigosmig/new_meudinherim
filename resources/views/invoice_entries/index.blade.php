@@ -11,6 +11,8 @@
     <script>
         var entry_title = '{{ __('messages.ajax_title') }}';
         var entry_text = '{{ __('messages.entries.ajax_text') }}';
+        var parcel_title = '{{ __('messages.parcel_title') }}';
+        var parcel_text = '{{ __('messages.entries.delete_parcel') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
     </script>
@@ -63,7 +65,18 @@
                                 <tr>
                                     <td>{{ toBrDate($entry->date) }}</td>
                                     <td>{{ $entry->category->name }}</td>
-                                    <td>{{ $entry->description }}</td>
+
+                                    @if (isset($entry->parcelable) && $entry->parcelable)
+                                        <td>
+                                            <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($entry->parcelable->value) }}" 
+                                                style="text-decoration: none; color: inherit">
+                                                {{ $entry->description }}
+                                            </a>
+                                        </td>
+                                    @else
+                                        <td>{{ $entry->description }}</td>
+                                    @endif
+
                                     @if ($entry->isExpenseCategory())
                                         <td style="color: red">
                                             {{ toBrMoney($entry->value) }}
@@ -76,12 +89,21 @@
                                     @if (! $invoice->isPaid())
                                         <td class="table-actions">
                                             <div class="row">
-                                                <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </a>
-                                                <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                @if (!isset($entry->parcelable))
+                                                    <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                @endif
+
+                                                @if (!isset($entry->parcelable))
+                                                    <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-danger btn-sm delete-parcels" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                @endif
                                             </div>
                                         </td>
                                     @endif

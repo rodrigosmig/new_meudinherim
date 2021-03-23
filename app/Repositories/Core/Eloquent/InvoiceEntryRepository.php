@@ -87,4 +87,33 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
                
         return $total / 100;
     }
+
+    /**
+     * Returns entries for a given invoice
+     *
+     * @param Invoice $invoice
+     * @return Illuminate\Database\Eloquent\Collection
+     */ 
+    public function getEntries($invoice)
+    {
+        return $invoice->entries()
+                ->whereDoesntHave('parcels')
+                ->get();
+    }
+
+    /**
+     * Creates an invoice entry parcel
+     */ 
+    public function createInvoiceEntryParcel($entry, array $data)
+    {
+        return $entry->parcels()->create([
+            'date'          => $data['date'],
+            'description'   => $data['description'],
+            'value'         => $data['parcel_value'],
+            'parcel_number' => $data['parcel_number'],
+            'parcel_total'  => $data['total_parcels'],
+            'invoice_id'    => $data['invoice_id'],
+            'category_id'   => $data['category_id'],
+        ]);
+    }
 }

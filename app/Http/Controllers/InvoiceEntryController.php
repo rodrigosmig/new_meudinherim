@@ -60,7 +60,7 @@ class InvoiceEntryController extends Controller
 
         $data = [
             'title'     => __('global.invoice'),
-            'entries'   => $invoice->entries,
+            'entries'   => $this->service->getAllEntriesForInvoice($invoice),
             'invoice'   => $invoice
         ];
 

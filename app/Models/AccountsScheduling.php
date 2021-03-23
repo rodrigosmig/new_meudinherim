@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\UserTrait;
+use App\Traits\HasCategory;
 use App\Models\AccountEntry;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountsScheduling extends Model
 {
-    use UserTrait;
+    use UserTrait, HasCategory;
     
     public $fillable =  [
         'due_date', 
@@ -21,11 +22,6 @@ class AccountsScheduling extends Model
         'monthly',
         'user_id'
     ];
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
 
     public function accountEntry(){
         return $this->hasOne(AccountEntry::class, 'account_scheduling_id');
@@ -44,16 +40,6 @@ class AccountsScheduling extends Model
     public function setValueAttribute($value)
     {
         $this->attributes['value'] = $value * 100;
-    }
-
-    /**
-     * Checks if the category is an expense type
-     *
-     * @return bool
-     */
-    public function isExpenseCategory()
-    {
-        return $this->category->type == $this->category::EXPENSE;
     }
 
     /**

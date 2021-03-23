@@ -116,10 +116,22 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
         $total = 0;
 
         foreach ($invoice->entries as $entry) {
-            if ($entry->category->type === $entry->category::INCOME) {
+            if ($entry->hasParcels()) {
+                continue;
+            }
+
+            if (! $entry->isExpenseCategory()) {
                 $total -= $entry->value;
             } else {
                 $total += $entry->value;
+            }
+        }
+
+        foreach ($invoice->parcels as $parcel) {
+            if (! $parcel->isExpenseCategory()) {
+                $total -= $parcel->value;
+            } else {
+                $total += $parcel->value;
             }
         }
 
