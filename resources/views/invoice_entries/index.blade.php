@@ -100,7 +100,7 @@
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 @else
-                                                    <button class="btn btn-danger btn-sm delete-parcels" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <button class="btn btn-danger btn-sm delete-parcels" data-entry="{{ $entry->parcelable_id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 @endif

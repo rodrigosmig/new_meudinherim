@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Invoice;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,11 @@ class Parcel extends Model
     public function parcelable()
     {
         return $this->morphTo();
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     public function getValueAttribute($value)

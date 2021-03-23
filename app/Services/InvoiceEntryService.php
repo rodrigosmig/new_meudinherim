@@ -121,7 +121,21 @@ class InvoiceEntryService
 
     public function delete(InvoiceEntry $entry)
     {
+        if ($entry->hasParcels()) {
+            $this->deleteParcels($entry);
+        }
         return $this->repository->delete($entry);
+    }
+
+    public function deleteParcels(InvoiceEntry $entry): void
+    {
+        foreach ($entry->parcels as $parcel) {
+            $invoice = $parcel->invoice;
+
+            $parcel->delete();
+
+            $this->invoiceRepository->updateInvoiceAmount($invoice);
+        }
     }
 
     public function findById($id)
