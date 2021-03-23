@@ -78,7 +78,7 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      * 
      * @return Invoice
      */
-    public function getInvoiceByDate($card, $date): ?Invoice
+    public function getInvoiceByDate($card, $date)
     {
         $new_date = $this->getDueAndClosingDateForInvoice($card, $date);
         
@@ -104,7 +104,7 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      * 
      * @return Invoice
      */
-    public function getInvoiceById($card, $invoice_id): ?Invoice
+    public function getInvoiceById($card, $invoice_id)
     {
         return $card->invoices()
                 ->where('id', $invoice_id)

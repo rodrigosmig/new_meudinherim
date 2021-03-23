@@ -8,7 +8,7 @@ interface InvoiceRepositoryInterface
 {
     public function createInvoice($card, string $date);
     public function getDueAndClosingDateForInvoice($card, $date): array;
-    public function getInvoiceByDate($card, $date): ?Model;
-    public function getInvoiceById($card, $invoice_id): ?Model;
+    public function getInvoiceByDate($card, $date);
+    public function getInvoiceById($card, $invoice_id);
     public function getInvoiceTotalAmount($invoice): float;
 }
