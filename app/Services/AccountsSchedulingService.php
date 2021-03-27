@@ -10,17 +10,18 @@ use App\Models\AccountsScheduling;
 use App\Services\AccountEntryService;
 use App\Exceptions\AccountIsPaidException;
 use App\Exceptions\AccountIsNotPaidException;
+use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
 
 class AccountsSchedulingService
 {
-    protected $account_scheduling;
+    protected $repository;
 
-    public function __construct(AccountsScheduling $account_scheduling)
+    public function __construct(AccountsSchedulingRepositoryInterface $repository)
     {
-        $this->account_scheduling = $account_scheduling;
+        $this->repository = $repository;
     }
 
-    public function store(array $data)
+    public function create(array $data)
     {
         $data['monthly'] = isset($data['monthly']) ? true : false;
 
@@ -28,7 +29,7 @@ class AccountsSchedulingService
             return $this->createInstallments($data);
         } 
 
-        return $this->account_scheduling->create($data);
+        return $this->repository->create($data);
     }
 
     /**
@@ -67,19 +68,17 @@ class AccountsSchedulingService
     {
         $data['monthly'] = isset($data['monthly']) ? true : false;
         
-        $account_scheduling->update($data);
-        
-        return $account_scheduling;
+        return $this->repository->update($account_scheduling, $data);
     }
 
     public function delete(AccountsScheduling $account_scheduling)
     {
-        return $account_scheduling->delete();
+        return $this->repository->delete($account_scheduling);
     }
 
     public function findById($id)
     {
-        return $this->account_scheduling->find($id);
+        return $this->repository->findById($id);
     }
 
     /**
@@ -91,28 +90,17 @@ class AccountsSchedulingService
      */
     public function getAccountsSchedulingsByType($categoryType, array $filter = null)
     {
-        $from = date('Y-m-01');
-        $to = date('Y-m-t');
+        $range_date = [
+            'from'  => date('Y-m-01'),
+            'to'    => date('Y-m-t')
+        ];
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {
-            $from = $filter['from'];
-            $to = $filter['to'];
+            $filter['from'] = $range_date['from'];
+            $filter['to']   = $range_date['to'];
         }
 
-        $result = $this->account_scheduling::select('accounts_schedulings.*')
-            ->join('categories', 'categories.id', '=', 'accounts_schedulings.category_id')
-            ->where('categories.type', $categoryType)
-            ->where('due_date', '>=', $from)
-            ->where('due_date', '<=', $to)
-            ->orderBy('due_date');
-
-        
-        if (isset($filter['status']) && in_array($filter['status'], ['open', 'paid'])) {
-            $status = $filter['status'] == 'open' ? false : true;
-            $result->where('paid', $status);
-        }
-       
-        return $result->get();
+        return $this->repository->getAccountsSchedulingsByType($categoryType, $filter);
     }
 
     /**
@@ -123,9 +111,9 @@ class AccountsSchedulingService
      * @return bool
      * @throws AccountIsPaidException
      */
-    public function payment(Account $account, array $data): bool
+    public function payment(Account $account, AccountsScheduling $account_scheduling, array $data): bool
     {
-        $account_scheduling = $this->findById($data['id']);
+        /* $account_scheduling = $this->findById($data['id']);
 
         if (! $account_scheduling) {
             return false;
@@ -133,7 +121,7 @@ class AccountsSchedulingService
 
         if ($account_scheduling->isPaid()) {
             throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
-        }
+        } */
 
         $account_scheduling->paid_date = $data['paid_date'];
         $account_scheduling->paid = true;

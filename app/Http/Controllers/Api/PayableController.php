@@ -14,7 +14,6 @@ use App\Exceptions\AccountIsNotPaidException;
 use App\Http\Requests\Api\PayableStoreRequest;
 use App\Http\Requests\Api\PayableUpdateRequest;
 use App\Http\Resources\AccountsSchedulingResource;
-use App\Http\Requests\Api\PayableUpdateStoreRequest;
 
 class PayableController extends Controller
 {

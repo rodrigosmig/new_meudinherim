@@ -15,8 +15,10 @@ use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\AccountRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Core\Eloquent\AccountsSchedulingRepository;
 use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
+use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -60,6 +62,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             AccountEntryRepositoryInterface::class,
             AccountEntryRepository::class
+        );
+
+        $this->app->bind(
+            AccountsSchedulingRepositoryInterface::class,
+            AccountsSchedulingRepository::class
         );
     }
 
