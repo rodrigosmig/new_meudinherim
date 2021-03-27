@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasParcel;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use App\Models\AccountEntry;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccountsScheduling extends Model
 {
-    use UserTrait, HasCategory;
+    use UserTrait, HasCategory, HasParcel;
     
     public $fillable =  [
         'due_date', 

@@ -7,10 +7,10 @@ use App\Models\User;
 use App\Models\Account;
 use App\Services\CardService;
 use App\Models\AccountsScheduling;
-use App\Services\AccountEntryService;
-use App\Exceptions\AccountIsPaidException;
 use App\Exceptions\AccountIsNotPaidException;
+use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
+use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 
 class AccountsSchedulingService
 {
@@ -88,7 +88,7 @@ class AccountsSchedulingService
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAccountsSchedulingsByType($categoryType, array $filter = null)
+    public function getAccountsSchedulingsByType($categoryType, array $filter = [])
     {
         $range_date = [
             'from'  => date('Y-m-01'),
@@ -100,7 +100,7 @@ class AccountsSchedulingService
             $filter['to']   = $range_date['to'];
         }
 
-        return $this->repository->getAccountsSchedulingsByType($categoryType, $filter);
+        return $this->repository->getAccountsSchedulingsByType($categoryType, $range_date);
     }
 
     /**
@@ -108,21 +108,10 @@ class AccountsSchedulingService
      *
      * @param Account $account
      * @param array $data
-     * @return bool
-     * @throws AccountIsPaidException
+     * @return void
      */
-    public function payment(Account $account, AccountsScheduling $account_scheduling, array $data): bool
+    public function payment(Account $account, AccountsScheduling $account_scheduling, array $data): void
     {
-        /* $account_scheduling = $this->findById($data['id']);
-
-        if (! $account_scheduling) {
-            return false;
-        }
-
-        if ($account_scheduling->isPaid()) {
-            throw new AccountIsPaidException(__('messages.account_scheduling.account_is_paid'));            
-        } */
-
         $account_scheduling->paid_date = $data['paid_date'];
         $account_scheduling->paid = true;
         
@@ -133,9 +122,9 @@ class AccountsSchedulingService
             'category_id'   => $account_scheduling->category_id,
         ];
 
-        $accountEntryService = app(AccountEntryService::class);
+        $accountEntryRepository = app(AccountEntryRepositoryInterface::class);
         
-        $entry = $accountEntryService->make($account, $entryData);        
+        $entry = $accountEntryRepository->create($account, $entryData);        
         $entry->accountScheduling()->associate($account_scheduling);
 
         if ($account_scheduling->invoice) {
@@ -146,12 +135,10 @@ class AccountsSchedulingService
             $this->createMonthlyPayment($account_scheduling);
         }
 
-        $entry->save();
-        $account_scheduling->save();
+        $this->accountEntryRepository->save($entry);
+        $this->repository->save($account_scheduling);
 
         $this->updateAccountBalance($account, $entry->date);
-        
-        return true;
     }
 
     /**
@@ -183,22 +170,21 @@ class AccountsSchedulingService
      */
     public function cancelPayment($account_scheduling): bool
     {
-        if (! $account_scheduling->isPaid()) {
-            throw new AccountIsNotPaidException(__('messages.account_scheduling.account_is_not_paid'));
-        }
-
         $account        = $account_scheduling->accountEntry->account;
         $payment_date   = $account_scheduling->paid_date;
 
-        $account_scheduling->accountEntry()->delete();
-        $account_scheduling->paid_date = null;
-        $account_scheduling->paid = false;
+        $this->repository->deleteAccountEntry($account_scheduling);
+
+        $new_data = [
+            'paid_date' => null,
+            'paid' => false
+        ];
+
+        $this->repository->update($account_scheduling, $new_data);
 
         if ($account_scheduling->invoice) {
             $this->updateInvoice($account_scheduling, false);
         } 
-
-        $account_scheduling->save();
 
         $this->updateAccountBalance($account, $payment_date);
                
@@ -213,7 +199,9 @@ class AccountsSchedulingService
 
     private function updateInvoice(AccountsScheduling $account_scheduling, $payment = true): void
     {
-        $account_scheduling->invoice()->update([
+        $invoiceRepository = app(InvoiceRepositoryInterface::class);
+
+        $invoiceRepository->update($account_scheduling->invoice, [
             'paid' => $payment ? true : false
         ]);
 
@@ -255,7 +243,7 @@ class AccountsSchedulingService
      * @param int $categoryType
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAccountsByUserForCron(User $user, $categoryType)
+    /* public function getAccountsByUserForCron(User $user, $categoryType)
     {
         return $this->account_scheduling::select('accounts_schedulings.*')
             ->withoutGlobalScopes()
@@ -265,5 +253,5 @@ class AccountsSchedulingService
             ->where('paid', false)
             ->where('accounts_schedulings.user_id', $user->id)
             ->get();
-    }
+    } */
 }

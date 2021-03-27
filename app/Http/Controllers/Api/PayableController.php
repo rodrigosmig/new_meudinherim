@@ -33,7 +33,7 @@ class PayableController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = null;
+        $filter = [];
 
         if ((isset($request->from)
             && $request->from
@@ -63,7 +63,7 @@ class PayableController extends Controller
     {
         $data = $request->validated();
 
-        $payable = $this->service->store($data);
+        $payable = $this->service->create($data);
 
         if (gettype($payable) === 'boolean') {
             return response()->json(['message' => __('messages.account_scheduling.installments_created')]);
@@ -112,12 +112,12 @@ class PayableController extends Controller
         }
 
         if ($payable->isPaid()) {
-            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => __('messages.account_scheduling.update_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $payable_updated = $this->service->update($payable, $data);
+        $this->service->update($payable, $data);
 
-        return (new AccountsSchedulingResource($payable_updated));
+        return (new AccountsSchedulingResource($payable));
     }
 
     /**
@@ -150,18 +150,19 @@ class PayableController extends Controller
     public function payment(PaymentRequest $request, $id)
     {
         $data       = $request->validated();
-        $data['id'] = $id;
-        $account    = $this->accountService->findById($data['account_id']);
+        $payable    = $this->repository->findById($id);
 
-        try {
-            $entry = $this->service->payment($account, $data);
-        } catch (AccountIsPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if (! $entry) {
+        if (! $payable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        if ($payable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $account = $this->accountService->findById($data['account_id']);
+
+        $this->service->payment($account, $payable, $data);
 
         return response()->json(['message' => __('messages.account_scheduling.payable_paid')], Response::HTTP_OK);
     }
