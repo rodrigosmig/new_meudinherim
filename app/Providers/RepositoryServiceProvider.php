@@ -9,11 +9,13 @@ use App\Repositories\Core\Eloquent\AccountRepository;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 use App\Repositories\Core\Eloquent\CategoryRepository;
 use App\Repositories\Interfaces\CardRepositoryInterface;
+use App\Repositories\Core\Eloquent\AccountEntryRepository;
 use App\Repositories\Core\Eloquent\InvoiceEntryRepository;
 use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\AccountRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -53,6 +55,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             ParcelRepositoryInterface::class,
             ParcelRepository::class
+        );
+
+        $this->app->bind(
+            AccountEntryRepositoryInterface::class,
+            AccountEntryRepository::class
         );
     }
 
