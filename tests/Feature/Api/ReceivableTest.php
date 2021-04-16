@@ -9,8 +9,6 @@ use App\Models\Category;
 use App\Models\AccountEntry;
 use Laravel\Sanctum\Sanctum;
 use App\Models\AccountsScheduling;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ReceivableTest extends TestCase
 {
@@ -103,14 +101,14 @@ class ReceivableTest extends TestCase
             'value'                 => 100,
             'category_id'           => $category->id,
             'installment'           => 'on',
-            'installments_number'   => 2,
-            'installment_value'     => 50,
+            'installments_number'   => 4,
+            'installment_value'     => 25,
         ];
 
         $response = $this->postJson('/api/receivables', $data);
 
-        $response->assertStatus(200)
-            ->assertExactJson(['message' => __('messages.account_scheduling.installments_created')]);
+        $response->assertStatus(201)
+            ->assertJsonCount(4, 'data');
     }
 
     public function testValidationErrorWhenCreateReceivableWithInstallments()

@@ -41,13 +41,13 @@ class ReceivablesCron extends Command
      */
     public function handle()
     {
-        $receivableService = app(AccountsSchedulingService::class);
-        $userService    = app(ProfileService::class);
+        $receivableRepository   = app(AccountsSchedulingRepositoryInterface::class);
+        $userService            = app(ProfileService::class);
         
         $users = $userService->getUsersForNotification();
 
         foreach ($users as $user) {
-            $receivables = $receivableService->getAccountsByUserForCron($user, Category::INCOME);
+            $receivables = $receivableRepository->getAccountsByUserForCron($user, Category::INCOME);
             
             if ($receivables->count() > 0) {
                 $user->notify(new AccountReceivableNotification($receivables));

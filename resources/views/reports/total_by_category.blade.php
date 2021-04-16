@@ -156,15 +156,15 @@
                                     </thead>
     
                                     <tbody>                                
-                                        @foreach ($cards as $category)
+                                        @foreach ($cards as $category_name => $data)
                                             <tr>
-                                                <td>{{ $category['category'] }}</td>
+                                                <td>{{ $category_name }}</td>
                                                 <td>
-                                                    <a class="badge-pill badge-success show-entries" data-from="{{ $from }}" data-to="{{ $to }}" data-category="{{ $category['id'] }}" data-type="card" href="javascript:void(0)" data-toggle="modal" data-target="#modal-entries">
-                                                        {{ $category['quantity'] }}
+                                                    <a class="badge-pill badge-success show-entries" data-from="{{ $from }}" data-to="{{ $to }}" data-category="{{ $data['id'] }}" data-type="card" href="javascript:void(0)" data-toggle="modal" data-target="#modal-entries">
+                                                        {{ $data['quantity'] }}
                                                     </a>
                                                 </td>
-                                                <td>{{ toBrMoney($category['total'] )}}</td>
+                                                <td>{{ toBrMoney($data['total'] )}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -12,7 +12,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}?1">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 @endpush
 
 @push('js')

@@ -80,8 +80,16 @@
                                                 <a href="{{ route('payables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_payment') }}">
                                                     <i class="fas fa-receipt"></i>
                                                 </a>
+                                            @elseif ($entry->isPayableParcel())
+                                                <a href="{{ route('payables.show', [$entry->parcel->id, "parcelable_id" => $entry->parcel->parcelable_id]) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_payment') }}">
+                                                    <i class="fas fa-receipt"></i>
+                                                </a>
                                             @elseif($entry->isReceivable())
                                                 <a href="{{ route('receivables.show', $entry->accountScheduling->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_receivement') }}">
+                                                    <i class="fas fa-receipt"></i>
+                                                </a>
+                                            @elseif($entry->isReceivableParcel())
+                                                <a href="{{ route('receivables.show', [$entry->parcel->id, "parcelable_id" => $entry->parcel->parcelable_id]) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="{{ __('global.show_receivement') }}">
                                                     <i class="fas fa-receipt"></i>
                                                 </a>
                                             @else

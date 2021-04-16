@@ -79,4 +79,35 @@ class Category extends Model
             __('global.default_categories.others')
         ];
     }
+
+    /**
+     * Query for union with parcels
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGetQueryForInvoiceEntryGroupedByCategory($query)
+    {
+        $mutator = 100;
+        return $query->selectRaw("categories.name as category, categories.id, SUM(invoice_entries.value) / {$mutator} as total, count(*) as quantity")
+            ->join('invoice_entries', 'invoice_entries.category_id', '=', 'categories.id')
+            ->where('has_parcels', false)
+            ->orderByDesc('total')
+            ->groupBy('categories.name', 'categories.id');
+    }
+
+    /**
+     * Query for union with invoice entries
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGetQueryForParcelGroupedByCategory($query)
+    {
+        $mutator = 100;
+        return $query->selectRaw("categories.name as category, categories.id, SUM(parcels.value) / {$mutator} as total, count(*) as quantity")
+            ->join('parcels', 'parcels.category_id', '=', 'categories.id')
+            ->orderByDesc('total')
+            ->groupBy('categories.name', 'categories.id');
+    }
 }

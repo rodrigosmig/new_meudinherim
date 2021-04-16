@@ -147,4 +147,32 @@ class CategoryService
 
         return $categories;
     }
+
+    public function getTotalByCategoryType($categoryType, array $filter)
+    {
+        $entries = $this->repository->getTotalByCategoryType($categoryType, $filter);
+
+        $result = [];
+
+        foreach ($entries as $key => $value) {
+            if (!isset($result[$value['category']])) {
+                $result[$value['category']]['total'] = 0;
+                $result[$value['category']]['quantity'] = 0;
+            }
+
+            $result[$value['category']]["id"] = $value['id'];
+            $result[$value['category']]["total"] += $value['total'];
+            $result[$value['category']]["quantity"] += $value['quantity'];
+        }
+
+        uasort($result, function($a, $b) {
+            if ($a['total'] == $b['total']) {
+                return 0;
+            }
+
+            return $a['total'] < $b['total'] ? 1 : -1;
+        });
+
+        return $result;
+    }
 }

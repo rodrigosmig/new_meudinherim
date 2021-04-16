@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Parcel;
 use App\Models\Account;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
@@ -19,7 +20,7 @@ class AccountEntry extends Model
      */
     protected $table = 'account_entries';
 
-    public $fillable =  ['date', 'description', 'value', 'category_id', 'account_id', 'account_scheduling_id', 'user_id'];
+    public $fillable =  ['date', 'description', 'value', 'category_id', 'account_id', 'parcel_id', 'account_scheduling_id', 'user_id'];
 
 
     public function account()
@@ -30,6 +31,11 @@ class AccountEntry extends Model
     public function accountScheduling()
     {
         return $this->belongsTo(AccountsScheduling::class);
+    }
+
+    public function parcel()
+    {
+        return $this->belongsTo(Parcel::class);
     }
 
     public function getValueAttribute($value)
@@ -52,6 +58,16 @@ class AccountEntry extends Model
         return $this->accountScheduling && $this->isExpenseCategory();
     }
 
+    /**
+     * Checks if the entry was made by an accounts payable
+     *
+     * @return bool
+     */
+    public function isPayableParcel()
+    {
+        return $this->parcel && $this->isExpenseCategory();
+    }
+
      /**
      * Checks if the entry was made by an accounts receivable
      *
@@ -60,5 +76,15 @@ class AccountEntry extends Model
     public function isReceivable()
     {
         return $this->accountScheduling && !$this->isExpenseCategory();
+    }
+
+    /**
+     * Checks if the entry was made by an accounts receivable
+     *
+     * @return bool
+     */
+    public function isReceivableParcel()
+    {
+        return $this->parcel && !$this->isExpenseCategory();
     }
 }

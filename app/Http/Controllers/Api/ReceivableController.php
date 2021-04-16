@@ -14,7 +14,6 @@ use App\Exceptions\AccountIsNotPaidException;
 use App\Http\Requests\Api\ReceivableStoreRequest;
 use App\Http\Requests\Api\ReceivableUpdateRequest;
 use App\Http\Resources\AccountsSchedulingResource;
-use App\Http\Requests\Api\ReceivableUpdateStoreRequest;
 
 class ReceivableController extends Controller
 {
@@ -34,19 +33,22 @@ class ReceivableController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = null;
+        $filter = [];
 
         if ((isset($request->from)
             && $request->from
             && isset($request->to)
             && $request->to)
-            || $request->status
         ) {
             $filter = [
                 'from'      => $request->from,
                 'to'        => $request->to,
                 'status'    => $request->status
             ];
+        }
+
+        if (isset($request->filter_status) && $request->filter_status) {
+            $filter['status'] = $request->filter_status;
         }
 
         $payables = $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter);
@@ -64,10 +66,11 @@ class ReceivableController extends Controller
     {
         $data = $request->validated();
 
-        $receivable = $this->service->store($data);
+        $receivable = $this->service->create($data);
 
         if (gettype($receivable) === 'boolean') {
-            return response()->json(['message' => __('messages.account_scheduling.installments_created')]);
+            return AccountsSchedulingResource::collection($receivable);
+            //return response()->json(['message' => __('messages.account_scheduling.installments_created')]);
         }
 
         return (new AccountsSchedulingResource($receivable))
@@ -116,9 +119,9 @@ class ReceivableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $receivable_updated = $this->service->update($receivable, $data);
+        $this->service->update($receivable, $data);
 
-        return (new AccountsSchedulingResource($receivable_updated));
+        return (new AccountsSchedulingResource($receivable));
     }
 
     /**
@@ -151,20 +154,19 @@ class ReceivableController extends Controller
     public function payment(PaymentRequest $request, $id)
     {
         $data       = $request->validated();
-        $data['id'] = $id;
-        $account    = $this->accountService->findById($data['account_id']);
+        $receivable = $this->service->findById($id);
 
-        try {
-            $entry = $this->service->payment($account, $data);
-        } catch (AccountIsPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if (! $entry) {
+        if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $this->accountService->updateBalance($account, $data['paid_date']);
+        if ($receivable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $account = $this->accountService->findById($data['account_id']);
+
+        $this->service->payment($account, $receivable, $data);
 
         return response()->json(['message' => __('messages.account_scheduling.receivable_paid')], Response::HTTP_OK);
     }
@@ -176,10 +178,8 @@ class ReceivableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        try {
-            $this->service->cancelPayment($receivable);
-        } catch (AccountIsNotPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (! $receivable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return response()->json(['message' => __('messages.account_scheduling.receivable_cancel')], Response::HTTP_OK);
