@@ -67,14 +67,12 @@
                                         </a>
                                     @else
                                         @if (isset($payable->parcelable) && $payable->parcelable)
-                                            <td>
-                                                <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($payable->parcelable->value) }}" 
-                                                    style="text-decoration: none; color: inherit">
-                                                    {{ $payable->description }}
-                                                </a>
-                                            </td>
+                                            <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($payable->parcelable->value) }}" 
+                                                style="text-decoration: none; color: inherit">
+                                                {{ $payable->description }}
+                                            </a>
                                         @else
-                                            <td>{{ $payable->description }}</td>
+                                            {{ $payable->description }}
                                         @endif
                                     @endif
                                 </td>

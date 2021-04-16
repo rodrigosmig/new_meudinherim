@@ -109,19 +109,23 @@ class AccountsSchedulingService
      */
     public function getAccountsSchedulingsByType($categoryType, array $filter = [])
     {
-        $range_date = [
+        $data = [
             'from'  => date('Y-m-01'),
             'to'    => date('Y-m-t')
         ];
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {
-            $range_date['from'] = $filter['from'];
-            $range_date['to']   = $filter['to'];
+            $data['from'] = $filter['from'];
+            $data['to']   = $filter['to'];
         }
 
-        $accounts_schedulings = $this->repository->getAccountsSchedulingsByType($categoryType, $range_date);
+        if (isset($filter['status']) && in_array($filter['status'], ['open', 'paid'])) {
+            $data['status'] = $filter['status'];
+        }
+
+        $accounts_schedulings = $this->repository->getAccountsSchedulingsByType($categoryType, $data);
        
-        $parcels = $this->parcelRepository->getParcelsOfAccountsScheduling($categoryType, $range_date);
+        $parcels = $this->parcelRepository->getParcelsOfAccountsScheduling($categoryType, $data);
 
         return $accounts_schedulings->concat($parcels);
     }

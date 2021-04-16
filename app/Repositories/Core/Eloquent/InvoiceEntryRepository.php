@@ -37,12 +37,14 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
      * @return array
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
-    {       
-        return $this->model::selectRaw('categories.name as category, categories.id, SUM(invoice_entries.value) / 100 as total, count(*) as quantity')
+    {
+        $mutator = 100;
+        return $this->model::selectRaw("categories.name as category, categories.id, SUM(invoice_entries.value) / {$mutator} as total, count(*) as quantity")
             ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
             ->where('categories.type', $categoryType)
             ->where('date', '>=', $filter['from'])
             ->where('date', '<=', $filter['to'])
+            ->where('has_parcels', false)
             ->orderByDesc('total')
             ->groupBy('categories.name', 'categories.id')
             ->get()
@@ -57,13 +59,12 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
      * @return array
      */ 
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id): array
-    {       
-        return $this->model
-            ->with('invoice.card')
+    {
+        return $this->model::with('invoice.card')
             ->with('category')
             ->where('category_id', $category_id)
-            ->where('date', '>=', $from)
-            ->where('date', '<=', $to)
+            ->whereBetween('date', [$from, $to])
+            ->where('has_parcels', false)
             ->orderBy('date')
             ->get()
             ->toArray();
@@ -78,8 +79,7 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
      */ 
     public function getTotalMonthlyByCategory($categoryType, $filter): float
     {
-        $total = $this->model
-            ->join('categories', 'categories.id', '=', 'invoice_entries.category_id')
+        $total = $this->model::join('categories', 'categories.id', '=', 'invoice_entries.category_id')
             ->where('categories.type', $categoryType)
             ->whereMonth('date', $filter['month'])
             ->whereYear('date', $filter['year'])

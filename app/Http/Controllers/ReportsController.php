@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Services\CategoryService;
 use App\Services\AccountEntryService;
 use App\Services\InvoiceEntryService;
 use App\Services\AccountsSchedulingService;
@@ -14,15 +15,18 @@ class ReportsController extends Controller
     protected $accountsSchedulingService;
     protected $accountEntryService;
     protected $invoiceEntryService;
+    protected $categoryService;
 
     public function __construct(
         AccountsSchedulingService $accountsSchedulingService,
         AccountEntryService $accountEntryService,
-        InvoiceEntryService $invoiceEntryService
+        InvoiceEntryService $invoiceEntryService,
+        CategoryService $categoryService
     ){
-        $this->accountsSchedulingService = $accountsSchedulingService;
-        $this->accountEntryService = $accountEntryService;
-        $this->invoiceEntryService = $invoiceEntryService;
+        $this->accountsSchedulingService    = $accountsSchedulingService;
+        $this->accountEntryService          = $accountEntryService;
+        $this->invoiceEntryService          = $invoiceEntryService;
+        $this->categoryService              = $categoryService;
 
         $this->title = __('global.reports');
     }
@@ -106,8 +110,8 @@ class ReportsController extends Controller
             ];
 
             $data['incomes']    = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::INCOME, $filter);
-            $data['expenses']   = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);
-            $data['cards']      = $this->invoiceEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);
+            $data['expenses']   = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);            
+            $data['cards']      = $this->categoryService->getTotalByCategoryType(Category::EXPENSE, $filter);
             $data['from'] = $filter['from'];
             $data['to'] = $filter['to'];
         }

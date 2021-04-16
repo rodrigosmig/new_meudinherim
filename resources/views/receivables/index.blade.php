@@ -62,14 +62,12 @@
                                 </td>
                                 <td>
                                     @if (isset($receivable->parcelable) && $receivable->parcelable)
-                                        <td>
-                                            <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($receivable->parcelable->value) }}" 
-                                                style="text-decoration: none; color: inherit">
-                                                {{ $receivable->description }}
-                                            </a>
-                                        </td>
+                                        <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($receivable->parcelable->value) }}" 
+                                            style="text-decoration: none; color: inherit">
+                                            {{ $receivable->description }}
+                                        </a>
                                     @else
-                                        <td>{{ $receivable->description }}</td>
+                                        {{ $receivable->description }}
                                     @endif
                                 </td>
                                 <td>

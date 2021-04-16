@@ -35,15 +35,20 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
      * @param Invoice $invoice
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getParcelsOfAccountsScheduling(int $categoryType, array $range_date)
+    public function getParcelsOfAccountsScheduling(int $categoryType, array $filter)
     {
         return $this->model::whereHasMorph(
             'parcelable', 
             AccountsScheduling::class,
-            function (Builder $query) use ($range_date, $categoryType) {
+            function (Builder $query) use ($categoryType, $filter) {
                 $query->join('categories', 'categories.id', '=', 'category_id')
                     ->where('categories.type', $categoryType)
-                    ->whereBetween('parcels.due_date', [$range_date['from'], $range_date['to']]);
+                    ->whereBetween('parcels.due_date', [$filter['from'], $filter['to']]);
+
+                    if (isset($filter['status']) && $filter['status']) {
+                        $status = $filter['status'] == 'open' ? false : true;
+                        $query->where('parcels.paid', $status);
+                    }
                 
             })->get();
     }
@@ -64,5 +69,24 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
                 $query->where('parcels.id', $parcel_id)
                     ->where('parcelable_id', $account_scheduling_id);
             })->first();
+    }
+
+    /**
+     * Returns the parcels for the given category id and range date
+     *
+     * @param int $categoryType
+     * @param array $filter
+     * @return array
+     */ 
+    public function getParcelsByCategoryAndRangeDate($from, $to, $category_id): array
+    {
+        return $this->model::with('invoice.card')
+            ->with('category')
+            ->where('category_id', $category_id)
+            ->where('date', '>=', $from)
+            ->where('date', '<=', $to)
+            ->orderBy('date')
+            ->get()
+            ->toArray();
     }
 }

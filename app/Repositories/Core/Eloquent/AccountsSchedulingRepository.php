@@ -29,8 +29,8 @@ class AccountsSchedulingRepository extends BaseEloquentRepository implements Acc
             ->where('has_parcels', false)
             ->orderBy('due_date');
 
-        
-        if (isset($filter['status']) && in_array($filter['status'], ['open', 'paid'])) {
+
+        if (isset($filter['status']) && $filter['status']) {
             $status = $filter['status'] == 'open' ? false : true;
             $result->where('paid', $status);
         }
