@@ -2,24 +2,24 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\Interfaces\ProfileRepositoryInterface;
 
 class ProfileService
 {
     protected $user;
 
-    public function __construct(User $user)
+    public function __construct(ProfileRepositoryInterface $repository)
     {
-        $this->user = $user;
+        $this->repository = $repository;
     }
 
     public function updatePassword(array $data): bool
     {
         $user = auth()->user();
         
-        return $user->update([
+        return $this->repository->update($user, [
             'password' => Hash::make($data['password'])
         ]);
     }
@@ -30,7 +30,7 @@ class ProfileService
         
         $user = auth()->user();
         
-        return $user->update($data);
+        return $this->repository->update($user, $data);
     }
 
     public function updateAvatar(array $data): void
@@ -44,7 +44,8 @@ class ProfileService
         $avatar = Storage::put('public/avatar', $data['file']);
         
         $user->avatar = $avatar;
-        $user->save();
+
+        $this->repository->save($user);
     }
 
     /**
@@ -54,9 +55,7 @@ class ProfileService
      */
     public function getUsersForNotification()
     {
-        return $this->user
-            ->where('enable_notification', true)
-            ->get();
+        return $this->repository->getUsersForNotification();
     }
 
     public function getApiUser()
@@ -71,7 +70,7 @@ class ProfileService
      */
     public function createUser(array $data)
     {
-        return $this->user->create([
+        return $this->repository->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
