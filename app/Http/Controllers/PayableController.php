@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 use App\Services\AccountService;
 use App\Http\Requests\PaymentRequest;
 use RealRashid\SweetAlert\Facades\Alert;
-use App\Exceptions\AccountIsPaidException;
 use App\Http\Requests\StorePayableRequest;
 use App\Services\AccountsSchedulingService;
-use App\Exceptions\AccountIsNotPaidException;
 
 class PayableController extends Controller
 {
@@ -100,7 +98,13 @@ class PayableController extends Controller
      */
     public function show($id)
     {
-        $payable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $payable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $payable = $this->service->findById($id);
+        }
 
         if (! $payable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
@@ -200,11 +204,16 @@ class PayableController extends Controller
 
     public function payment(PaymentRequest $request, $id)
     {
-        $data       = $request->validated();
-        $payable    = $this->repository->findById($id);
+        $data = $request->validated();
+
+        if(isset($data['parcelable_id']) && $data['parcelable_id']) {
+            $payable = $this->service->findParcel($id, $data['parcelable_id']);
+        } else {
+            $payable = $this->service->findById($id);
+        }
 
         if (! $payable) {
-            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
+            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_found'));
             return redirect()->route('payables.index');
         }
 
@@ -223,7 +232,13 @@ class PayableController extends Controller
     }
 
     public function cancelPayment($id) {
-        $payable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $payable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $payable = $this->service->findById($id);
+        }
 
         if (! $payable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));

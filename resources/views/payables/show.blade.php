@@ -31,7 +31,7 @@
                 @endif
                 <span class="float-right">
                     @if ($payable->isPaid())
-                        <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-target="#payment" title="{{ __('global.cancel_payment') }}">
+                        <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-parcelable="{{ isset($payable->parcelable_id) ? $payable->parcelable_id : '' }}" data-toggle="tooltip" data-target="#payment" title="{{ __('global.cancel_payment') }}">
                             <i class="fas fa-ban"></i>
                         </button>
                     @else
@@ -107,6 +107,10 @@
                 </div>
 
             </div>
+
+            @isset($payable->parcelable_id)
+                <input type="hidden" name="parcelable_id" value="{{ $payable->parcelable_id }}">
+            @endisset
 
             <div class="card-footer">
                 <a href="{{ route('payables.index') }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Core\Eloquent;
 
+use DateTime;
 use App\Models\AccountsScheduling;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
@@ -25,6 +26,7 @@ class AccountsSchedulingRepository extends BaseEloquentRepository implements Acc
             ->where('categories.type', $categoryType)
             ->where('due_date', '>=', $filter['from'])
             ->where('due_date', '<=', $filter['to'])
+            ->where('has_parcels', false)
             ->orderBy('due_date');
 
         
@@ -56,8 +58,59 @@ class AccountsSchedulingRepository extends BaseEloquentRepository implements Acc
             ->get();
     }
 
-    public function deleteAccountEntry($account_scheduling)
+    /**
+     * Delete the account entry related to account scheduling 
+     * 
+     * @param mixed $account_scheduling
+     * @return bool
+     */
+    public function deleteAccountEntry($account_scheduling): bool
     {
         return $account_scheduling->accountEntry()->delete();
+    }
+
+    public function createParcels($account_scheduling, array $data)
+    {
+        return $account_scheduling->parcels()->create([
+            'due_date'      => $data['due_date'],
+            'description'   => $data['description'],
+            'value'         => $data['parcel_value'],
+            'parcel_number' => $data['parcel_number'],
+            'parcel_total'  => $data['total_parcels'],
+            'category_id'   => $data['category_id'],
+        ]);
+    }
+
+     /**
+     * Delete parcels for a given account scheduling
+     *
+     * @param AccountsScheduling $invoice
+     * @return void
+     */
+    public function deleteParcels($account_scheduling): void
+    {
+        foreach ($account_scheduling->parcels as $parcel) {
+            $parcel->delete();
+        }
+    }
+
+    /**
+     * Creates the account payables to next month
+     *
+     * @param AccountsScheduling $account_scheduling
+     * @return void
+     */
+    public function createMonthlyPayment($account_scheduling): void
+    {
+        $date = new DateTime($account_scheduling->due_date);
+        $next_month = $date->modify('+1 month');
+
+        $account_scheduling->create([
+            'due_date'      => $next_month->format('Y-m-d'),
+            'description'   => $account_scheduling->description,
+            'value'         => $account_scheduling->value,
+            'category_id'   => $account_scheduling->category_id,
+            'monthly'       => $account_scheduling->monthly
+        ]);
     }
 }

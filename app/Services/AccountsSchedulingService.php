@@ -4,21 +4,25 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\User;
+use App\Models\Parcel;
 use App\Models\Account;
 use App\Services\CardService;
 use App\Models\AccountsScheduling;
 use App\Exceptions\AccountIsNotPaidException;
+use App\Repositories\Interfaces\ParcelRepositoryInterface;
+use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
-use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 
 class AccountsSchedulingService
 {
     protected $repository;
+    protected $parcelRepository;
 
-    public function __construct(AccountsSchedulingRepositoryInterface $repository)
+    public function __construct(AccountsSchedulingRepositoryInterface $repository, ParcelRepositoryInterface $parcelRepository)
     {
-        $this->repository = $repository;
+        $this->repository       = $repository;
+        $this->parcelRepository = $parcelRepository;
     }
 
     public function create(array $data)
@@ -26,42 +30,48 @@ class AccountsSchedulingService
         $data['monthly'] = isset($data['monthly']) ? true : false;
 
         if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
-            return $this->createInstallments($data);
+            return $this->createAccountSchedulingParcels($data);
         } 
 
         return $this->repository->create($data);
     }
 
     /**
-     * Create the installments
+     * Create the parcels
      *
      * @param array $data
-     * @return bool
+     * @return array
      */ 
-    public function createInstallments(array $data): bool
+    public function createAccountSchedulingParcels(array $data): array
     {
-        $date                   = new DateTime($data['due_date']);
-        $total                  = $data['value'];
-        $installments_number    = $data['installments_number'];
-        $installment_value      = number_format($total / $installments_number, 2);
-        $description_default    = $data['description'];
+        $data['has_parcels'] = true;
 
-        $data['value'] = $installment_value;
+        $account_scheduling = $this->repository->create($data);
 
-        for ($i = 1; $i <= $installments_number; $i++) {
-            $data['due_date']       = $date->format('Y-m-d');
-            $data['description']    = $description_default . " {$i}/{$installments_number}" ;           
+        $parcels        = [];
+        $total_parcels  = $data['installments_number'];
 
-            $entry = $this->account_scheduling->create($data);
+        $parcel_data = [
+            'total_parcels' => $total_parcels,
+            'parcel_value'  => number_format($account_scheduling->value / $data['installments_number'], 2),
+            'category_id'   => $account_scheduling->category->id,
+        ];
 
-            if (! $entry) {
-                return false;
-            }
+        $date = new DateTime($account_scheduling->date);
+
+        for ($parceling = 1; $parceling <= $total_parcels; $parceling++) {
+            $parcel_data['due_date']            = $date->format('Y-m-d');
+            $parcel_data['description']     = $account_scheduling->description . " {$parceling}/{$total_parcels}" ;           
+            $parcel_data['parcel_number']   = $parceling;
+
+            $parcel = $this->repository->createParcels($account_scheduling, $parcel_data);
+
+            $parcels[] = $parcel;
 
             $date = $date->modify('+1 month');
         }
 
-        return true;
+        return $parcels;
     }
 
     public function update(AccountsScheduling $account_scheduling, $data)
@@ -73,12 +83,21 @@ class AccountsSchedulingService
 
     public function delete(AccountsScheduling $account_scheduling)
     {
+        if ($account_scheduling->hasParcels()) {
+            $this->repository->deleteParcels($account_scheduling);
+        }
+
         return $this->repository->delete($account_scheduling);
     }
 
-    public function findById($id)
+    public function findById($id): ?AccountsScheduling
     {
         return $this->repository->findById($id);
+    }
+
+    public function findParcel($parcel_id, $account_scheduling_id): ?Parcel
+    {
+        return $this->parcelRepository->findParcelsOfAccountsScheduling($account_scheduling_id, $parcel_id);
     }
 
     /**
@@ -96,21 +115,26 @@ class AccountsSchedulingService
         ];
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {
-            $filter['from'] = $range_date['from'];
-            $filter['to']   = $range_date['to'];
+            $range_date['from'] = $filter['from'];
+            $range_date['to']   = $filter['to'];
         }
 
-        return $this->repository->getAccountsSchedulingsByType($categoryType, $range_date);
+        $accounts_schedulings = $this->repository->getAccountsSchedulingsByType($categoryType, $range_date);
+       
+        $parcels = $this->parcelRepository->getParcelsOfAccountsScheduling($categoryType, $range_date);
+
+        return $accounts_schedulings->concat($parcels);
     }
 
     /**
      * Makes the bill payment
      *
      * @param Account $account
+     * @param Account $account
      * @param array $data
      * @return void
      */
-    public function payment(Account $account, AccountsScheduling $account_scheduling, array $data): void
+    public function payment(Account $account, $account_scheduling, array $data): void
     {
         $account_scheduling->paid_date = $data['paid_date'];
         $account_scheduling->paid = true;
@@ -120,53 +144,40 @@ class AccountsSchedulingService
             'description'   => $account_scheduling->description,
             'value'         => $account_scheduling->value,
             'category_id'   => $account_scheduling->category_id,
+            'account_id'    => $account->id
         ];
 
         $accountEntryRepository = app(AccountEntryRepositoryInterface::class);
         
-        $entry = $accountEntryRepository->create($account, $entryData);        
-        $entry->accountScheduling()->associate($account_scheduling);
+        $entry = $accountEntryRepository->create($entryData);
 
-        if ($account_scheduling->invoice) {
-            $this->updateInvoice($account_scheduling);
+        if (! $account_scheduling->isParcel()) {
+            $entry->accountScheduling()->associate($account_scheduling);
+            
+
+            if ($account_scheduling->invoice) {
+                $this->updateInvoice($account_scheduling);
+            }
+
+            if ($account_scheduling->monthly) {
+                $this->repository->createMonthlyPayment($account_scheduling);
+            }
+
+            $this->repository->save($account_scheduling);
+        } else {            
+            $entry->parcel()->associate($account_scheduling);
+            $this->parcelRepository->save($account_scheduling);
         }
 
-        if ($account_scheduling->monthly) {
-            $this->createMonthlyPayment($account_scheduling);
-        }
-
-        $this->accountEntryRepository->save($entry);
-        $this->repository->save($account_scheduling);
-
+        $accountEntryRepository->save($entry);
         $this->updateAccountBalance($account, $entry->date);
-    }
-
-    /**
-     * Creates the account payables to next month
-     *
-     * @param AccountsScheduling $payable
-     * @return void
-     */
-    public function createMonthlyPayment(AccountsScheduling $payable)
-    {
-        $date = new DateTime($payable->due_date);
-        $next_month = $date->modify('+1 month');
-
-        $this->account_scheduling->create([
-            'due_date'      => $next_month->format('Y-m-d'),
-            'description'   => $payable->description,
-            'value'         => $payable->value,
-            'category_id'   => $payable->category_id,
-            'monthly'       => $payable->monthly
-        ]);
     }
 
     /**
      * Cancels the payment and delete the account entry
      *
-     * @param AccountsScheduling $payable
+     * @param mixed $account_scheduling
      * @return bool
-     * @throws AccountIsNotPaidException
      */
     public function cancelPayment($account_scheduling): bool
     {
@@ -180,7 +191,11 @@ class AccountsSchedulingService
             'paid' => false
         ];
 
-        $this->repository->update($account_scheduling, $new_data);
+        if ($account_scheduling->isParcel()) {
+            $this->parcelRepository->update($account_scheduling, $new_data);
+        } else {
+            $this->repository->update($account_scheduling, $new_data);
+        }
 
         if ($account_scheduling->invoice) {
             $this->updateInvoice($account_scheduling, false);

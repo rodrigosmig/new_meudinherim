@@ -16,6 +16,8 @@
     <script>
         var receivable_title = '{{ __('messages.ajax_title') }}';
         var receivable_text = '{{ __('messages.account_scheduling.ajax_text') }}';
+        var parcel_title = '{{ __('messages.parcel_title') }}';
+        var parcel_text = '{{ __('messages.account_scheduling.delete_parcel') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
     </script>
@@ -36,7 +38,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table datatable datatable">
+                <table class="table datatable">
                     <thead>
                         <th>{{ __('global.due_date') }}</th>
                         <th>{{ __('global.paid_date') }}</th>
@@ -59,7 +61,16 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $receivable->description }}
+                                    @if (isset($receivable->parcelable) && $receivable->parcelable)
+                                        <td>
+                                            <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($receivable->parcelable->value) }}" 
+                                                style="text-decoration: none; color: inherit">
+                                                {{ $receivable->description }}
+                                            </a>
+                                        </td>
+                                    @else
+                                        <td>{{ $receivable->description }}</td>
+                                    @endif
                                 </td>
                                 <td>
                                     {{ $receivable->category->name }}
@@ -85,18 +96,31 @@
                                 <td class="table-actions">
                                     <div class="row">
                                         @if (! $receivable->isPaid())
-                                            <a class="btn btn-info btn-sm edit" href="{{ route('receivables.edit', $receivable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <button class="btn btn-danger btn-sm delete" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            @if (! isset($receivable->parcelable))
+                                                <a class="btn btn-info btn-sm edit" href="{{ route('receivables.edit', $receivable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                            @endif
                                             
-                                            <a class="btn btn-success btn-sm edit" href="{{ route('receivables.show', $receivable->id) }}" data-toggle="tooltip" data-placement="top"  title="{{ __('global.receive') }}">
-                                                <i class="fas fa-money-bill-alt"></i>
-                                            </a>
+                                            @if (! isset($receivable->parcelable))
+                                                <button class="btn btn-danger btn-sm delete" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+
+                                                <a class="btn btn-success btn-sm edit" href="{{ route('receivables.show', $receivable->id) }}" data-toggle="tooltip" data-placement="top"  title="{{ __('global.receive') }}">
+                                                    <i class="fas fa-money-bill-alt"></i>
+                                                </a>
+                                            @else
+                                                <button class="btn btn-danger btn-sm delete-parcels" data-receivable="{{ $receivable->parcelable_id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+
+                                                <a class="btn btn-success btn-sm" href="{{ route('receivables.show', [$receivable->id, "parcelable_id" => $receivable->parcelable_id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
+                                                    <i class="fas fa-money-bill-alt"></i>
+                                                </a>
+                                            @endif
                                         @else
-                                            <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_receivement') }}">
+                                            <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-parcelable="{{ isset($receivable->parcelable_id) ? $receivable->parcelable_id : '' }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_receivement') }}">
                                                 <i class="fas fa-ban"></i>
                                             </button>
                                         @endif

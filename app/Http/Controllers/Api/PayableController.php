@@ -8,9 +8,7 @@ use Illuminate\Http\Response;
 use App\Services\AccountService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\PaymentRequest;
-use App\Exceptions\AccountIsPaidException;
 use App\Services\AccountsSchedulingService;
-use App\Exceptions\AccountIsNotPaidException;
 use App\Http\Requests\Api\PayableStoreRequest;
 use App\Http\Requests\Api\PayableUpdateRequest;
 use App\Http\Resources\AccountsSchedulingResource;
@@ -39,13 +37,15 @@ class PayableController extends Controller
             && $request->from
             && isset($request->to)
             && $request->to)
-            || $request->status
         ) {
             $filter = [
                 'from'      => $request->from,
                 'to'        => $request->to,
-                'status'    => $request->status
             ];
+        }
+
+        if (isset($request->filter_status) && $request->filter_status) {
+            $filter['status'] = $request->filter_status;
         }
 
         $payables = $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter);
@@ -66,7 +66,7 @@ class PayableController extends Controller
         $payable = $this->service->create($data);
 
         if (gettype($payable) === 'boolean') {
-            return response()->json(['message' => __('messages.account_scheduling.installments_created')]);
+            return AccountsSchedulingResource::collection($payable);
         }
 
         return (new AccountsSchedulingResource($payable))
@@ -150,7 +150,7 @@ class PayableController extends Controller
     public function payment(PaymentRequest $request, $id)
     {
         $data       = $request->validated();
-        $payable    = $this->repository->findById($id);
+        $payable    = $this->service->findById($id);
 
         if (! $payable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
@@ -174,11 +174,11 @@ class PayableController extends Controller
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        try {
-            $this->service->cancelPayment($payable);
-        } catch (AccountIsNotPaidException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (! $payable->isPaid()) {
+            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        $this->service->cancelPayment($payable);
 
         return response()->json(['message' => __('messages.account_scheduling.payable_cancel')], Response::HTTP_OK);
     }

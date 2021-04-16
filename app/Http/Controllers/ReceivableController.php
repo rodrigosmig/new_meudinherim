@@ -31,7 +31,7 @@ class ReceivableController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = null;
+        $filter = [];
 
         if (isset($request->filter_from)
             && $request->filter_from
@@ -81,7 +81,7 @@ class ReceivableController extends Controller
     {
         $data = $request->validated();
         
-        $receivable = $this->service->store($data);
+        $receivable = $this->service->create($data);
 
         if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_save'));
@@ -101,7 +101,13 @@ class ReceivableController extends Controller
      */
     public function show($id)
     {
-        $receivable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $receivable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
 
         if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
@@ -122,7 +128,13 @@ class ReceivableController extends Controller
      */
     public function edit($id)
     {
-        $receivable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $receivable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
 
         if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
@@ -201,23 +213,27 @@ class ReceivableController extends Controller
 
     public function receivement(ReceivementRequest $request, $id)
     {
-        $data       = $request->validated();
-        $data['id'] = $id;
+        $data = $request->validated();
+
+        if(isset($data['parcelable_id']) && $data['parcelable_id']) {
+            $receivable = $this->service->findParcel($id, $data['parcelable_id']);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
+
+        if (! $receivable) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.not_found')]);
+        }
+
+        if ($receivable->isPaid()) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.receivable_is_paid')]);
+        }
+
         $account    = $this->accountService->findById($data['account_id']);
 
-        try {
-            $entry = $this->service->payment($account, $data);
-        } catch (AccountIsPaidException $exception) {
-            Alert::error(__('global.invalid_request'), $exception->getMessage());
-            return redirect()->route('receivables.index');
-        }
-
-        if (! $entry) {
-            Alert::error(__('global.invalid_request'), __('messages.not_found'));
-            return redirect()->route('receivables.index');
-        }
-
-        $this->accountService->updateBalance($account, $data['paid_date']);
+        $this->service->payment($account, $receivable, $data);
 
         Alert::success(__('global.success'), __('messages.account_scheduling.receivable_paid'));
 
@@ -225,24 +241,25 @@ class ReceivableController extends Controller
     }
 
     public function cancelreceivement($id) {
-        $receivable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $receivable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
 
         if (! $receivable) {
             Alert::error(__('global.invalid_request'), __('messages.not_found'));
             return redirect()->route('receivables.index');
         }
 
-        try {
-            $response = $this->service->cancelPayment($receivable);
-        } catch (AccountIsNotPaidException $exception) {
-            Alert::error(__('global.invalid_request'), $exception->getMessage());
-            return redirect()->route('receivables.index');
+        if (! $receivable->isPaid()) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.account_scheduling.receivable_is_paid')]);
         }
 
-        if (! $response) {
-            Alert::error(__('global.invalid_request'), __('messages.account_scheduling.not_cancel_receivement'));
-            return redirect()->route('receivables.index');
-        }
+        $this->service->cancelPayment($receivable);
 
         Alert::success(__('global.success'), __('messages.account_scheduling.receivable_cancel'));
 
