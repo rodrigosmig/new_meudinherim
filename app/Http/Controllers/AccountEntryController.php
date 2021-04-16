@@ -10,6 +10,9 @@ use App\Http\Requests\StoreAccountEntryRequest;
 
 class AccountEntryController extends Controller
 {
+    protected $service;
+    protected $accountService;
+
     public function __construct(AccountEntryService $service, AccountService $accountService)
     {
         $this->service          = $service;
@@ -33,7 +36,7 @@ class AccountEntryController extends Controller
             return redirect()->route('accounts.index');
         }
 
-        $range_date = null;
+        $range_date = [];
 
         if (isset($request->filter_from)
             && $request->filter_from
@@ -49,7 +52,7 @@ class AccountEntryController extends Controller
         $data = [
             'title'     => $this->title,
             'account'   => $account,
-            'entries'   => $this->service->getEntriesByAccount($account->id, $range_date),
+            'entries'   => $this->service->getEntriesByAccountId($account->id, $range_date),
             'filter'    => $range_date
         ];
 
@@ -87,7 +90,7 @@ class AccountEntryController extends Controller
             return redirect()->route('accounts.index');
         }
 
-        $entry = $this->service->make($account, $data);
+        $entry = $this->service->create($account->id, $data);
 
         $this->accountService->updateBalance($account, $entry->date);
        
@@ -127,12 +130,14 @@ class AccountEntryController extends Controller
     {
         $data = $request->except('_token');
 
-        $entry = $this->service->update($id, $data);
+        $entry = $this->service->findById($id);
 
         if (! $entry) {
-            Alert::error(__('global.invalid_request'), __('messages.not_save'));
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_found'));
             return redirect()->route('accounts.index');
         }
+
+        $this->service->update($entry, $data);
 
         $this->accountService->updateBalance($entry->account, $entry->date);
 
@@ -156,13 +161,10 @@ class AccountEntryController extends Controller
                 ->json(['title' => __('global.invalid_request'), 'text' => __('messages.entries.not_found')]);
         }
 
-        $date = $entry->date;
-        $account = $entry->account;
+        $date       = $entry->date;
+        $account    = $entry->account;
 
-        if (! $this->service->delete($entry)) {
-            return response()
-                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_delete')]);
-        }
+        $this->service->delete($entry);
 
         $this->accountService->updateBalance($account, $date);
 

@@ -31,7 +31,7 @@
                 @endif
                 <span class="float-right">
                     @if ($receivable->isPaid())
-                        <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-toggle="tooltip" title="{{ __('global.cancel_receivement') }}">
+                        <button class="btn btn-danger btn-sm cancel_receivement" data-receivable="{{ $receivable->id }}" data-parcelable="{{ isset($receivable->parcelable_id) ? $receivable->parcelable_id : '' }} data-toggle="tooltip" title="{{ __('global.cancel_receivement') }}">
                             <i class="fas fa-ban"></i>
                         </button>
                     @else
@@ -106,6 +106,10 @@
                     </div>
                 </div>
             </div>
+
+            @isset($receivable->parcelable_id)
+                <input type="hidden" name="parcelable_id" value="{{ $receivable->parcelable_id }}">
+            @endisset
 
             <div class="card-footer">
                 <a href="{{ route('receivables.index') }}" class="btn btn-outline-dark">{{ __('global.cancel') }}</a>

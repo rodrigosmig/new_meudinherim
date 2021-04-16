@@ -16,6 +16,8 @@
     <script>
         var payable_title = '{{ __('messages.ajax_title') }}';
         var payable_text = '{{ __('messages.account_scheduling.ajax_text') }}';
+        var parcel_title = '{{ __('messages.parcel_title') }}';
+        var parcel_text = '{{ __('messages.account_scheduling.delete_parcel') }}';
         var button_cancel = '{{ __('global.cancel') }}';
         var button_confirm = '{{ __('global.confirm') }}';
     </script>
@@ -36,7 +38,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table datatable datatable">
+                <table class="table datatable">
                     <thead>
                         <th>{{ __('global.due_date') }}</th>
                         <th>{{ __('global.paid_date') }}</th>
@@ -64,7 +66,14 @@
                                             {{ $payable->description }}
                                         </a>
                                     @else
-                                        {{ $payable->description }}
+                                        @if (isset($payable->parcelable) && $payable->parcelable)
+                                            <a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Total: {{ toBrMoney($payable->parcelable->value) }}" 
+                                                style="text-decoration: none; color: inherit">
+                                                {{ $payable->description }}
+                                            </a>
+                                        @else
+                                            {{ $payable->description }}
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -91,18 +100,31 @@
                                 <td class="table-actions">
                                     <div class="row">
                                         @if (! $payable->isPaid())
-                                            <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                            
-                                            <a class="btn btn-success btn-sm edit" href="{{ route('payables.show', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
-                                                <i class="fas fa-money-bill-alt"></i>
-                                            </a>
+                                            @if (! isset($payable->parcelable))
+                                                <a class="btn btn-info btn-sm edit" href="{{ route('payables.edit', $payable->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                            @endif
+
+                                            @if (! isset($payable->parcelable))
+                                                <button class="btn btn-danger btn-sm delete" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+
+                                                <a class="btn btn-success btn-sm" href="{{ route('payables.show', [$payable->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
+                                                    <i class="fas fa-money-bill-alt"></i>
+                                                </a>
+                                            @else
+                                                <button class="btn btn-danger btn-sm delete-parcels" data-payable="{{ $payable->parcelable_id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+
+                                                <a class="btn btn-success btn-sm" href="{{ route('payables.show', [$payable->id, "parcelable_id" => $payable->parcelable_id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.pay') }}">
+                                                    <i class="fas fa-money-bill-alt"></i>
+                                                </a>
+                                            @endif
                                         @else
-                                            <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.cancel_payment') }}">
+                                            <button class="btn btn-danger btn-sm cancel_payment" data-payable="{{ $payable->id }}" data-parcelable="{{ isset($payable->parcelable_id) ? $payable->parcelable_id : '' }}" data-toggle="tooltip"  data-placement="top" title="{{ __('global.cancel_payment') }}">
                                                 <i class="fas fa-ban"></i>
                                             </button>
                                         @endif

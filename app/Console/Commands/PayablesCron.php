@@ -2,11 +2,12 @@
 
 namespace App\Console\Commands;
 
+use app;
 use App\Models\Category;
 use Illuminate\Console\Command;
 use App\Services\ProfileService;
-use App\Services\AccountsSchedulingService;
 use App\Notifications\AccountPayableNotification;
+use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
 
 class PayablesCron extends Command
 {
@@ -41,13 +42,13 @@ class PayablesCron extends Command
      */
     public function handle()
     {
-        $payableService = app(AccountsSchedulingService::class);
+        $payableRepository = app(AccountsSchedulingRepositoryInterface::class);
         $userService    = app(ProfileService::class);
         
         $users = $userService->getUsersForNotification();
 
         foreach ($users as $user) {
-            $payables = $payableService->getAccountsByUserForCron($user, Category::EXPENSE);
+            $payables = $payableRepository->getAccountsByUserForCron($user, Category::EXPENSE);
             
             if ($payables->count() > 0) {
                 $user->notify(new AccountPayableNotification($payables));

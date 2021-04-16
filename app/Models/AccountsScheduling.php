@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasParcel;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use App\Models\AccountEntry;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccountsScheduling extends Model
 {
-    use UserTrait, HasCategory;
+    use UserTrait, HasCategory, HasParcel;
     
     public $fillable =  [
         'due_date', 
@@ -17,13 +18,20 @@ class AccountsScheduling extends Model
         'description', 
         'value', 
         'category_id', 
-        'invoice_id', 
+        'invoice_id',
+        'has_parcels',
         'paid',
         'monthly',
         'user_id'
     ];
 
-    public function accountEntry(){
+    protected $casts = [
+        'paid'          => 'boolean',
+        'has_parcels'   => 'boolean',        
+    ];
+
+    public function accountEntry()
+    {
         return $this->hasOne(AccountEntry::class, 'account_scheduling_id');
     }
 
@@ -49,6 +57,16 @@ class AccountsScheduling extends Model
      */
     public function isPaid()
     {
-        return $this->paid;
+        return $this->paid == true;
+    }
+
+    /**
+     * Checks if the account is parcel
+     *
+     * @return bool
+     */
+    public function isParcel()
+    {
+        return isset($this->parcelable_type) && isset($this->parcelable_id) && $this->parcelable_type === AccountsScheduling::class;
     }
 }

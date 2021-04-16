@@ -9,8 +9,6 @@ use App\Models\AccountEntry;
 use App\Models\Category;
 use Laravel\Sanctum\Sanctum;
 use App\Models\AccountsScheduling;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PayableTest extends TestCase
 {
@@ -109,8 +107,8 @@ class PayableTest extends TestCase
 
         $response = $this->postJson('/api/payables', $data);
 
-        $response->assertStatus(200)
-            ->assertExactJson(['message' => __('messages.account_scheduling.installments_created')]);
+        $response->assertStatus(201)
+            ->assertJsonCount(2, 'data');
     }
 
     public function testValidationErrorWhenCreatePayableWithInstallments()

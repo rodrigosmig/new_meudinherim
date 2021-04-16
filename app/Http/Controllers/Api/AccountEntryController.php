@@ -34,7 +34,7 @@ class AccountEntryController extends Controller
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $range_date = null;
+        $range_date = [];
 
         if (isset($request->from)
             && $request->from
@@ -47,7 +47,7 @@ class AccountEntryController extends Controller
             ];
         }
 
-        $entries = $this->entryService->getEntriesByAccount($account->id, $range_date);
+        $entries = $this->entryService->getEntriesByAccountId($account->id, $range_date);
 
         return AccountEntryResource::collection($entries);
     }
@@ -68,7 +68,7 @@ class AccountEntryController extends Controller
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $entry = $this->entryService->make($account, $data);
+        $entry = $this->entryService->create($account_id, $data);
 
         $this->accountService->updateBalance($account, $entry->date);
 
@@ -102,11 +102,17 @@ class AccountEntryController extends Controller
      */
     public function update(StoreUpdateAccountEntryRequest $request, $id)
     {
-        $entry = $this->entryService->update($id, $request->validated());
+        $data = $request->validated();
+
+        $entry = $this->entryService->findById($id);
 
         if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
+
+        $this->entryService->update($entry, $data);
+
+        $this->accountService->updateBalance($entry->account, $entry->date);
 
         return new AccountEntryResource($entry);
     }
@@ -125,7 +131,12 @@ class AccountEntryController extends Controller
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
+        $date       = $entry->date;
+        $account    = $entry->account;
+
         $this->entryService->delete($entry);
+
+        $this->accountService->updateBalance($account, $date);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }

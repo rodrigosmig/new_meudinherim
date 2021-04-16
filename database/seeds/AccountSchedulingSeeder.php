@@ -25,7 +25,7 @@ class AccountSchedulingSeeder extends Seeder
             'monthly'       => true
         ];
 
-        $service->store($data);
+        $service->create($data);
 
         $data = [
             'due_date'      => now()->modify('8 days')->format('Y-m-d'),
@@ -36,7 +36,7 @@ class AccountSchedulingSeeder extends Seeder
             'monthly'       => true
         ];
 
-        $service->store($data);
+        $service->create($data);
 
         $data = [
             'due_date'      => now()->modify('10 days')->format('Y-m-d'),
@@ -47,7 +47,7 @@ class AccountSchedulingSeeder extends Seeder
             'monthly'       => true
         ];
 
-        $service->store($data);
+        $service->create($data);
 
         $data = [
             'due_date'      => now()->modify('10 days')->format('Y-m-d'),
@@ -58,7 +58,7 @@ class AccountSchedulingSeeder extends Seeder
             'monthly'       => true
         ];
 
-        $service->store($data);
+        $service->create($data);
 
         $data = [
             'due_date'      => now()->modify('10 days')->format('Y-m-d'),
@@ -69,7 +69,7 @@ class AccountSchedulingSeeder extends Seeder
             'monthly'       => true
         ];
 
-        $service->store($data);
+        $service->create($data);
 
         $data = [
             'due_date'      => now()->modify('10 days')->format('Y-m-d'),
@@ -80,6 +80,6 @@ class AccountSchedulingSeeder extends Seeder
             'monthly'       => true
         ];
 
-        $service->store($data);
+        $service->create($data);
     }
 }

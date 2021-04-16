@@ -5,15 +5,18 @@ namespace App\Services;
 use DateTime;
 use App\Models\Account;
 use App\Models\AccountEntry;
+use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 
 class AccountEntryService
 {
-    protected $account_entry;
+    protected $repository;
 
-    public function __construct(AccountEntry $account_entry, Account $account)
+    public function __construct(AccountEntryRepositoryInterface $repository, Account $account)
     {
+        $this->repository    = $repository;
+        
         $this->account          = $account;
-        $this->account_entry    = $account_entry;
+        $this->repository    = $repository;
     }
 
     /**
@@ -23,32 +26,26 @@ class AccountEntryService
      * @param array $data
      * @return AccountEntry
      */ 
-    public function make(Account $account, array $data): AccountEntry
+    public function create($account_id, array $data)
     {
-        return $account->entries()->create($data);
+        $data['account_id'] = $account_id;
+
+        return $this->repository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update(AccountEntry $entry, array $data)
     {
-        $account_entry = $this->findById($id);
-
-        if (! $account_entry) {
-            return false;
-        }
-        
-        $account_entry->update($data);
-        
-        return $account_entry;
+        return $this->repository->update($entry, $data);;
     }
 
     public function delete(AccountEntry $entry)
     {
-        return $entry->delete();
+        return $this->repository->delete($entry);
     }
 
     public function findById($id)
     {
-        return $this->account_entry->find($id);
+        return $this->repository->findById($id);
     }
 
     /**
@@ -58,22 +55,19 @@ class AccountEntryService
      * @param array $range_date
      * @return Illuminate\Database\Eloquent\Collection
      */  
-    public function getEntriesByAccount($account_id, array $range_date = null)
+    public function getEntriesByAccountId($account_id, array $filter = [])
     {
-        $from = date('Y-m-01');
-        $to = date('Y-m-t');
+        $range_date = [
+            'from'  => date('Y-m-01'),
+            'to'    => date('Y-m-t')
+        ];
 
-        if ($range_date && isset($range_date['from']) && isset($range_date['to'])) {
-            $from = $range_date['from'];
-            $to = $range_date['to'];
+        if ($filter && isset($filter['from']) && isset($filter['to'])) {
+            $range_date['from'] = $filter['from'];
+            $range_date['to']   = $filter['to'];
         }
 
-        return $this->account_entry
-            ->where('account_id', $account_id)
-            ->where('date', '>=', $from)
-            ->where('date', '<=', $to)
-            ->orderBy('date')
-            ->get();
+        return $this->repository->getEntriesByAccountId($account_id, $range_date);
     }
 
     /**
@@ -93,14 +87,8 @@ class AccountEntryService
             $month  = $new_date->format('m');
             $year   = $new_date->format('Y');
 
-            $total = $this->account_entry::select('account_entries.id')
-                ->join('categories', 'categories.id', '=', 'account_entries.category_id')
-                ->where('categories.type', $categoryType)
-                ->whereMonth('date', $month)
-                ->whereYear('date', $year)
-                ->sum('value');
+            $total = $this->repository->getTotalTypeOfCategory($categoryType, $month, $year);
 
-            $key = (int) $month;
             $result[] = $total / 100;
 
             $new_date = $new_date->modify("+1 month");
@@ -123,19 +111,12 @@ class AccountEntryService
         $year       = $new_date->format('Y');
         $result     = [];
         
-        $total = $this->account_entry::selectRaw('categories.name, SUM(account_entries.value) as total')
-            ->join('categories', 'categories.id', '=', 'account_entries.category_id')
-            ->where('categories.type', $categoryType)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->groupBy('categories.name')
-            ->get()
-            ->toArray();
+        $categories = $this->repository->getTotalByCategory($categoryType, $month, $year);
 
-        foreach ($total as $value) {
+        foreach ($categories as $category) {
             $result[] = [
-                'value' => $value['total'] / 100,
-                'label' => $value['name']
+                'value' => $category['total'] / 100,
+                'label' => $category['name']
             ];
         }
 
@@ -155,12 +136,7 @@ class AccountEntryService
         $month      = $new_date->format('m');
         $year       = $new_date->format('Y');
         
-        $total = $this->account_entry
-            ->join('categories', 'categories.id', '=', 'account_entries.category_id')
-            ->where('categories.type', $categoryType)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->sum('value');
+        $total = $this->repository->getTotalTypeOfCategory($categoryType, $month, $year);
 
         return $total / 100;
     }
@@ -174,15 +150,7 @@ class AccountEntryService
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
     {       
-        return $this->account_entry::selectRaw('categories.name as category, categories.id, SUM(account_entries.value) / 100 as total, count(*) as quantity')
-            ->join('categories', 'categories.id', '=', 'account_entries.category_id')
-            ->where('categories.type', $categoryType)
-            ->where('date', '>=', $filter['from'])
-            ->where('date', '<=', $filter['to'])
-            ->orderByDesc('total')
-            ->groupBy('categories.name', 'categories.id')
-            ->get()
-            ->toArray();
+        return $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
     }
 
     /**
@@ -194,14 +162,6 @@ class AccountEntryService
      */ 
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
     {       
-        return $this->account_entry
-            ->with('account')
-            ->with('category')
-            ->where('category_id', $category_id)
-            ->where('date', '>=', $from)
-            ->where('date', '<=', $to)
-            ->orderBy('date')
-            ->get()
-            ->toArray();
+        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
     }
 }

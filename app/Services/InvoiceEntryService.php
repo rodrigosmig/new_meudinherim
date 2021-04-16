@@ -180,8 +180,14 @@ class InvoiceEntryService
      * @return array
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
-    {       
-        return $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
+    {
+        $entries = $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
+
+        $parcelRepository = app(Parcelrepositoryinterface::class);
+
+        $parcels = $parcelRepository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
+
+        return array_merge($parcels, $entries);
     }
 
     /**
@@ -192,8 +198,27 @@ class InvoiceEntryService
      * @return array
      */ 
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
-    {       
-        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+    {
+        $entries = $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+
+        $parcelRepository = app(Parcelrepositoryinterface::class);
+
+        $parcels = $parcelRepository->getParcelsByCategoryAndRangeDate($from, $to, $category_id);
+
+        $result = array_merge($parcels, $entries);
+        
+        usort($result, function($a, $b) {
+            $v1 = new DateTime($a['date']);
+            $v2 = new DateTime($b['date']);
+
+            if ($v1 == $v2) {
+                return 0;
+            }
+
+            return $v1 < $v2 ? -1 : 1;
+        });
+
+        return (array) $result;
     }
 
     /**
