@@ -83,7 +83,7 @@ class RegisterController extends Controller
         $accountService  = app(AccountService::class);
         
         $categoryService->createDefaultCategories();
-        $accountService->store([
+        $accountService->create([
             'name' => __('global.money'),
             'type' => Account::MONEY
         ]);
