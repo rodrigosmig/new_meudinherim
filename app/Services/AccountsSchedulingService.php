@@ -57,7 +57,7 @@ class AccountsSchedulingService
             'category_id'   => $account_scheduling->category->id,
         ];
 
-        $date = new DateTime($account_scheduling->date);
+        $date = new DateTime($account_scheduling->due_date);
 
         for ($parceling = 1; $parceling <= $total_parcels; $parceling++) {
             $parcel_data['due_date']            = $date->format('Y-m-d');
