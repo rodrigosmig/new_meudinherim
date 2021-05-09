@@ -158,8 +158,8 @@ class AccountService
 
         $accountEntryService = app(AccountEntryService::class);
 
-        $accountEntryService->make($source_account, $newData['source']);
-        $accountEntryService->make($destination_account, $newData['destination']);
+        $accountEntryService->create($source_account->id, $newData['source']);
+        $accountEntryService->create($destination_account->id, $newData['destination']);
 
         $this->updateBalance($source_account, $data['date']);
         $this->updateBalance($destination_account, $data['date']);
