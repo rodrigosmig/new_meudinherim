@@ -20,15 +20,17 @@ return [
     ],
 
     'accounts' => [
-        'not_found'             => 'Nenhuma Conta Encontrada',
-        'create'                => 'Conta adicionada com sucesso.',
-        'update'                => 'Conta atualizada com sucesso',
-        'delete'                => 'Conta deletada com sucesso',
-        'ajax_text'             => 'A conta será excluída permanentemente',
-        'equal_accounts'        => 'As contas de origem e destino não podem ser iguais',
-        'transfer_completed'    => 'Transferência completada com sucesso',
-        'api_not_found'         => 'Conta não encontrada',
-        'not_delete'            => 'A conta possui lançamentos, não é possível excluir'
+        'not_found'                     => 'Nenhuma Conta Encontrada',
+        'create'                        => 'Conta adicionada com sucesso.',
+        'update'                        => 'Conta atualizada com sucesso',
+        'delete'                        => 'Conta deletada com sucesso',
+        'ajax_text'                     => 'A conta será excluída permanentemente',
+        'equal_accounts'                => 'As contas origem e destino não podem ser iguais',
+        'transfer_completed'            => 'Transferência completada com sucesso',
+        'api_not_found'                 => 'Conta não encontrada',
+        'not_delete'                    => 'A conta possui lançamentos, não é possível excluir',
+        'source_account_not_found'      => "A conta origem não foi encontrada",
+        'destination_account_not_found' => "A conta destino não foi encontrada",
     ],
 
     'cards' => [

@@ -162,12 +162,26 @@ class AccountController extends Controller
     {
         $data = $request->validated();
 
-        try {
-            $this->service->accountTransfer($data);
-        } catch (\exception $e) {
-            Alert::error(__('global.invalid'), $e->getMessage());
-            return redirect()->back();
+        $source_account = $this->service->findById($data['source_account_id']);
+
+        if (! $source_account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.source_account_not_found'));
+            return redirect()->route('accounts.transfer');
         }
+        
+        $destination_account = $this->service->findById($data['destination_account_id']);
+
+        if (! $destination_account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.destination_account_not_found'));
+            return redirect()->route('accounts.transfer');
+        }
+
+        if ($source_account->id === $destination_account->id) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.equal_accounts'));
+            return redirect()->route('accounts.transfer');
+        }
+        
+        $this->service->accountTransfer($source_account, $destination_account, $data);
 
         Alert::success(__('global.success'), __('messages.accounts.transfer_completed'));
         return redirect()->route('dashboard.index');

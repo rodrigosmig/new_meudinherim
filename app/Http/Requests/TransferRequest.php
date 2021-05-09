@@ -27,16 +27,11 @@ class TransferRequest extends FormRequest
     public function rules()
     {
         return [
-            "description"       => 'required|min:3',
-            "date"              => 'required|date_format:Y-m-d',
-            "value"             => 'required|numeric',
-            'source_account_id' => [
-                'required',
-                Rule::exists(Account::class, 'id')->where(function($query) {
-                    $query->where('id', $this->source_account_id)
-                        ->where('user_id', auth()->user()->id);
-                })
-            ],
+            "description"               => 'required|min:3',
+            "date"                      => 'required|date_format:Y-m-d',
+            "value"                     => 'required|numeric',
+            'source_account_id'         => 'required',
+            'destination_account_id'    => 'required',
             'source_category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {
@@ -44,14 +39,7 @@ class TransferRequest extends FormRequest
                         ->where('user_id', auth()->user()->id)
                         ->where('type', Category::EXPENSE);
                 })
-            ],
-            'destination_account_id' => [
-                'required',
-                Rule::exists(Account::class, 'id')->where(function($query) {
-                    $query->where('id', $this->destination_account_id)
-                        ->where('user_id', auth()->user()->id);
-                })
-            ],
+            ],            
             'destination_category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {

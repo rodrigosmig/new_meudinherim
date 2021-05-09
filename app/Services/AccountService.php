@@ -141,28 +141,22 @@ class AccountService
     /**
      * Transfers an amount between bank accounts
      *
+     * @param Account $from_account
+     * @param Account $to_account
      * @param array $data
      * @return void
-     * @throws Exception
      */  
-    public function accountTransfer($data)
+    public function accountTransfer(Account $from_account, Account $to_account, array $data)
     {
-        $source_account     = $this->repository->findById($data['source_account_id']);
-        $destination_account    = $this->repository->findById($data['destination_account_id']);
-
-        if ($source_account->id === $destination_account->id) {
-            throw new Exception(__('messages.accounts.equal_accounts'));
-        }
-
         $newData = $this->prepareDataForEntry($data);
 
         $accountEntryService = app(AccountEntryService::class);
 
-        $accountEntryService->create($source_account->id, $newData['source']);
-        $accountEntryService->create($destination_account->id, $newData['destination']);
+        $accountEntryService->create($from_account->id, $newData['source']);
+        $accountEntryService->create($to_account->id, $newData['destination']);
 
-        $this->updateBalance($source_account, $data['date']);
-        $this->updateBalance($destination_account, $data['date']);
+        $this->updateBalance($from_account, $data['date']);
+        $this->updateBalance($to_account, $data['date']);
     }
 
     private function prepareDataForEntry($data): array
