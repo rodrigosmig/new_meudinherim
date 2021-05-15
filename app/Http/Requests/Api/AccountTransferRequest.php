@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
-use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class TransferRequest extends FormRequest
+class AccountTransferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +30,7 @@ class TransferRequest extends FormRequest
         return [
             "description"               => 'required|min:3',
             "date"                      => 'required|date_format:Y-m-d',
-            "value"                     => 'required|numeric',
+            "value"                     => 'required|numeric|gt:0',
             'source_account_id'         => 'required',
             'destination_account_id'    => 'required',
             'source_category_id' => [
@@ -49,5 +50,10 @@ class TransferRequest extends FormRequest
                 })
             ]
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

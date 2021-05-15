@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\AccountService;
 use App\Services\AccountEntryService;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\Http\Requests\AccountTransferRequest;
 use App\Http\Requests\StoreAccountEntryRequest;
 
 class AccountEntryController extends Controller
@@ -170,5 +171,43 @@ class AccountEntryController extends Controller
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.entries.delete')]);
+    }
+
+    public function transfer()
+    {
+        $data = [
+            'title' => $this->title
+        ];
+
+        return view('accounts.transfer', $data);
+    }
+
+    public function accountTransfer(AccountTransferRequest $request)
+    {
+        $data = $request->validated();
+
+        $source_account = $this->accountService->findById($data['source_account_id']);
+
+        if (! $source_account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.source_account_not_found'));
+            return redirect()->route('accounts.transfer');
+        }
+        
+        $destination_account = $this->accountService->findById($data['destination_account_id']);
+
+        if (! $destination_account) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.destination_account_not_found'));
+            return redirect()->route('accounts.transfer');
+        }
+
+        if ($source_account->id === $destination_account->id) {
+            Alert::error(__('global.invalid_request'), __('messages.accounts.equal_accounts'));
+            return redirect()->route('accounts.transfer');
+        }
+        
+        $this->service->accountTransfer($source_account, $destination_account, $data);
+
+        Alert::success(__('global.success'), __('messages.accounts.transfer_completed'));
+        return redirect()->route('dashboard.index');
     }
 }

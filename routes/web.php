@@ -30,8 +30,6 @@ Route::group([
     Route::resource('categories', 'CategoryController');
 
     //Acounts
-    Route::get('accounts/transfer', 'AccountController@transfer')->name('accounts.transfer');
-    Route::post('accounts/transfer', 'AccountController@transferStore')->name('accounts.transfer_store');
     Route::resource('accounts', 'AccountController');
     Route::get('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries');
     Route::post('accounts/{account_id}/entries', 'AccountEntryController@index')->name('accounts.entries.filter');
@@ -48,6 +46,8 @@ Route::group([
     Route::delete('account_entries/{account_entry}', 'AccountEntryController@destroy')->name('account_entries.destroy');
     Route::get('account_entries/create', 'AccountEntryController@create')->name('account_entries.create');
     Route::post('account_entries', 'AccountEntryController@store')->name('account_entries.store');
+    Route::get('account_entries/account-transfer', 'AccountEntryController@transfer')->name('accounts.transfer');
+    Route::post('account_entries/account-transfer', 'AccountEntryController@accountTransfer')->name('accounts.transfer_store');
 
     //Invoice Entries
     Route::get('invoice_entries', 'InvoiceEntryController@create')->name('invoice_entries.create');
