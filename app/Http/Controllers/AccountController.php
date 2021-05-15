@@ -148,28 +148,4 @@ class AccountController extends Controller
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.accounts.delete')]);
     }
-
-    public function transfer()
-    {
-        $data = [
-            'title' => $this->title
-        ];
-
-        return view('accounts.transfer', $data);
-    }
-
-    public function transferStore(TransferRequest $request)
-    {
-        $data = $request->validated();
-
-        try {
-            $this->service->accountTransfer($data);
-        } catch (\exception $e) {
-            Alert::error(__('global.invalid'), $e->getMessage());
-            return redirect()->back();
-        }
-
-        Alert::success(__('global.success'), __('messages.accounts.transfer_completed'));
-        return redirect()->route('dashboard.index');
-    }
 }

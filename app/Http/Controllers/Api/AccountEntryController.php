@@ -8,6 +8,7 @@ use App\Services\AccountService;
 use App\Http\Controllers\Controller;
 use App\Services\AccountEntryService;
 use App\Http\Resources\AccountEntryResource;
+use App\Http\Requests\Api\AccountTransferRequest;
 use App\Http\Requests\Api\StoreUpdateAccountEntryRequest;
 
 class AccountEntryController extends Controller
@@ -139,5 +140,30 @@ class AccountEntryController extends Controller
         $this->accountService->updateBalance($account, $date);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    public function accountTransfer(AccountTransferRequest $request)
+    {
+        $data = $request->validated();
+
+        $source_account = $this->accountService->findById($data['source_account_id']);
+
+        if (! $source_account) {
+            return response()->json(['message' => __('messages.accounts.source_account_not_found')], Response::HTTP_NOT_FOUND);
+        }
+        
+        $destination_account = $this->accountService->findById($data['destination_account_id']);
+
+        if (! $destination_account) {
+            return response()->json(['message' => __('messages.accounts.destination_account_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($source_account->id === $destination_account->id) {
+            return response()->json(['message' => __('messages.accounts.equal_accounts')], Response::HTTP_BAD_REQUEST);
+        }
+        
+        $this->entryService->accountTransfer($source_account, $destination_account, $data);
+
+        return response()->json(['message' => __('messages.accounts.transfer_completed')], Response::HTTP_OK);
     }
 }
