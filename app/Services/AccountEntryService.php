@@ -164,4 +164,46 @@ class AccountEntryService
     {       
         return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
     }
+
+    /**
+     * Transfers an amount between bank accounts
+     *
+     * @param Account $from_account
+     * @param Account $to_account
+     * @param array $data
+     * @return void
+     */  
+    public function accountTransfer(Account $from_account, Account $to_account, array $data): void
+    {
+        $newData = $this->prepareDataForEntry($data);
+
+        $accountService = app(AccountService::class);
+
+        $this->create($from_account->id, $newData['source']);
+        $this->create($to_account->id, $newData['destination']);
+
+        $accountService->updateBalance($from_account, $data['date']);
+        $accountService->updateBalance($to_account, $data['date']);
+    }
+
+    private function prepareDataForEntry($data): array
+    {
+        $newData['source'] = [
+            "account_id" => $data['source_account_id'],
+            "category_id" => $data['source_category_id'],
+            "date" => $data['date'],
+            "description" => $data['description'],
+            "value" => $data['value'],
+        ];
+
+        $newData['destination'] = [
+            "account_id" => $data['destination_account_id'],
+            "category_id" => $data['destination_category_id'],
+            "date" => $data['date'],
+            "description" => $data['description'],
+            "value" => $data['value'],
+        ];
+
+        return $newData;
+    }
 }

@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
-use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class TransferRequest extends FormRequest
+class AccountTransferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,16 +28,11 @@ class TransferRequest extends FormRequest
     public function rules()
     {
         return [
-            "description"       => 'required|min:3',
-            "date"              => 'required|date_format:Y-m-d',
-            "value"             => 'required|numeric',
-            'source_account_id' => [
-                'required',
-                Rule::exists(Account::class, 'id')->where(function($query) {
-                    $query->where('id', $this->source_account_id)
-                        ->where('user_id', auth()->user()->id);
-                })
-            ],
+            "description"               => 'required|min:3',
+            "date"                      => 'required|date_format:Y-m-d',
+            "value"                     => 'required|numeric|gt:0',
+            'source_account_id'         => 'required',
+            'destination_account_id'    => 'required',
             'source_category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {
@@ -44,14 +40,7 @@ class TransferRequest extends FormRequest
                         ->where('user_id', auth()->user()->id)
                         ->where('type', Category::EXPENSE);
                 })
-            ],
-            'destination_account_id' => [
-                'required',
-                Rule::exists(Account::class, 'id')->where(function($query) {
-                    $query->where('id', $this->destination_account_id)
-                        ->where('user_id', auth()->user()->id);
-                })
-            ],
+            ],            
             'destination_category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {
@@ -61,5 +50,10 @@ class TransferRequest extends FormRequest
                 })
             ]
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

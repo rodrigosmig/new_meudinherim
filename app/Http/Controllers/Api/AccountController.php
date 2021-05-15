@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\AccountService;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AccountResource;
 use Illuminate\Database\QueryException;
 use App\Http\Requests\Api\AccountUpdateStoreRequest;
-use App\Http\Resources\AccountResource;
 
 class AccountController extends Controller
 {

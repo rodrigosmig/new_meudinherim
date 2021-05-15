@@ -70,6 +70,7 @@ Route::group([
     Route::get('account-entries/{entry_id}', 'Api\\AccountEntryController@show');
     Route::put('account-entries/{entry_id}', 'Api\\AccountEntryController@update');
     Route::delete('account-entries/{entry_id}', 'Api\\AccountEntryController@destroy');
+    Route::post('account-entries/account-transfer', 'Api\\AccountEntryController@accountTransfer');
 });
 
 Route::fallback('Api\\FallbackController@fallback');

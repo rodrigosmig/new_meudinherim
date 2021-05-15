@@ -365,4 +365,139 @@ class AccountEntryTest extends TestCase
 
         $response->assertStatus(204);
     }
+
+    public function testAccountTransferWithUnauthenticatedUser()
+    {
+        $response = $this->postJson("/api/account-entries/account-transfer");
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testValidationErrorWhenMakingAAccountTransfer()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $data = [
+            "description"               => "d",
+            "date"                      => "20210509",
+            "value"                     => "Test",
+            "source_account_id"         => "9999",
+            "destination_account_id"    => "9999",
+            "source_category_id"        => "9999",
+            "destination_category_id"   => "9999",
+        ];
+        
+        $message_date                       = __('validation.date_format', ['attribute' => __('validation.attributes.date'), 'format' => 'Y-m-d']);
+        $message_description                = __('validation.min.string', ['attribute' => __('validation.attributes.description'), 'min' => 3]);
+        $message_value_gt_zero              = __('validation.gt.numeric', ['attribute' => 'value', 'value' => 0]);
+        $message_value_numeric              = __('validation.numeric', ['attribute' => 'value']);
+        $message_source_category_id         = __('validation.exists', ['attribute' => 'source category id']);
+        $message_destination_category_id    = __('validation.exists', ['attribute' => 'destination category id']);
+
+        $response = $this->postJson("/api/account-entries/account-transfer", $data);
+
+        $response->assertStatus(422)
+            ->assertExactJson([
+                'description'               => [$message_description],
+                'date'                      => [$message_date],
+                'value'                     => [$message_value_numeric, $message_value_gt_zero],
+                'source_category_id'        => [$message_source_category_id],
+                'destination_category_id'   => [$message_destination_category_id],
+            ]);
+
+    }
+
+    public function testErrorWhenMakingAAccountTransferToTheSameAccount()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $source_account = factory(Account::class)->create();
+
+        $source_category        = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $destination_category   = factory(Category::class)->create(['type' => Category::INCOME]);
+
+        $data = [
+            "description"               => "Test description",
+            "date"                      => now()->format('Y-m-d'),
+            "value"                     => 100,
+            "source_account_id"         => $source_account->id,
+            "destination_account_id"    => $source_account->id,
+            "source_category_id"        => $source_category->id,
+            "destination_category_id"   => $destination_category->id,
+        ];
+
+        $response = $this->postJson("/api/account-entries/account-transfer", $data);
+
+        $response->assertStatus(400)
+            ->assertJsonPath('message', __('messages.accounts.equal_accounts'));
+
+    }
+
+    public function testErrorWhenMakingAAccountTransferWithInvalidCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $source_account = factory(Account::class)->create();
+
+        $source_category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $destination_category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+
+        $data = [
+            "description" => "Test description",
+            "date" => now()->format('Y-m-d'),
+            "value" => 100,
+            "source_account_id" => $source_account->id,
+            "destination_account_id" => $source_account->id,
+            "source_category_id" => $source_category->id,
+            "destination_category_id" => $destination_category->id,
+        ];
+
+        $message_source_category_id         = __('validation.exists', ['attribute' => 'source category id']);
+        $message_destination_category_id    = __('validation.exists', ['attribute' => 'destination category id']);
+
+        $response = $this->postJson("/api/account-entries/account-transfer", $data);
+
+        $response->assertStatus(422)
+            ->assertExactJson([
+                'source_category_id'        => [$message_source_category_id],
+                'destination_category_id'   => [$message_destination_category_id],
+            ]);
+
+    }
+
+    public function testAccountTransferSuccessfully()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $source_account         = factory(Account::class)->create();
+        $destination_account    = factory(Account::class)->create();
+
+        $source_category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $destination_category = factory(Category::class)->create(['type' => Category::INCOME]);
+
+        $data = [
+            "description" => "Test description",
+            "date" => now()->format('Y-m-d'),
+            "value" => 100,
+            "source_account_id" => $source_account->id,
+            "destination_account_id" => $destination_account->id,
+            "source_category_id" => $source_category->id,
+            "destination_category_id" => $destination_category->id,
+        ];
+
+        $response = $this->postJson("/api/account-entries/account-transfer", $data);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('message', __('messages.accounts.transfer_completed'));
+    }
+
 }
