@@ -55,6 +55,8 @@ Route::group([
     Route::get('invoice_entries/{entry_id}/edit', 'InvoiceEntryController@edit')->name('invoice_entries.edit');
     Route::put('invoice_entries/{entry_id}/update', 'InvoiceEntryController@update')->name('invoice_entries.update');
     Route::delete('invoice_entries/{entry_id}', 'InvoiceEntryController@destroy')->name('invoice_entries.delete');
+    Route::get('invoice_entries/{entry_id}/next-parcels', 'InvoiceEntryController@ajaxNextParcels')->name('invoice_entries.nextParcels');
+    Route::post('invoice_entries/{entry_id}/anticipate-parcels', 'InvoiceEntryController@anticipateParcels')->name('invoice_entries.anticipateParcels');
 
     //Accounts Payable
     Route::resource('payables', 'PayableController');

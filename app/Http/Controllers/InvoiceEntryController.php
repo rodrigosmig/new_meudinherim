@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CardService;
+use Illuminate\Http\Response;
 use App\Services\InvoiceEntryService;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Exceptions\InsufficientLimitException;
@@ -188,5 +189,63 @@ class InvoiceEntryController extends Controller
 
         return response()
                 ->json(['title' => __('global.success'), 'text' => __('messages.entries.delete')]);
+    }
+
+    public function ajaxNextParcels()
+    {
+        $card_id        = request()->get('card_id', 0);
+        $parcel_number  = request()->get('parcel_number', 0);
+        $entry_id       = request()->get('entry_id', 0);
+
+        $card = $this->cardService->findById($card_id);
+
+        if (!$card) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        $entry = $this->service->findById($entry_id);
+
+        if (!$entry) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        $parcels = $this->service->getOpenParcels($entry, $parcel_number);
+
+        return response()->json([
+            'total'     => $entry->value,
+            'parcels'   => $parcels
+        ]);
+    }
+
+    public function anticipateParcels(Request $request, $entry_id)
+    {
+        $entry = $this->service->findById($entry_id);
+
+        if (!$entry) {
+            Alert::error(__('global.invalid_request'), __('messages.parcels.not_found'));
+            return redirect()->route('cards.index');
+        }
+
+        if (! isset($request->parcels) || empty($request->parcels)) {
+            Alert::error(__('global.invalid_request'), __('messages.parcels.select_parcel'));
+            return redirect()->back();
+        }
+
+        $parcels_ids = $request->parcels;
+
+        if (! $this->service->parcelsExists($entry, $parcels_ids)) {
+            Alert::error(__('global.invalid_request'), __('messages.parcels.not_found'));
+            return redirect()->route('cards.index');
+        }
+
+        $card = $entry->invoice->card;
+        
+        $this->service->anticipateParcels($card, $parcels_ids);
+
+        Alert::success(__('global.success'), __('messages.parcels.anticipate'));
+
+        return redirect()->back();
     }
 }

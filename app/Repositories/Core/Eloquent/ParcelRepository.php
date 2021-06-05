@@ -25,7 +25,8 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
             'parcelable', 
             InvoiceEntry::class,
             function (Builder $query) use ($invoice) {
-                $query->where('parcels.invoice_id', '=', $invoice->id);
+                $query->where('parcels.invoice_id', '=', $invoice->id)
+                    ->where('parcels.anticipated', false);
             })->get();
     }
 
@@ -88,5 +89,39 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
             ->orderBy('date')
             ->get()
             ->toArray();
+    }
+
+    /**
+     * Returns parcel for a given invoice entry
+     *
+     * @param int $invoice_entry_id
+     * @param int $parcel_id
+     * @return Parcel
+     */ 
+    public function findParcelOfInvoiceEntry($invoice_entry_id, $parcel_id)
+    {
+        return $this->model::whereHasMorph(
+            'parcelable', 
+            InvoiceEntry::class,
+            function (Builder $query) use ($invoice_entry_id, $parcel_id) {
+                $query->where('parcels.id', $parcel_id)
+                    ->where('parcelable_id', $invoice_entry_id);
+            })->first();
+    }
+
+    /**
+     * Returns the nexts parcels for a given parcel number
+     *
+     * @param InvoiceEntry $invoice_entry
+     * @return Illuminate\Database\Eloquent\Collection
+     */ 
+    public function getOpenParcels($invoice_entry, int $parcel_number)
+    {
+        return $invoice_entry->parcels()
+                    ->join('invoices', 'invoices.id', '=', 'parcels.invoice_id')
+                    ->where('invoices.paid', false)
+                    ->where('anticipated', false)
+                    ->where('parcel_number', '>', $parcel_number)
+                    ->get();
     }
 }

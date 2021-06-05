@@ -5,7 +5,7 @@ return [
     'not_delete'            => 'Could not be deleted. Try again.',
     'ajax_title'            => 'Are you sure?',
     'not_found'             => 'No records found',
-    'parcel_text'           => 'Do you wish delete all parcels?',
+    'parcel_text'           => 'Do you wish delete all installments?',
 
     'categories' => [
         'select_type'       => 'Select a category type',
@@ -104,5 +104,11 @@ return [
         'payable_due_in'    => "Accounts payable due in",
         'receivable_due_in' => "Accounts receivable due in",
         'footer_mail'       => 'If you’re having trouble clicking the :actionText button, copy and paste the URL below into your web browser:'
+    ],
+
+    'parcels' => [
+        'not_found'     => 'Installment Not Found',
+        'select_parcel' => 'Select at least one installment',
+        'anticipate'    => 'Anticipated installments successfully'
     ]
 ];
