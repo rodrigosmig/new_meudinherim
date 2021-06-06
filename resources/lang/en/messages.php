@@ -61,6 +61,7 @@ return [
         'invalid_invoice'       => 'The informed invoice was not found',
         'api_not_found'         => 'Entry Not Found',
         'delete_parcel'         => 'When confirming, all installments will be excluded',
+        'not_parcel'            => 'Este lançamento não possui parcelas',
     ],
 
     'account_scheduling' => [

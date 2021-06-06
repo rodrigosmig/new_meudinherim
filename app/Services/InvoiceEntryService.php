@@ -294,6 +294,8 @@ class InvoiceEntryService
     {
         $count = 0;
         foreach($invoice_entry->parcels as $parcel) {
+            if ($parcel->anticipated) continue;
+
             if (in_array($parcel->id, $parcels_ids)) {
                 $count++;
             }

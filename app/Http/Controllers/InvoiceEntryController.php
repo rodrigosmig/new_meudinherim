@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use App\Services\InvoiceEntryService;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Exceptions\InsufficientLimitException;
+use App\Http\Requests\AnticipateParcelsRequest;
 use App\Http\Requests\StoreInvoiceEntryRequest;
 use App\Http\Requests\UpdateInvoiceEntryRequest;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
@@ -211,6 +212,11 @@ class InvoiceEntryController extends Controller
                 ->json(['title' => __('global.invalid_request'), 'text' => __('messages.not_found')], Response::HTTP_NOT_FOUND);
         }
 
+        if (!$entry->has_parcels) {
+            return response()
+                ->json(['title' => __('global.invalid_request'), 'text' => __('messages.entries.not_parcel')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $parcels = $this->service->getOpenParcels($entry, $parcel_number);
 
         return response()->json([
@@ -219,7 +225,7 @@ class InvoiceEntryController extends Controller
         ]);
     }
 
-    public function anticipateParcels(Request $request, $entry_id)
+    public function anticipateParcels(AnticipateParcelsRequest $request, $entry_id)
     {
         $entry = $this->service->findById($entry_id);
 
@@ -228,8 +234,8 @@ class InvoiceEntryController extends Controller
             return redirect()->route('cards.index');
         }
 
-        if (! isset($request->parcels) || empty($request->parcels)) {
-            Alert::error(__('global.invalid_request'), __('messages.parcels.select_parcel'));
+        if (!$entry->has_parcels) {
+            Alert::error(__('global.invalid_request'), __('messages.entries.not_parcel'));
             return redirect()->back();
         }
 

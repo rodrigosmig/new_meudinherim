@@ -63,6 +63,7 @@ return [
         'invalid_invoice'       => 'A fatura informada não foi encontrado',
         'api_not_found'         => 'Lançamento não encontrado',
         'delete_parcel'         => 'Ao confirmar, todas as parcelas serão excluídas',
+        'not_parcel'            => 'Este lançamento não possui parcelas',
     ],
 
     'account_scheduling' => [

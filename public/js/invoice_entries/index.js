@@ -85,7 +85,7 @@ $(function() {
         const entry_id = $(this).attr('data-entry_id')
         const card_id = $(this).attr('data-card_id')
         const parcel_number = $(this).attr('data-parcel_number')
-console.log(parcel_number);
+
         $.ajax({
             type: 'GET',
             url: `/invoice_entries/${entry_id}/next-parcels`,
@@ -132,17 +132,12 @@ console.log(parcel_number);
                 
             },
             error: function(response) {
+                console.log(response)
                 $("#loading").hide()
-                $("#no-entries").html(response.responseJSON.message)
+                $("#no-entries").html(response.responseJSON.text)
             },
           });
     });
-/* 
-    $('.submit-anticipate').on('click', function (e) {
-        e.preventDefault()
-        //$('#form-anticipate').attr(`action', '/invoice_entries/anticipate-parcels')
-        alert('anticipate')
-    }) */
     
     $.ajaxSetup({
         headers: {
