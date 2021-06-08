@@ -243,7 +243,7 @@ class InvoiceEntryController extends Controller
 
         if (! $this->service->parcelsExists($entry, $parcels_ids)) {
             Alert::error(__('global.invalid_request'), __('messages.parcels.not_found'));
-            return redirect()->route('cards.index');
+            return redirect()->back();
         }
 
         $card = $entry->invoice->card;

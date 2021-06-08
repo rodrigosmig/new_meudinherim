@@ -118,6 +118,7 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
     public function getOpenParcels($invoice_entry, int $parcel_number)
     {
         return $invoice_entry->parcels()
+                    ->select('parcels.*')
                     ->join('invoices', 'invoices.id', '=', 'parcels.invoice_id')
                     ->where('invoices.paid', false)
                     ->where('anticipated', false)

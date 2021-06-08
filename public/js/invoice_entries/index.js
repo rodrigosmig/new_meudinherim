@@ -138,6 +138,15 @@ $(function() {
             },
           });
     });
+
+    $('#modal-anticipate').on('hidden.bs.modal', function (e) {
+        $('#table-body').html("")
+        $("#no-entries").html("")
+        $("#table-caption").html("")
+        $("#table-remaining").html("")
+        $("#table-parcels").hide()
+        $("#loading").show()
+    })
     
     $.ajaxSetup({
         headers: {
