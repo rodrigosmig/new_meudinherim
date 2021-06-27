@@ -5,7 +5,7 @@ return [
     'not_delete'            => 'Não foi possível deletar. Tente novamente',
     'ajax_title'            => 'Tem certeza?',
     'not_found'             => 'Nenhum registro encontrado',
-    'parcel_title'           => 'Deseja excluir todas as parcelas?',
+    'parcel_title'          => 'Deseja excluir todas as parcelas?',
 
     'categories' => [
         'select_type'       => 'Selecione um tipo de categoria',
@@ -63,6 +63,7 @@ return [
         'invalid_invoice'       => 'A fatura informada não foi encontrado',
         'api_not_found'         => 'Lançamento não encontrado',
         'delete_parcel'         => 'Ao confirmar, todas as parcelas serão excluídas',
+        'not_parcel'            => 'Este lançamento não possui parcelas',
     ],
 
     'account_scheduling' => [
@@ -108,5 +109,11 @@ return [
         'payable_due_in'    => "Contas a pagar com vencimento em ",
         'receivable_due_in' => "Contas a receber com vencimento em ",
         'footer_mail'       => 'Se você estiver tendo problemas para clicar no botão ":actionText", copie e cole o endereço abaixo em seu navegador da web:'
+    ],
+
+    'parcels' => [
+        'not_found'     => 'Parcela não encontrada',
+        'select_parcel' => 'Selecione pelo menos uma parcela',
+        'anticipate'    => 'Parcelas antecipadas com sucesso'
     ]
 ];

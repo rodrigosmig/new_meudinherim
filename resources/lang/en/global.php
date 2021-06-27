@@ -134,6 +134,11 @@ return [
     'view_accounts'                 => 'View Accounts',
     'regards'                       => 'Regards',
     'receive_notifications'         => 'Receive Notifications',
+    'anticipate_parcels'            => 'Anticipate installments',
+    'parcel_number'                 => 'Parcel number',
+    'anticipate'                    => 'Anticipate',
+    'remaining'                     => 'Remaining',
+    'anticipated'                   => 'Anticipated',
 
     'default_categories' => [
         'salary'            => 'Salary',

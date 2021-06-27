@@ -63,6 +63,8 @@ Route::group([
     Route::get('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@show');
     Route::put('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@update');
     Route::delete('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@destroy');
+    Route::get('invoice_entries/{entry_id}/card_id/{card_id}/parcel_number/{parcel_number}/next-parcels', 'Api\\InvoiceEntryController@nextParcels');
+    Route::post('invoice_entries/{entry_id}/anticipate-parcels', 'Api\\InvoiceEntryController@anticipateParcels');
 
     //Account entries
     Route::get('accounts/{account_id}/entries', 'Api\\AccountEntryController@index');

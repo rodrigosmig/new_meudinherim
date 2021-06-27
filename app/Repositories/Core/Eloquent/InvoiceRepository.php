@@ -127,7 +127,9 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
             }
         }
 
-        foreach ($invoice->parcels as $parcel) {
+        $parcels = $invoice->parcels()->where('anticipated', false)->get();
+
+        foreach ($parcels as $parcel) {
             if (! $parcel->isExpenseCategory()) {
                 $total -= $parcel->value;
             } else {

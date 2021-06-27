@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\InvoiceEntry;
 use Illuminate\Http\Request;
 use App\Services\CardService;
 use Illuminate\Http\Response;
@@ -9,9 +10,11 @@ use App\Http\Controllers\Controller;
 use App\Services\InvoiceEntryService;
 use App\Http\Resources\InvoiceEntryResource;
 use App\Exceptions\InsufficientLimitException;
+use App\Http\Resources\InvoiceEntryParcelResource;
+use App\Http\Requests\Api\AnticipateParcelsRequest;
 use App\Http\Requests\Api\StoreInvoiceEntryRequest;
 use App\Http\Requests\Api\UpdateInvoiceEntryRequest;
-use App\Models\InvoiceEntry;
+use App\Http\Resources\InvoiceEntryParcelCollection;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceEntryController extends Controller
@@ -149,5 +152,54 @@ class InvoiceEntryController extends Controller
         $this->entryService->delete($entry);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    public function nextParcels($entry_id, $card_id, $parcel_number)
+    {
+        $card = $this->cardService->findById($card_id);
+
+        if (!$card) {
+            return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        $entry = $this->entryService->findById($entry_id);
+
+        if (!$entry) {
+            return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$entry->has_parcels) {
+            return response()->json(['message' => __('messages.entries.not_parcel')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $parcels = $this->entryService->getOpenParcels($entry, $parcel_number);
+
+        return new InvoiceEntryParcelCollection($parcels);
+
+    }
+
+    public function anticipateParcels(AnticipateParcelsRequest $request, $entry_id)
+    {
+        $entry = $this->entryService->findById($entry_id);
+
+        if (!$entry) {
+            return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$entry->has_parcels) {
+            return response()->json(['message' => __('messages.entries.not_parcel')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $parcels_ids = $request->parcels;
+
+        if (! $this->entryService->parcelsExists($entry, $parcels_ids)) {
+            return response()->json(['message' => __('messages.parcels.not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        $card = $entry->invoice->card;
+        
+        $this->entryService->anticipateParcels($card, $parcels_ids);
+
+        return response()->json(['message' => __('messages.parcels.anticipate')], Response::HTTP_OK);
     }
 }

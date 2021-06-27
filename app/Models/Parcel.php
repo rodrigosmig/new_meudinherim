@@ -22,12 +22,14 @@ class Parcel extends Model
         'parcel_number', 
         'parcel_total',
         'paid',
+        'anticipated',
         'invoice_id',
         'user_id'
     ];
 
     protected $casts = [
-        'paid' => 'boolean',
+        'paid'          => 'boolean',
+        'anticipated'   => 'boolean',
     ];
 
     public function parcelable()

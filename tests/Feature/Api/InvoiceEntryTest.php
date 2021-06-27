@@ -5,12 +5,15 @@ namespace Tests\Feature\Api;
 use Tests\TestCase;
 use App\Models\Card;
 use App\Models\User;
+use App\Models\Parcel;
 use App\Models\Invoice;
 use App\Models\Category;
 use App\Models\InvoiceEntry;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Repositories\Interfaces\ParcelRepositoryInterface;
+use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 
 class InvoiceEntryTest extends TestCase
 {
@@ -421,5 +424,171 @@ class InvoiceEntryTest extends TestCase
         $response = $this->deleteJson("/api/invoice-entries/{$entry->id}");
 
         $response->assertStatus(204);
+    }
+
+    public function testGetNextParcelsWhenUnauthenticatedUser()
+    {
+        $card = 'test';
+
+        $entry = 'test';
+        
+        $response = $this->getJson("/api/invoice_entries/{$entry}/card_id/{$card}/parcel_number/1/next-parcels");
+        
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testGetNextParcels()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+
+        $card = factory(Card::class)->create();
+
+        $entry = factory(InvoiceEntry::class)->create([
+            'category_id'   => $category->id,
+            'has_parcels'   => true,
+            'value'         => 300  
+        ]);
+
+        $invoice1 = factory(Invoice::class)->create([
+            'card_id' => $card->id,
+            'due_date'      => now()->modify('+30 days')->format('Y-m-d'),
+            'closing_date'  => now()->modify('+24 days')->format('Y-m-d'),
+        ]);
+
+        $invoice2 = factory(Invoice::class)->create([
+            'card_id' => $card->id,
+            'due_date'      => now()->modify('+60 days')->format('Y-m-d'),
+            'closing_date'  => now()->modify('+54 days')->format('Y-m-d'),
+        ]);
+
+        $invoice3 = factory(Invoice::class)->create([
+            'card_id' => $card->id,
+            'due_date'      => now()->modify('+90 days')->format('Y-m-d'),
+            'closing_date'  => now()->modify('+84 days')->format('Y-m-d'),
+        ]);
+
+        $parcel1 = factory(Parcel::class)->create([
+            'parcelable_id' => $entry->id,
+            'parcel_number' => 1,
+            'parcel_total'  => 3,
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'invoice_id'    => $invoice1->id
+        ]);
+
+        $parcel2 = factory(Parcel::class)->create([
+            'parcelable_id' => $entry->id,
+            'parcel_number' => 2,
+            'parcel_total'  => 3,
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'invoice_id'    => $invoice2->id
+        ]);
+
+        $parcel3 = factory(Parcel::class)->create([
+            'parcelable_id' => $entry->id,
+            'parcel_number' => 3,
+            'parcel_total'  => 3,
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'invoice_id'    => $invoice3->id
+        ]);
+
+        $response = $this->getJson("/api/invoice_entries/{$entry->id}/card_id/{$card->id}/parcel_number/1/next-parcels");
+        
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'data');
+    }
+
+    public function testAnticipateParcelsSuccessfully()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+
+        $card = factory(Card::class)->create();
+
+        $entry = factory(InvoiceEntry::class)->create([
+            'category_id'   => $category->id,
+            'has_parcels'   => true,
+            'value'         => 300  
+        ]);
+
+        $invoice1 = factory(Invoice::class)->create([
+            'card_id'       => $card->id,
+            'amount'        => 100,
+            'due_date'      => now()->modify('+30 days')->format('Y-m-d'),
+            'closing_date'  => now()->modify('+24 days')->format('Y-m-d'),
+        ]);
+
+        $invoice2 = factory(Invoice::class)->create([
+            'card_id'       => $card->id,
+            'amount'        => 100,
+            'due_date'      => now()->modify('+60 days')->format('Y-m-d'),
+            'closing_date'  => now()->modify('+54 days')->format('Y-m-d'),
+        ]);
+
+        $invoice3 = factory(Invoice::class)->create([
+            'card_id'       => $card->id,
+            'amount'        => 100,
+            'due_date'      => now()->modify('+90 days')->format('Y-m-d'),
+            'closing_date'  => now()->modify('+84 days')->format('Y-m-d'),
+        ]);
+
+        $this->assertEquals(100, $invoice3->amount);
+
+        $parcel1 = factory(Parcel::class)->create([
+            'parcelable_id' => $entry->id,
+            'parcel_number' => 1,
+            'parcel_total'  => 3,
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'invoice_id'    => $invoice1->id
+        ]);
+
+        $parcel2 = factory(Parcel::class)->create([
+            'parcelable_id' => $entry->id,
+            'parcel_number' => 2,
+            'parcel_total'  => 3,
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'invoice_id'    => $invoice2->id
+        ]);
+
+        $parcel3 = factory(Parcel::class)->create([
+            'parcelable_id' => $entry->id,
+            'parcel_number' => 3,
+            'parcel_total'  => 3,
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'invoice_id'    => $invoice3->id
+        ]);
+        
+        $this->assertFalse($parcel3->anticipated);
+
+        $parcels_ids = [
+            'parcels' => [$parcel3->id]
+        ];
+        
+        $response = $this->postJson("/api/invoice_entries/{$entry->id}/anticipate-parcels", $parcels_ids);
+      
+        $response->assertStatus(200)
+        ->assertJsonPath('message', __('messages.parcels.anticipate'));
+
+        $anticipated_parcel = app(ParcelRepositoryInterface::class)->findByid($parcel3->id);
+
+        $this->assertTrue($anticipated_parcel->anticipated);
+
+        $invoice3 = app(InvoiceRepositoryInterface::class)->findById($invoice3->id);
+        
+        $this->assertEquals(0, $invoice3->amount);
+
     }
 }

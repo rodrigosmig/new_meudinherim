@@ -4,6 +4,7 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\Card;
+use App\Models\Parcel;
 use App\Models\Invoice;
 use App\Models\Category;
 use App\Models\InvoiceEntry;
@@ -18,10 +19,13 @@ class InvoiceEntryService
 {
     protected $repository;
 
-    public function __construct(InvoiceEntryRepositoryInterface $repository, InvoiceRepositoryInterface $invoiceRepository)
-    {
+    public function __construct(InvoiceEntryRepositoryInterface $repository, 
+        InvoiceRepositoryInterface $invoiceRepository,
+        ParcelRepositoryInterface $parcelRepository
+    ) {
         $this->repository           = $repository;
         $this->invoiceRepository    = $invoiceRepository;
+        $this->parcelRepository     = $parcelRepository;
     }
 
     public function create(Card $card, array $data)
@@ -201,7 +205,7 @@ class InvoiceEntryService
     {
         $entries = $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
 
-        $parcelRepository = app(Parcelrepositoryinterface::class);
+        $parcelRepository = app(ParcelRepositoryInterface::class);
 
         $parcels = $parcelRepository->getParcelsByCategoryAndRangeDate($from, $to, $category_id);
 
@@ -254,5 +258,78 @@ class InvoiceEntryService
         $parcels = $parcelRepository->getParcelsOfInvoice($invoice);
         
         return $entries->concat($parcels);
+    }
+
+    /**
+     * Returns entries for a given invoice
+     *
+     * @param Invoice $invoice
+     * @return Parcel
+     */ 
+    public function findParcel($invoice_entry_id, $parcel_id): ?Parcel
+    {
+        return $this->parcelRepository->findParcelsOfInvoiceEntry($invoice_entry_id, $parcel_id);
+    }
+
+    /**
+     * Returns entries for a given invoice
+     *
+     * @param InvoiceEntry $invoice_entry
+     * @param int $parcel_number
+     * @return Illuminate\Database\Eloquent\Collection
+     */ 
+    public function getOpenParcels($invoice_entry, int $parcel_number)
+    {
+        return $this->parcelRepository->getOpenParcels($invoice_entry, $parcel_number);
+    }
+
+    /**
+     * Check if the parcels ids exists
+     *
+     * @param InvoiceEntry $invoice_entry
+     * @param array $parcels_ids
+     * @return bool
+     */ 
+    public function parcelsExists(InvoiceEntry $invoice_entry, array $parcels_ids): bool
+    {
+        $count = 0;
+        foreach($invoice_entry->parcels as $parcel) {
+            if ($parcel->anticipated) continue;
+
+            if (in_array($parcel->id, $parcels_ids)) {
+                $count++;
+            }
+        }
+
+        return $count === count($parcels_ids);
+    }
+
+    /**
+     * Anticipates the parcels for the current invoice 
+     *
+     * @param array $parcels_ids
+     * @return bool
+     */ 
+    public function anticipateParcels(Card $card, array $parcels_ids)
+    {
+        foreach($parcels_ids as $parcel_id) {
+            $parcel = $this->parcelRepository->findById($parcel_id);
+            $parcel->anticipated = true;
+            $parcel->save();
+
+            $this->invoiceRepository->updateInvoiceAmount($parcel->invoice);
+
+            $data = [
+                'date'          => now()->format('Y-m-d'),
+                'description'   => $parcel->description . ' (' . __('global.anticipated') . ')',
+                'value'         => $parcel->value,
+                'category_id'   => $parcel->category_id,
+                'anticipated'   => true
+            ];
+
+            $entry = $this->createEntry($card, $data);
+        }
+
+        $this->invoiceRepository->updateInvoiceAmount($entry->invoice);
     }
 }
