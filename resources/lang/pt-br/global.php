@@ -136,6 +136,11 @@ return [
     'view_accounts'                 => 'Ver Contas',
     'regards'                       => 'Atenciosamente',
     'receive_notifications'         => 'Receber Notificações',
+    'anticipate_parcels'            => 'Antecipar parcelas',
+    'parcel_number'                 => 'Número da parcela',
+    'anticipate'                    => 'Antecipar',
+    'remaining'                     => 'Valor restante',
+    'anticipated'                   => 'Antecipado',
 
     'default_categories' => [
         'salary'            => 'Salário',

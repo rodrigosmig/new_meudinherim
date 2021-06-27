@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Parcel;
+use App\Models\Invoice;
 use App\Traits\HasParcel;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
@@ -18,10 +20,11 @@ class InvoiceEntry extends Model
      */
     protected $table = 'invoice_entries';
     
-    public $fillable =  ['date', 'description', 'value', 'monthly', 'has_parcels', 'category_id', 'invoice_id', 'user_id'];
+    public $fillable =  ['date', 'description', 'value', 'monthly', 'has_parcels', 'anticipated', 'category_id', 'invoice_id', 'user_id'];
 
     protected $casts = [
-        'has_parcels' => 'boolean'
+        'has_parcels' => 'boolean',
+        'anticipated' => 'boolean',
     ];
 
     public function invoice()

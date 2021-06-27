@@ -36,6 +36,60 @@
 @section('plugins.Sweetalert2', true)
 
 @section('content')
+    {{-- Modal Anticipate --}}
+    <div class="modal fade" id="modal-anticipate" tabindex="-1" role="dialog" aria-labelledby="anticipateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('global.anticipate_parcels') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form-anticipate" action="" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div id="loading">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only"></span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <h4 id="no-entries"></h4>
+    
+                        <div class="table-responsive">
+                            <table id="table-parcels" class="table table-striped" style="display: none">
+                                <caption>
+                                    {{ __("global.amount") }}: <span id="table-caption"></span><br />
+                                    {{ __("global.remaining") }}: <span id="table-remaining">
+                                </caption>
+    
+                                <thead>
+                                    <th>{{ __('global.parcel_number') }}</th>
+                                    <th>{{ __('global.date') }}</th>
+                                    <th>{{ __('global.description') }}</th>
+                                    <th>{{ __('global.value') }}</th>
+                                    <th>{{ __('global.anticipate') }}</th>
+                                </thead>
+    
+                                <tbody id="table-body">
+    
+                                </tbody>
+                                                        
+                            </table>
+                        </div>                    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary submit-anticipate">{{ __('global.submit') }}</button>
+                    </div>                    
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
             <h4>
@@ -89,20 +143,35 @@
                                     @if (! $invoice->isPaid())
                                         <td class="table-actions">
                                             <div class="row">
-                                                @if (!isset($entry->parcelable))
+                                                @if (!isset($entry->parcelable) && !$entry->anticipated)
                                                     <a class="btn btn-info btn-sm edit" href="{{ route('invoice_entries.edit', $entry->id) }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.edit') }}">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
                                                 @endif
 
-                                                @if (!isset($entry->parcelable))
+                                                @if (!isset($entry->parcelable) && !$entry->anticipated)
                                                     <button class="btn btn-danger btn-sm delete" data-entry="{{ $entry->id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 @else
-                                                    <button class="btn btn-danger btn-sm delete-parcels" data-entry="{{ $entry->parcelable_id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    @if($entry->parcelable && $entry->parcel_number === 1 && !$entry->invoice->isPaid() && !$entry->anticipated)
+                                                        <button class="btn btn-danger btn-sm delete-parcels" data-entry="{{ $entry->parcelable_id }}" data-toggle="tooltip" data-placement="top" title="{{ __('global.delete') }}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    @endif
+
+                                                    @if($entry->parcelable && $entry->parcel_number < $entry->parcel_total && !$entry->invoice->isPaid() && !$entry->anticipated)
+                                                        <button class="btn btn-success btn-sm anticipate-parcels" 
+                                                            data-placement="top" 
+                                                            data-toggle="modal" data-target="#modal-anticipate"
+                                                            title="{{ __('global.anticipate_parcels') }}"
+                                                            data-entry_id="{{ $entry->parcelable_id }}"
+                                                            data-card_id={{ $entry->invoice->card->id}}
+                                                            data-parcel_number={{ $entry->parcel_number }}
+                                                        >
+                                                            <i class="fas fa-clock"></i>
+                                                        </button>
+                                                    @endif      
                                                 @endif
                                             </div>
                                         </td>
