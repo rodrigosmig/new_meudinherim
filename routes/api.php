@@ -33,6 +33,7 @@ Route::group([
         ->group(function() {
             Route::get('/', 'Api\\UserController@show');
             Route::put('/', 'Api\\UserController@update');
+            Route::put('/password', 'Api\\UserController@updatePassword');
             Route::post('/avatar', 'Api\\UserController@updateAvatar');
             
         }

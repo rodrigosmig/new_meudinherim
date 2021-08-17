@@ -10,6 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UserStoreRequest;
 use App\Http\Requests\Api\UserUpdateRequest;
 use App\Http\Requests\Api\UserUpdateAvatarRequest;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -19,28 +22,13 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    /* public function store(UserStoreRequest $request)
-    {
-        $data = $request->validated();
-
-        $user = $this->service->createUser($data);
-
-        return response()->json($user, Response::HTTP_CREATED);
-    } */
-
-    /**
      * Display the specified resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function show()
     {
-        return response()->json($this->service->getApiUser());
+        return new UserResource($this->service->getApiUser());
     }
 
     /**
@@ -55,7 +43,7 @@ class UserController extends Controller
 
         $this->service->updateProfile($data);
 
-        return response()->json($this->service->getApiUser());
+        return new UserResource($this->service->getApiUser());
     }
 
     /**
@@ -71,5 +59,22 @@ class UserController extends Controller
         $this->service->updateAvatar($data);
 
         return response()->json(['message' => __('messages.profile.avatar_updated')]);
+    }
+    
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePassword(ChangePasswordRequest $request)
+    {
+        $data = $request->validated();
+
+        $this->service->updatePassword($data);
+
+        return response()->json([
+            'message' => __('messages.profile.password_updated'),
+        ]);
     }
 }

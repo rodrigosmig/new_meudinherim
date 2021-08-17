@@ -26,7 +26,7 @@ class ProfileService
 
     public function updateProfile(array $data): bool
     {
-        $data['enable_notification'] = isset($data['enable_notification']) ? true : false;
+        $data['enable_notification'] = isset($data['enable_notification']) && $data['enable_notification'] == 'true' ? true : false;
         
         $user = auth()->user();
         
@@ -70,10 +70,13 @@ class ProfileService
      */
     public function createUser(array $data)
     {
+        $enable_notification = isset($data['enable_notification']) && $data['enable_notification'] == 'true' ? true : false;
+
         return $this->repository->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'enable_notification' => $enable_notification
         ]);
     }
 }
