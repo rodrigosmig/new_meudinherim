@@ -15,6 +15,11 @@ class ProfileService
         $this->repository = $repository;
     }
 
+    public function findByEmail($email)
+    {
+        return $this->repository->findByEmail($email);
+    }
+
     public function updatePassword(array $data): bool
     {
         $user = auth()->user();
@@ -41,9 +46,13 @@ class ProfileService
             Storage::delete($user->avatar);
         }
 
-        $avatar = Storage::put('public/avatar', $data['file']);
+        $avatar = $data['file'];
+
+        $avatarName = $user->id . '_avatar' . time() . '.' . $avatar->getClientOriginalExtension();
+
+        $data['file']->storeAs('public/avatars', $avatarName);
         
-        $user->avatar = $avatar;
+        $user->avatar = "avatars/" . $avatarName;
 
         $this->repository->save($user);
     }
