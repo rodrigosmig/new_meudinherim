@@ -58,7 +58,10 @@ class UserController extends Controller
 
         $this->service->updateAvatar($data);
 
-        return response()->json(['message' => __('messages.profile.avatar_updated')]);
+        return response()->json([
+            'message' => __('messages.profile.avatar_updated'),
+            'avatar'  => url("storage/" . auth()->user()->avatar)
+        ]);
     }
     
     /**

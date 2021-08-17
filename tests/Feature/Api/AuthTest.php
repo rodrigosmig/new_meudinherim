@@ -89,7 +89,7 @@ class AuthTest extends TestCase
 
         $response = $this->postJson('/api/auth/login', $data);
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
     }
 
     public function testLoginFailedWithoutDeviceField()

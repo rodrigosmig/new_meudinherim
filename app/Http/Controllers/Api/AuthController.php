@@ -6,12 +6,10 @@ use App\Models\User;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Services\AccountService;
 use App\Services\ProfileService;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\UserStoreRequest;
@@ -20,17 +18,23 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        $credentials = $request->validated();
+        $data = $request->validated();
+        $userService = app(ProfileService::class);
 
-        $user = User::where('email', $credentials['email'])->first();
+        $credentials = request(['email', 'password']);
 
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
-            return response()->json(['error' => 'Unauthorized'], Response::HTTP_NOT_FOUND);
+        if (!auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Invalid Credentials'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $token = $user->createToken($credentials['device'])->plainTextToken;
+        $user = $userService->findByEmail($credentials['email']);
 
-        return response()->json(['token' => $token]);
+        $token = $user->createToken($data['device'])->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user'  => new UserResource($user)
+        ]);
     }
 
     public function logout(Request $request)
@@ -67,5 +71,10 @@ class AuthController extends Controller
         auth()->logout();
 
         return new UserResource($user);
+    }
+
+    public function profile()
+    {
+        return new UserResource(auth()->user());
     }
 }

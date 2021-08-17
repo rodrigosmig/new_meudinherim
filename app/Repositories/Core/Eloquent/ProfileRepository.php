@@ -12,6 +12,18 @@ class ProfileRepository extends BaseEloquentRepository implements ProfileReposit
     protected $model = User::class;
 
     /**
+     * Get user of a given email
+     *
+     * @return User
+     */
+    public function findByEmail(string $email) {
+
+        return $this->model::where('email', $email)
+            ->first();
+    }
+
+
+    /**
      * Returns users with notification enabled
      *
      * @return Illuminate\Database\Eloquent\Collection
