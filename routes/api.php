@@ -24,7 +24,7 @@ Route::group([
     Route::prefix('auth')
         ->group(function() {
             Route::post('/logout', 'Api\\AuthController@logout');
-            Route::post('/refresh', 'Api\\AuthController@refresh');
+            Route::get('/me', 'Api\\AuthController@profile');
         }
     );
     
@@ -33,6 +33,7 @@ Route::group([
         ->group(function() {
             Route::get('/', 'Api\\UserController@show');
             Route::put('/', 'Api\\UserController@update');
+            Route::put('/password', 'Api\\UserController@updatePassword');
             Route::post('/avatar', 'Api\\UserController@updateAvatar');
             
         }

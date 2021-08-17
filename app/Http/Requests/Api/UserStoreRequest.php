@@ -29,6 +29,7 @@ class UserStoreRequest extends FormRequest
             'name'      => 'required|string|max:2048|min:3',
             'email'     => 'required|email|max:255|unique:users',
             'password'  => 'required|min:8|confirmed',
+            'enable_notification' => 'nullable'
         ];
     }
 

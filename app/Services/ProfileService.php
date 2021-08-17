@@ -15,6 +15,11 @@ class ProfileService
         $this->repository = $repository;
     }
 
+    public function findByEmail($email)
+    {
+        return $this->repository->findByEmail($email);
+    }
+
     public function updatePassword(array $data): bool
     {
         $user = auth()->user();
@@ -26,7 +31,7 @@ class ProfileService
 
     public function updateProfile(array $data): bool
     {
-        $data['enable_notification'] = isset($data['enable_notification']) ? true : false;
+        $data['enable_notification'] = isset($data['enable_notification']) && $data['enable_notification'] == 'true' ? true : false;
         
         $user = auth()->user();
         
@@ -41,9 +46,13 @@ class ProfileService
             Storage::delete($user->avatar);
         }
 
-        $avatar = Storage::put('public/avatar', $data['file']);
+        $avatar = $data['file'];
+
+        $avatarName = $user->id . '_avatar' . time() . '.' . $avatar->getClientOriginalExtension();
+
+        $data['file']->storeAs('public/avatars', $avatarName);
         
-        $user->avatar = $avatar;
+        $user->avatar = "avatars/" . $avatarName;
 
         $this->repository->save($user);
     }
@@ -70,10 +79,13 @@ class ProfileService
      */
     public function createUser(array $data)
     {
+        $enable_notification = isset($data['enable_notification']) && $data['enable_notification'] == 'true' ? true : false;
+
         return $this->repository->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'enable_notification' => $enable_notification
         ]);
     }
 }

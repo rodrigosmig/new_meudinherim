@@ -75,8 +75,8 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/auth/register', $data);
 
         $response->assertStatus(201)
-                ->assertJsonPath('data.name', $data['name'])
-                ->assertJsonPath('data.email', $data['email']);
+                ->assertJsonPath('name', $data['name'])
+                ->assertJsonPath('email', $data['email']);
     }
 
     public function testLoginFailedWithInvalidEmail()
@@ -89,7 +89,7 @@ class AuthTest extends TestCase
 
         $response = $this->postJson('/api/auth/login', $data);
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
     }
 
     public function testLoginFailedWithoutDeviceField()
