@@ -68,6 +68,8 @@ class AuthController extends Controller
             'type'      => Account::MONEY,
         ]);
 
+        auth()->logout();
+
         return new UserResource($user);
     }
 
