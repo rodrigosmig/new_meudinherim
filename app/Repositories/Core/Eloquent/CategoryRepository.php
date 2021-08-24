@@ -23,6 +23,17 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
     }
 
     /**
+     * Get categories all categories
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllCategories()
+    {
+
+        return $this->model::orderBy('name')->get();
+    }
+
+    /**
      * Get income categories for form
      *
      * @return array
