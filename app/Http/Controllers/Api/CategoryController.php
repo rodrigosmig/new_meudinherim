@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\CategoryResource;
 use App\Http\Requests\Api\CategoryUpdateStoreRequest;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -24,7 +25,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        if (isset($request->type)) {
+        if (isset($request->type) && in_array($request->type, [Category::INCOME, Category::EXPENSE])) {
             return CategoryResource::collection($this->service->getCategoriesByType($request->type));
         }
 

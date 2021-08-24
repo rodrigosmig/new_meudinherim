@@ -74,8 +74,8 @@ class CategoryTest extends TestCase
         $response = $this->postJson('/api/categories', $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.type', $data['type'])
-            ->assertJsonPath('data.name', $data['name']);
+            ->assertJsonPath('type', $data['type'])
+            ->assertJsonPath('name', $data['name']);
     }
     
 
@@ -91,8 +91,37 @@ class CategoryTest extends TestCase
         $response = $this->getJson('/api/categories', []);
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data.income')
-            ->assertJsonCount(1, 'data.expense');
+            ->assertJsonCount(4, 'data');
+    }
+
+    public function testGetOnlyIncomeCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
+        $expense_category = factory(Category::class, 3)->create(['type' => Category::EXPENSE]);
+
+        $response = $this->getJson('/api/categories?type=1', []);
+
+        $response->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function testGetOnlyExpenseCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
+        $expense_category = factory(Category::class, 5)->create(['type' => Category::EXPENSE]);
+
+        $response = $this->getJson('/api/categories?type=2', []);
+
+        $response->assertStatus(200)
+            ->assertJsonCount(5, 'data');
     }
 
     public function testGetNonExistentCategory()
@@ -138,8 +167,8 @@ class CategoryTest extends TestCase
         $response = $this->getJson("/api/categories/{$category->id}");
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.id', $category->id)
-                ->assertJsonPath('data.name', $category->name);
+                ->assertJsonPath('id', $category->id)
+                ->assertJsonPath('name', $category->name);
     }
 
     public function testUpdateCategoryWithUnauthenticatedUser()
@@ -209,8 +238,8 @@ class CategoryTest extends TestCase
         $response = $this->putJson("/api/categories/{$category->id}", $data);
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.name', $data['name'])
-                ->assertJsonPath('data.type', $data['type']);
+                ->assertJsonPath('name', $data['name'])
+                ->assertJsonPath('type', $data['type']);
     }
 
     public function testDeleteCategoryWithUnauthenticatedUser()
