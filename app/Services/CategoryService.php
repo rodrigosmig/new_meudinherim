@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Models\Category;
-use App\Repositories\Core\Eloquent\CategoryRepository;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
 
 class CategoryService
 {
     protected $repository;
 
-    public function __construct(CategoryRepository $repository)
+    public function __construct(CategoryRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -138,7 +138,7 @@ class CategoryService
         }
     }
 
-    public function getAllCategories(): array
+    public function getAllCategoriesByType(): array
     {
         $categories = [
             'income'    => $this->getCategoriesByType(Category::INCOME),
@@ -146,6 +146,11 @@ class CategoryService
         ];
 
         return $categories;
+    }
+
+    public function getAllCategories()
+    {
+        return $this->repository->getAllCategories();
     }
 
     public function getTotalByCategoryType($categoryType, array $filter)
