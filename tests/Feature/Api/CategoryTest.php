@@ -91,8 +91,37 @@ class CategoryTest extends TestCase
         $response = $this->getJson('/api/categories', []);
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data.income')
-            ->assertJsonCount(1, 'data.expense');
+            ->assertJsonCount(4, 'data');
+    }
+
+    public function testGetOnlyIncomeCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
+        $expense_category = factory(Category::class, 3)->create(['type' => Category::EXPENSE]);
+
+        $response = $this->getJson('/api/categories?type=1', []);
+
+        $response->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function testGetOnlyExpenseCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
+        $expense_category = factory(Category::class, 5)->create(['type' => Category::EXPENSE]);
+
+        $response = $this->getJson('/api/categories?type=2', []);
+
+        $response->assertStatus(200)
+            ->assertJsonCount(5, 'data');
     }
 
     public function testGetNonExistentCategory()
