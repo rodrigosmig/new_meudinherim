@@ -31,7 +31,7 @@ class ProfileService
 
     public function updateProfile(array $data): bool
     {
-        $data['enable_notification'] = isset($data['enable_notification']) && $data['enable_notification'] == 'true' ? true : false;
+        $data['enable_notification'] = isset($data['enable_notification']) && $data['enable_notification'] ? true : false;
         
         $user = auth()->user();
         
