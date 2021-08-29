@@ -36,10 +36,13 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
     {
         $timestamp  = (new DateTime($date))->getTimestamp();
         $new_date   = getdate($timestamp);        
-
         $due_date       = new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $card->pay_day);
         $closing_date   = new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $card->closing_day);
-
+        
+        if ($due_date < $closing_date) {
+            $due_date->modify('+1 month');
+        }
+        
         if ($card->closing_day <= $new_date['mday']) {
             $closing_date->modify('+1 month');
         }
