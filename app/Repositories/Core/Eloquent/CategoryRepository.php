@@ -15,11 +15,11 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getCategoriesByType($type) {
+    public function getCategoriesByType(string $type, int $per_page) {
 
         return $this->model::where('type', $type)
             ->orderBy('name')
-            ->get();
+            ->paginate($per_page);
     }
 
     /**
@@ -27,10 +27,10 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAllCategories()
+    public function getAllCategories(int $per_page)
     {
 
-        return $this->model::orderBy('name')->get();
+        return $this->model::orderBy('name')->paginate($per_page);
     }
 
     /**

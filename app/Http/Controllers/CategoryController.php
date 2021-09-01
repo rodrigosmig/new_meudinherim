@@ -32,8 +32,8 @@ class CategoryController extends Controller
     {
         $data = [
             'title' => $this->title,
-            'incoming' => $this->service->getCategoriesByType(Category::INCOME),
-            'outgoing' => $this->service->getCategoriesByType(Category::EXPENSE),
+            'incoming' => $this->service->getCategoriesByType(Category::INCOME, 1000),
+            'outgoing' => $this->service->getCategoriesByType(Category::EXPENSE, 1000),
         ];
 
         return view('categories.index', $data);
