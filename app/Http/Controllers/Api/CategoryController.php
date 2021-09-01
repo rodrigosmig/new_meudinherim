@@ -25,11 +25,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
+
         if (isset($request->type) && in_array($request->type, [Category::INCOME, Category::EXPENSE])) {
-            return CategoryResource::collection($this->service->getCategoriesByType($request->type));
+            return CategoryResource::collection($this->service->getCategoriesByType($request->type, $per_page));
         }
 
-        return CategoryResource::collection($this->service->getAllCategories());
+        return CategoryResource::collection($this->service->getAllCategories($per_page));
     }
 
     /**
