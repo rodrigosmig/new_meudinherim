@@ -40,9 +40,9 @@ class CategoryService
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getCategoriesByType($type) 
+    public function getCategoriesByType($type, $per_page) 
     {
-        return $this->repository->getCategoriesByType($type);
+        return $this->repository->getCategoriesByType($type, $per_page);
     }
 
     /**
@@ -148,9 +148,9 @@ class CategoryService
         return $categories;
     }
 
-    public function getAllCategories()
+    public function getAllCategories(int $per_page)
     {
-        return $this->repository->getAllCategories();
+        return $this->repository->getAllCategories($per_page);
     }
 
     public function getTotalByCategoryType($categoryType, array $filter)
