@@ -72,8 +72,8 @@ class AccountTest extends TestCase
         $response = $this->postJson('/api/accounts', $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.name', $data['name'])
-            ->assertJsonPath('data.type', $data['type']);
+            ->assertJsonPath('name', $data['name'])
+            ->assertJsonPath('type.id', $data['type']);
     }
 
     public function testGetAccountsWithUnauthenticatedUser()
@@ -142,8 +142,8 @@ class AccountTest extends TestCase
         $response = $this->getJson("/api/accounts/{$account->id}");
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.id', $account->id)
-                ->assertJsonPath('data.name', $account->name);
+                ->assertJsonPath('id', $account->id)
+                ->assertJsonPath('name', $account->name);
     }
 
     public function testUpdateAccountWithUnauthenticatedUser()
@@ -213,8 +213,8 @@ class AccountTest extends TestCase
         $response = $this->putJson("/api/accounts/{$account->id}", $data);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.name', $data['name'])
-            ->assertJsonPath('data.type', $data['type']);
+            ->assertJsonPath('name', $data['name'])
+            ->assertJsonPath('type.id', $data['type']);
     }
 
     public function testDeleteAccountWithUnauthenticatedUser()
