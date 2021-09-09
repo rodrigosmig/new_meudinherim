@@ -85,7 +85,7 @@ class InvoiceEntryService
 
         $parcel_data = [
             'total_parcels' => $total_parcels,
-            'parcel_value'  => number_format($entry->value / $data['installments_number'], 2),
+            'parcel_value'  => $entry->value / $data['installments_number'],
             'category_id'   => $entry->category->id,
         ];
 
