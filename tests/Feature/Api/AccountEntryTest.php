@@ -109,9 +109,9 @@ class AccountEntryTest extends TestCase
         $response = $this->postJson("/api/accounts/{$account->id}/entries", $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.date', $data['date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value']);
+            ->assertJsonPath('date', $data['date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value']);
     }
 
     public function testGetAccountEntryWithUnauthenticatedUser()
@@ -230,9 +230,9 @@ class AccountEntryTest extends TestCase
         $response = $this->getJson("/api/account-entries/{$entry->id}");
         
         $response->assertStatus(200)
-            ->assertJsonPath('data.id', $entry->id)
-            ->assertJsonPath('data.date', $entry->date)
-            ->assertJsonPath('data.value', $entry->value);
+            ->assertJsonPath('id', $entry->id)
+            ->assertJsonPath('date', $entry->date)
+            ->assertJsonPath('value', $entry->value);
     }
 
     public function testUpdateAccountEntryWithUnauthenticatedUser()
@@ -323,9 +323,9 @@ class AccountEntryTest extends TestCase
         $response = $this->putJson("/api/account-entries/{$entry->id}", $data);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.date', $data['date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value']);
+            ->assertJsonPath('date', $data['date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value']);
     }
 
     public function testDeleteAccountEntryWithUnauthenticatedUser()

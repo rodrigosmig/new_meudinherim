@@ -31,6 +31,8 @@ class AccountEntryController extends Controller
     {
         $account = $this->accountService->findById($account_id);
 
+        $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
+
         if (! $account) {
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
@@ -48,7 +50,7 @@ class AccountEntryController extends Controller
             ];
         }
 
-        $entries = $this->entryService->getEntriesByAccountId($account->id, $range_date);
+        $entries = $this->entryService->getEntriesByAccountId($account->id, $range_date, $per_page);
 
         return AccountEntryResource::collection($entries);
     }
