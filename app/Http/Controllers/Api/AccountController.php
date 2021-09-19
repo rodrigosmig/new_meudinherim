@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\AccountService;
 use App\Http\Controllers\Controller;
@@ -105,5 +106,10 @@ class AccountController extends Controller
         }
 
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    public function balance(Request $request, $id)
+    {
+        return $this->service->getAccountBalance($id);
     }
 }

@@ -27,6 +27,10 @@ class CategoryController extends Controller
     {
         $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
 
+        if (isset($request->type) && $request->type === "all") {
+            return response()->json($this->service->getAllCategoriesForApiForm());
+        }
+
         if (isset($request->type) && in_array($request->type, [Category::INCOME, Category::EXPENSE])) {
             return CategoryResource::collection($this->service->getCategoriesByType($request->type, $per_page));
         }

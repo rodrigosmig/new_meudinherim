@@ -17,13 +17,13 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
      * @param array $range_date
      * @return Illuminate\Database\Eloquent\Collection
      */  
-    public function getEntriesByAccountId($account_id, array $range_date)
+    public function getEntriesByAccountId($account_id, array $range_date, $per_page = 10)
     {
         return $this->model::where('account_id', $account_id)
                 ->where('date', '>=', $range_date['from'])
                 ->where('date', '<=', $range_date['to'])
                 ->orderBy('date')
-                ->get();
+                ->paginate($per_page);
     }
 
     /**
