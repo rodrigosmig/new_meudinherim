@@ -29,7 +29,7 @@ class AccountEntryTest extends TestCase
     {
         $account = 'Account';
 
-        $response = $this->postJson("/api/accounts/{$account}/entries");
+        $response = $this->postJson("/api/account-entries");
 
         $response->assertStatus(401)
             ->assertJsonPath('message', 'Unauthenticated.');
@@ -44,18 +44,19 @@ class AccountEntryTest extends TestCase
         $account = "Invalid account";
         
         $data = [
-            'date'                  => 'Invalid date',
-            'description'           => 'De',
-            'value'                 => -100,
-            'category_id'           => 'Invalid category',
+            'date'          => 'Invalid date',
+            'description'   => 'De',
+            'value'         => -100,
+            'category_id'   => 'Invalid category',
         ];        
 
         $message_date           = __('validation.date_format', ['attribute' => __('validation.attributes.date'), 'format' => 'Y-m-d']);
         $message_description    = __('validation.min.string', ['attribute' => __('validation.attributes.description'), 'min' => 3]);
         $message_value          = __('validation.gt.numeric', ['attribute' => 'value', 'value' => 0]);
         $message_category_id    = __('validation.exists', ['attribute' => 'category id']);
+        $message_account_id     = __('validation.filled', ['attribute' => 'account id']);
 
-        $response = $this->postJson("/api/accounts/{$account}/entries", $data);
+        $response = $this->postJson("/api/account-entries", $data);
 
         $response->assertStatus(422)
                 ->assertExactJson([
@@ -63,6 +64,7 @@ class AccountEntryTest extends TestCase
                     'description'   => [$message_description],
                     'value'         => [$message_value],
                     'category_id'   => [$message_category_id],
+                    'account_id'    => [$message_account_id],
                 ]);
     }
 
@@ -74,19 +76,18 @@ class AccountEntryTest extends TestCase
 
         $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
 
-        $account = 'Invalid Account';
-
         $data = [
-            'date'                  => now()->format('Y-m-d'),
-            'description'           => 'Account Entry test',
-            'value'                 => 100,
-            'category_id'           => $category->id
+            'date'          => now()->format('Y-m-d'),
+            'description'   => 'Account Entry test',
+            'value'         => 100,
+            'category_id'   => $category->id,
+            'account_id'    => 'Invalid Account'
         ];
 
-        $response = $this->postJson("/api/accounts/{$account}/entries", $data);
-
-        $response->assertStatus(404)
-            ->assertExactJson(['message' => __('messages.accounts.api_not_found')]);
+        $response = $this->postJson("/api/account-entries", $data);
+        $response->dump();
+        $response->assertStatus(422)
+            ->assertExactJson(['account_id' => [__('validation.exists', ['attribute' => 'account id'])]]);
     }
 
     public function testCreateAccountEntrySuccessfully()
@@ -104,21 +105,22 @@ class AccountEntryTest extends TestCase
             'description'   => 'Account Entry test',
             'value'         => 100,
             'category_id'   => $category->id,
+            'account_id'      => $account->id
         ];
 
-        $response = $this->postJson("/api/accounts/{$account->id}/entries", $data);
+        $response = $this->postJson("/api/account-entries", $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.date', $data['date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value']);
+            ->assertJsonPath('date', $data['date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value']);
     }
 
     public function testGetAccountEntryWithUnauthenticatedUser()
     {
         $account = 'Invalid Account';
 
-        $response = $this->postJson("/api/accounts/{$account}/entries");
+        $response = $this->getJson("/api/accounts/{$account}/entries");
 
         $response->assertStatus(401)
                 ->assertJsonPath('message', 'Unauthenticated.');
@@ -230,9 +232,9 @@ class AccountEntryTest extends TestCase
         $response = $this->getJson("/api/account-entries/{$entry->id}");
         
         $response->assertStatus(200)
-            ->assertJsonPath('data.id', $entry->id)
-            ->assertJsonPath('data.date', $entry->date)
-            ->assertJsonPath('data.value', $entry->value);
+            ->assertJsonPath('id', $entry->id)
+            ->assertJsonPath('date', $entry->date)
+            ->assertJsonPath('value', $entry->value);
     }
 
     public function testUpdateAccountEntryWithUnauthenticatedUser()
@@ -266,6 +268,7 @@ class AccountEntryTest extends TestCase
         $message_description    = __('validation.min.string', ['attribute' => __('validation.attributes.description'), 'min' => 3]);
         $message_value          = __('validation.gt.numeric', ['attribute' => 'value', 'value' => 0]);
         $message_category_id    = __('validation.exists', ['attribute' => 'category id']);
+        $message_account_id     = __('validation.filled', ['attribute' => 'account id']);
 
         $response = $this->putJson("/api/account-entries/{$entry->id}", $data);
 
@@ -276,6 +279,7 @@ class AccountEntryTest extends TestCase
                     'description'   => [$message_description],
                     'value'         => [$message_value],
                     'category_id'   => [$message_category_id],
+                    'account_id'    => [$message_account_id]
                 ]);
     }
 
@@ -289,11 +293,14 @@ class AccountEntryTest extends TestCase
 
         $category = factory(Category::class)->create(['type' => Category::INCOME]);
 
+        $account = factory(Account::class)->create();
+
         $data = [
             'date'      => now()->format('Y-m-d'),
             'description'   => 'Update test',
             'value'         => 100,
-            'category_id'   => $category->id
+            'category_id'   => $category->id,
+            'account_id'    => $account->id
         ];
 
         $response = $this->putJson("/api/account-entries/{$entry}", $data);
@@ -318,14 +325,15 @@ class AccountEntryTest extends TestCase
             'description'   => 'Account Entry updated',
             'value'         => 100,
             'category_id'   => $category->id,
+            'account_id'    => $account->id
         ];
 
         $response = $this->putJson("/api/account-entries/{$entry->id}", $data);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.date', $data['date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value']);
+            ->assertJsonPath('date', $data['date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value']);
     }
 
     public function testDeleteAccountEntryWithUnauthenticatedUser()

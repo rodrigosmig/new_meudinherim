@@ -56,6 +56,32 @@ class CategoryService
     }
 
     /**
+     * Get income categories for form
+     *
+     * @return array
+     */
+    public function getAllCategoriesForApiForm()
+    {
+        $allcategories = $this->getAllCategoriesForForm();
+
+        $data = [
+            'income' => [],
+            'expense' => []
+        ];
+
+        foreach ($allcategories as $categoryType => $categories) {
+            foreach ($categories as $key => $value) {
+                $data[$categoryType][] = [
+                    'id' => $key,
+                    'label' => $value
+                ];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Get expense categories for form
      *
      * @return array

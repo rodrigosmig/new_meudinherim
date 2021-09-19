@@ -55,11 +55,11 @@ class AccountEntryService
      * @param array $range_date
      * @return Illuminate\Database\Eloquent\Collection
      */  
-    public function getEntriesByAccountId($account_id, array $filter = [])
+    public function getEntriesByAccountId($account_id, array $filter = [], $per_page = 10)
     {
         $range_date = [
-            'from'  => date('Y-m-01'),
-            'to'    => date('Y-m-t')
+            'from'  => (new DateTime)->modify('-30 days')->format('Y-m-d'),
+            'to'    => date('Y-m-d')
         ];
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {
@@ -67,7 +67,7 @@ class AccountEntryService
             $range_date['to']   = $filter['to'];
         }
 
-        return $this->repository->getEntriesByAccountId($account_id, $range_date);
+        return $this->repository->getEntriesByAccountId($account_id, $range_date, $per_page);
     }
 
     /**
