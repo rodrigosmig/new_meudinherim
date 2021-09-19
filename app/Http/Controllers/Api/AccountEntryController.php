@@ -61,17 +61,17 @@ class AccountEntryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreUpdateAccountEntryRequest $request, $account_id)
+    public function store(StoreUpdateAccountEntryRequest $request)
     {
         $data = $request->validated();
 
-        $account = $this->accountService->findById($account_id);
+        $account = $this->accountService->findById($data['account_id']);
 
         if (! $account) {
             return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
-        $entry = $this->entryService->create($account_id, $data);
+        $entry = $this->entryService->create($data['account_id'], $data);
 
         $this->accountService->updateBalance($account, $entry->date);
 

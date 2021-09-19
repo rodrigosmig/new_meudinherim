@@ -29,6 +29,13 @@ class StoreUpdateAccountEntryRequest extends FormRequest
     public function rules()
     {
         return [
+            'account_id' => [
+                'required',
+                Rule::exists(Account::class, 'id')->where(function($query) {
+                    $query->where('id', $this->account_id)
+                        ->where('user_id', auth()->user()->id);
+                })
+            ],
             'category_id' => [
                 'required',
                 Rule::exists(Category::class, 'id')->where(function($query) {

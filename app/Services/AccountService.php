@@ -186,11 +186,11 @@ class AccountService
     public function getAllAccountBalances(): array
     {
         $accounts   = $this->repository->getAccounts();
-        $balances   = [];
+        $balances['balances']   = [];
         $total      = 0; 
 
         foreach ($accounts as $account) {
-            $balances[] = [
+            $balances['balances'][] = [
                 'account_id'    => $account->id,
                 'account_name'  => $account->name,
                 'balance'       => $account->balance
@@ -199,6 +199,32 @@ class AccountService
         }
 
         $balances['total'] = $total;
+        return $balances;
+    }
+
+    /**
+     * returns the balance of all user accounts
+     *
+     * @return array
+     */  
+    public function getAccountBalance($id): array
+    {
+        if (!$id || $id == "null") {
+            return $this->getAllAccountBalances();
+        }
+
+        $account = $this->findById($id);
+
+        if (!$account) {
+            return [];
+        }
+        
+        $balances['balances'][] = [
+            'account_id'    => $account->id,
+            'account_name'  => $account->name,
+            'balance'       => $account->balance
+        ];
+
         return $balances;
     }
 }

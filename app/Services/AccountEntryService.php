@@ -58,8 +58,8 @@ class AccountEntryService
     public function getEntriesByAccountId($account_id, array $filter = [], $per_page = 10)
     {
         $range_date = [
-            'from'  => date('Y-m-01'),
-            'to'    => date('Y-m-t')
+            'from'  => (new DateTime)->modify('-30 days')->format('Y-m-d'),
+            'to'    => date('Y-m-d')
         ];
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {

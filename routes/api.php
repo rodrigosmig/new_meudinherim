@@ -43,6 +43,7 @@ Route::group([
     Route::apiResource('categories', 'Api\\CategoryController', ["as" => "api"]);
 
     //Accounts
+    Route::get('accounts/balance/{id?}', 'Api\\AccountController@balance');
     Route::apiResource('accounts', 'Api\\AccountController', ["as" => "api"]);
 
     //Cards
@@ -69,7 +70,7 @@ Route::group([
 
     //Account entries
     Route::get('accounts/{account_id}/entries', 'Api\\AccountEntryController@index');
-    Route::post('accounts/{account_id}/entries', 'Api\\AccountEntryController@store');
+    Route::post('account-entries', 'Api\\AccountEntryController@store');
     Route::get('account-entries/{entry_id}', 'Api\\AccountEntryController@show');
     Route::put('account-entries/{entry_id}', 'Api\\AccountEntryController@update');
     Route::delete('account-entries/{entry_id}', 'Api\\AccountEntryController@destroy');
