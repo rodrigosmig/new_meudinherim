@@ -53,7 +53,7 @@ class AccountEntryController extends Controller
         $data = [
             'title'     => $this->title,
             'account'   => $account,
-            'entries'   => $this->service->getEntriesByAccountId($account->id, $range_date),
+            'entries'   => $this->service->getEntriesByAccountId($account->id, $range_date, 100),
             'filter'    => $range_date
         ];
 
