@@ -53,7 +53,7 @@ class AccountsSchedulingService
 
         $parcel_data = [
             'total_parcels' => $total_parcels,
-            'parcel_value'  => number_format($account_scheduling->value / $data['installments_number'], 2),
+            'parcel_value'  => round($account_scheduling->value / $data['installments_number'], 2),
             'category_id'   => $account_scheduling->category->id,
         ];
 
