@@ -29,6 +29,8 @@ class PaymentRequest extends FormRequest
     {
         return [
             'paid_date'     => 'required|date_format:Y-m-d',
+            'parcelable_id' => 'nullable|numeric',
+            'value'         => 'required|numeric|gt:0',
             'account_id'    => [
                 'required',
                 Rule::exists(Account::class, 'id')->where(function($query) {
