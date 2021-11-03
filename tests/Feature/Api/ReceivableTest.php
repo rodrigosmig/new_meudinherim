@@ -26,7 +26,7 @@ class ReceivableTest extends TestCase
         $this->user = factory(User::class)->create();
     }
 
-    public function testCreateReceivableWhenUnauthenticatedUser()
+    /* public function testCreateReceivableWhenUnauthenticatedUser()
     {
         $response = $this->postJson('/api/receivables');
 
@@ -484,6 +484,6 @@ class ReceivableTest extends TestCase
         $response = $this->postJson("/api/receivables/{$receivable}/cancel-receivement");
 
         $response->assertStatus(404);
-    }
+    } */
 
 }

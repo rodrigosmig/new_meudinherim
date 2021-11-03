@@ -71,7 +71,9 @@ class PayableController extends Controller
         $payable = $this->service->create($data);
 
         if (is_array($payable)) {
-            return AccountsSchedulingResource::collection($payable);
+            return AccountsSchedulingResource::collection($payable)
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
         }
 
         return (new AccountsSchedulingResource($payable))
