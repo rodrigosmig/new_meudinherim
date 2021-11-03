@@ -16,14 +16,23 @@ class AccountEntryResource extends JsonResource
      */
     public function toArray($request)
     {
-        $accountScheduling = "";
+        $accountScheduling = null;
 
-        if ($this->accountScheduling ) {
+        if ($this->accountScheduling) {
             $accountScheduling = [
+                'is_parcel'     => $this->accountScheduling->isParcel(),
                 "id"            => $this->accountScheduling->id,
+                'parcelable_id' => $this->accountScheduling->isParcel() ? $this->accountScheduling->parcelable_id : null,
                 "due_date"      => $this->accountScheduling->due_date,
                 "paid_date"     => $this->accountScheduling->paid_date,
-                "monthly"       => $this->accountScheduling->monthly
+            ];
+        } elseif ($this->parcel) {
+            $accountScheduling = [
+                'is_parcel'     => $this->parcel->isParcel(),
+                "id"            => $this->parcel->id,
+                'parcelable_id' => $this->parcel->isParcel() ? $this->parcel->parcelable_id : null,
+                "due_date"      => $this->parcel->due_date,
+                "paid_date"     => $this->parcel->paid_date,
             ];
         }
 

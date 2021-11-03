@@ -3,16 +3,15 @@
 namespace App\Services;
 
 use DateTime;
-use App\Models\User;
 use App\Models\Parcel;
 use App\Models\Account;
 use App\Services\CardService;
 use App\Models\AccountsScheduling;
-use App\Exceptions\AccountIsNotPaidException;
 use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class AccountsSchedulingService
 {
@@ -27,9 +26,10 @@ class AccountsSchedulingService
 
     public function create(array $data)
     {
-        $data['monthly'] = isset($data['monthly']) ? true : false;
+        $data['monthly'] = isset($data['monthly']) && $data['monthly'] ? true : false;
+        $data['installment'] = isset($data['installment']) && $data['installment'] ? true : false;
 
-        if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
+        if ($data['installment']) {
             return $this->createAccountSchedulingParcels($data);
         } 
 
@@ -76,7 +76,7 @@ class AccountsSchedulingService
 
     public function update(AccountsScheduling $account_scheduling, $data)
     {
-        $data['monthly'] = isset($data['monthly']) ? true : false;
+        $data['monthly'] = isset($data['monthly']) && $data['monthly'] ? true : false;
         
         return $this->repository->update($account_scheduling, $data);
     }
@@ -127,7 +127,9 @@ class AccountsSchedulingService
        
         $parcels = $this->parcelRepository->getParcelsOfAccountsScheduling($categoryType, $data);
 
-        return $accounts_schedulings->concat($parcels);
+        $all = $accounts_schedulings->concat($parcels);
+
+        return $all->sortBy('due_date');
     }
 
     /**
@@ -142,11 +144,13 @@ class AccountsSchedulingService
     {
         $account_scheduling->paid_date = $data['paid_date'];
         $account_scheduling->paid = true;
+
+        $value = $data['value'] ?? $account_scheduling->value;
         
         $entryData = [
             'date'          => $account_scheduling->paid_date,
             'description'   => $account_scheduling->description,
-            'value'         => $account_scheduling->value,
+            'value'         => $value,
             'category_id'   => $account_scheduling->category_id,
             'account_id'    => $account->id
         ];
@@ -167,6 +171,7 @@ class AccountsSchedulingService
                 $this->repository->createMonthlyPayment($account_scheduling);
             }
 
+            $account_scheduling->value = $value;
             $this->repository->save($account_scheduling);
         } else {            
             $entry->parcel()->associate($account_scheduling);
@@ -255,22 +260,29 @@ class AccountsSchedulingService
     }
 
     /**
-     * Returns accounts scheduling for a given category type and a given user
-     * for the current date
-     * 
-     * @param User $user
-     * @param int $categoryType
-     * @return Illuminate\Database\Eloquent\Collection
+     * @param int $current_page
+     * @param int $per_page
+     * @param array $payables
+     * @return array
      */
-    /* public function getAccountsByUserForCron(User $user, $categoryType)
+    public function paginate($current_page, $per_page, $payables): array
     {
-        return $this->account_scheduling::select('accounts_schedulings.*')
-            ->withoutGlobalScopes()
-            ->join('categories', 'categories.id', '=', 'accounts_schedulings.category_id')
-            ->where('categories.type', $categoryType)
-            ->where('due_date', now()->format('Y-m-d'))
-            ->where('paid', false)
-            ->where('accounts_schedulings.user_id', $user->id)
-            ->get();
-    } */
+        $totalRegisters = count($payables);
+        $last_page = ceil($totalRegisters / $per_page);
+
+        if ($current_page > $last_page) {
+            $current_page = $last_page;
+        }
+
+        $starting_point = ($current_page * $per_page) - $per_page;
+        
+        $items = array_slice($payables, $starting_point, $per_page);
+
+        $result = new Paginator($items, $totalRegisters, $per_page, $current_page, [
+            'path' => request()->url(),
+            'query' => request()->query(),
+        ]);
+
+        return $result->toArray();
+    }
 }

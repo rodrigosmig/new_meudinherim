@@ -159,10 +159,10 @@ class PayableTest extends TestCase
         $response = $this->postJson('/api/payables', $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.due_date', $data['due_date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value'])
-            ->assertJsonPath('data.category_id', $category->id);
+            ->assertJsonPath('due_date', $data['due_date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value'])
+            ->assertJsonPath('category.id', $category->id);
     }
 
     public function testGetPayablesWithUnauthenticatedUser()
@@ -261,8 +261,8 @@ class PayableTest extends TestCase
         $response = $this->getJson("/api/payables/{$payable->id}");
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.id', $payable->id)
-                ->assertJsonPath('data.name', $payable->name);
+                ->assertJsonPath('id', $payable->id)
+                ->assertJsonPath('name', $payable->name);
     }
 
     public function testUpdatePayableWithUnauthenticatedUser()
@@ -349,10 +349,10 @@ class PayableTest extends TestCase
         $response = $this->putJson("/api/payables/{$payable->id}", $data);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.due_date', $data['due_date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value'])
-            ->assertJsonPath('data.category_id', $data['category_id']);
+            ->assertJsonPath('due_date', $data['due_date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value'])
+            ->assertJsonPath('category.id', $data['category_id']);
     }
 
     public function testDeletePayableWithUnauthenticatedUser()
@@ -427,7 +427,8 @@ class PayableTest extends TestCase
 
         $data = [
             'paid_date'     => now()->modify('+1 days')->format('Y-m-d'),
-            'account_id'    => $account->id
+            'account_id'    => $account->id,
+            'value'         => $payable->value
         ];
 
         $response = $this->postJson("/api/payables/{$payable->id}/payment", $data);
@@ -450,6 +451,7 @@ class PayableTest extends TestCase
 
         $message_paid_date  = __('validation.date_format', ['attribute' => 'paid date', 'format' => 'Y-m-d']);
         $message_account_id = __('validation.exists', ['attribute' => 'account id']);
+        $message_value      = __('validation.filled', ['attribute' => 'value']);
 
         $data = [
             'paid_date'     => 'Invalid date',
@@ -461,7 +463,8 @@ class PayableTest extends TestCase
         $response->assertStatus(422)
             ->assertExactJson([
                 'paid_date'     => [$message_paid_date],
-                'account_id'    => [$message_account_id]
+                'account_id'    => [$message_account_id],
+                'value'         => [$message_value]
             ]);
     }
 
