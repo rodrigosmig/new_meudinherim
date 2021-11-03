@@ -12,7 +12,6 @@ use App\Services\AccountsSchedulingService;
 use App\Http\Requests\Api\PayableStoreRequest;
 use App\Http\Requests\Api\PayableUpdateRequest;
 use App\Http\Resources\AccountsSchedulingResource;
-
 class PayableController extends Controller
 {
     protected $service;
@@ -32,6 +31,8 @@ class PayableController extends Controller
     public function index(Request $request)
     {
         $filter = [];
+        $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
+        $page = isset($request->page) && is_numeric($request->page) ? $request->page : 1;
 
         if ((isset($request->from)
             && $request->from
@@ -44,13 +45,17 @@ class PayableController extends Controller
             ];
         }
 
-        if (isset($request->filter_status) && $request->filter_status) {
-            $filter['status'] = $request->filter_status;
+        if (isset($request->status) && $request->status) {
+            $filter['status'] = $request->status;
         }
 
         $payables = $this->service->getAccountsSchedulingsByType(Category::EXPENSE, $filter);
 
-        return AccountsSchedulingResource::collection($payables);
+        $payables_collection = AccountsSchedulingResource::collection($payables)->toArray($payables);
+
+        $results = $this->service->paginate($page, $per_page, $payables_collection);
+
+        return response()->json($results);
     }
 
     /**
@@ -65,7 +70,7 @@ class PayableController extends Controller
 
         $payable = $this->service->create($data);
 
-        if (gettype($payable) === 'boolean') {
+        if (is_array($payable)) {
             return AccountsSchedulingResource::collection($payable);
         }
 
@@ -82,7 +87,13 @@ class PayableController extends Controller
      */
     public function show($id)
     {
-        $payable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $payable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $payable = $this->service->findById($id);
+        }
 
         if (! $payable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
@@ -149,8 +160,13 @@ class PayableController extends Controller
 
     public function payment(PaymentRequest $request, $id)
     {
-        $data       = $request->validated();
-        $payable    = $this->service->findById($id);
+        $data = $request->validated();
+
+        if(isset($data['parcelable_id']) && $data['parcelable_id']) {
+            $payable = $this->service->findParcel($id, $data['parcelable_id']);
+        } else {
+            $payable = $this->service->findById($id);
+        }
 
         if (! $payable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
@@ -168,14 +184,20 @@ class PayableController extends Controller
     }
 
     public function cancelPayment($id) {
-        $payable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $payable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $payable = $this->service->findById($id);
+        }
 
         if (! $payable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
         if (! $payable->isPaid()) {
-            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => __('messages.account_scheduling.account_is_not_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $this->service->cancelPayment($payable);
