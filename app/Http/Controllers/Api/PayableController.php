@@ -175,7 +175,7 @@ class PayableController extends Controller
         }
 
         if ($payable->isPaid()) {
-            return response()->json(['message' => __('messages.account_scheduling.delete_payable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => __('messages.account_scheduling.payable_is_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $account = $this->accountService->findById($data['account_id']);

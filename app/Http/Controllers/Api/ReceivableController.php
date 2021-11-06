@@ -34,6 +34,8 @@ class ReceivableController extends Controller
     public function index(Request $request)
     {
         $filter = [];
+        $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
+        $page = isset($request->page) && is_numeric($request->page) ? $request->page : 1;        
 
         if ((isset($request->from)
             && $request->from
@@ -43,17 +45,20 @@ class ReceivableController extends Controller
             $filter = [
                 'from'      => $request->from,
                 'to'        => $request->to,
-                'status'    => $request->status
             ];
         }
 
-        if (isset($request->filter_status) && $request->filter_status) {
-            $filter['status'] = $request->filter_status;
+        if (isset($request->status) && $request->status) {
+            $filter['status'] = $request->status;
         }
 
-        $payables = $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter);
+        $receivables = $this->service->getAccountsSchedulingsByType(Category::INCOME, $filter);
 
-        return AccountsSchedulingResource::collection($payables);
+        $receivables_collection = AccountsSchedulingResource::collection($receivables)->toArray($receivables);
+
+        $results = $this->service->paginate($page, $per_page, $receivables_collection);
+
+        return response()->json($results);
     }
 
     /**
@@ -68,9 +73,10 @@ class ReceivableController extends Controller
 
         $receivable = $this->service->create($data);
 
-        if (gettype($receivable) === 'boolean') {
-            return AccountsSchedulingResource::collection($receivable);
-            //return response()->json(['message' => __('messages.account_scheduling.installments_created')]);
+        if (is_array($receivable)) {
+            return AccountsSchedulingResource::collection($receivable)
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
         }
 
         return (new AccountsSchedulingResource($receivable))
@@ -86,7 +92,13 @@ class ReceivableController extends Controller
      */
     public function show($id)
     {
-        $receivable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $receivable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
 
         if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
@@ -153,15 +165,20 @@ class ReceivableController extends Controller
 
     public function payment(PaymentRequest $request, $id)
     {
-        $data       = $request->validated();
-        $receivable = $this->service->findById($id);
+        $data = $request->validated();
+
+        if(isset($data['parcelable_id']) && $data['parcelable_id']) {
+            $receivable = $this->service->findParcel($id, $data['parcelable_id']);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
 
         if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
         if ($receivable->isPaid()) {
-            return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => __('messages.account_scheduling.receivable_is_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $account = $this->accountService->findById($data['account_id']);
@@ -172,15 +189,23 @@ class ReceivableController extends Controller
     }
 
     public function cancelPayment($id) {
-        $receivable = $this->service->findById($id);
+        $parcelable_id = request()->get('parcelable_id', false);
+
+        if($parcelable_id) {
+            $receivable = $this->service->findParcel($id, $parcelable_id);
+        } else {
+            $receivable = $this->service->findById($id);
+        }
 
         if (! $receivable) {
             return response()->json(['message' => __('messages.account_scheduling.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
         if (! $receivable->isPaid()) {
-            return response()->json(['message' => __('messages.account_scheduling.delete_receivable_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => __('messages.account_scheduling.account_is_not_paid')], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        $this->service->cancelPayment($receivable);
 
         return response()->json(['message' => __('messages.account_scheduling.receivable_cancel')], Response::HTTP_OK);
     }
