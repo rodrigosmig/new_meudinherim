@@ -26,7 +26,7 @@ class ReceivableTest extends TestCase
         $this->user = factory(User::class)->create();
     }
 
-    /* public function testCreateReceivableWhenUnauthenticatedUser()
+    public function testCreateReceivableWhenUnauthenticatedUser()
     {
         $response = $this->postJson('/api/receivables');
 
@@ -237,8 +237,8 @@ class ReceivableTest extends TestCase
         $response = $this->getJson("/api/receivables/{$receivable->id}");
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.id', $receivable->id)
-                ->assertJsonPath('data.name', $receivable->name);
+                ->assertJsonPath('id', $receivable->id)
+                ->assertJsonPath('name', $receivable->name);
     }
 
     public function testUpdateReceivableWithUnauthenticatedUser()
@@ -326,10 +326,10 @@ class ReceivableTest extends TestCase
         $response = $this->putJson("/api/receivables/{$receivable->id}", $data);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.due_date', $data['due_date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value'])
-            ->assertJsonPath('data.category_id', $data['category_id']);
+            ->assertJsonPath('due_date', $data['due_date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value'])
+            ->assertJsonPath('category.id', $data['category_id']);
     }
 
     public function testDeleteReceivableWithUnauthenticatedUser()
@@ -404,7 +404,8 @@ class ReceivableTest extends TestCase
 
         $data = [
             'paid_date'     => now()->modify('+1 days')->format('Y-m-d'),
-            'account_id'    => $account->id
+            'account_id'    => $account->id,
+            'value'         => 100
         ];
 
         $response = $this->postJson("/api/receivables/{$receivables->id}/receivement", $data);
@@ -427,6 +428,7 @@ class ReceivableTest extends TestCase
 
         $message_paid_date  = __('validation.date_format', ['attribute' => 'paid date', 'format' => 'Y-m-d']);
         $message_account_id = __('validation.exists', ['attribute' => 'account id']);
+        $message_value      = __('validation.filled', ['attribute' => 'value']);
 
         $data = [
             'paid_date'     => 'Invalid date',
@@ -438,7 +440,8 @@ class ReceivableTest extends TestCase
         $response->assertStatus(422)
             ->assertExactJson([
                 'paid_date'     => [$message_paid_date],
-                'account_id'    => [$message_account_id]
+                'account_id'    => [$message_account_id],
+                'value'         => [$message_value]
             ]);
     }
 
@@ -484,6 +487,6 @@ class ReceivableTest extends TestCase
         $response = $this->postJson("/api/receivables/{$receivable}/cancel-receivement");
 
         $response->assertStatus(404);
-    } */
+    }
 
 }
