@@ -99,9 +99,9 @@ class CardService
      * 
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getInvoicesByStatus(Card $card, $paid = false)
+    public function getInvoicesByStatus(Card $card, $paid = false, $per_page = 10)
     {
-        return $this->invoiceRepository->getInvoicesByStatus($card, $paid);
+        return $this->invoiceRepository->getInvoicesByStatus($card, $paid, $per_page);
     }
 
     /**

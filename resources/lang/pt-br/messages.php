@@ -114,6 +114,7 @@ return [
     'parcels' => [
         'not_found'     => 'Parcela não encontrada',
         'select_parcel' => 'Selecione pelo menos uma parcela',
-        'anticipate'    => 'Parcelas antecipadas com sucesso'
+        'anticipate'    => 'Parcelas antecipadas com sucesso',
+        'parcel_number' => 'O número de parcelas é obrigatório'
     ]
 ];

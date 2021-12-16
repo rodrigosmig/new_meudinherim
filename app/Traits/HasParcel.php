@@ -20,4 +20,16 @@ trait HasParcel
     {
         return $this->has_parcels == true;
     }
+
+    /**
+     * Checks if is a parcel
+     *
+     * @return bool
+     */
+    public function isParcel()
+    {
+        return isset($this->parcelable_type) 
+            && isset($this->parcelable_id) 
+            && ($this->parcelable_type === AccountsScheduling::class || $this->parcelable_type === InvoiceEntry::class);
+    }
 }

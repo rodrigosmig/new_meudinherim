@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Invoice;
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\UserTrait;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Card extends Model
 {
-    use UserTrait;
+    use UserTrait, SoftDeletes;
 
     protected $fillable = ['name', 'pay_day', 'closing_day', 'credit_limit', 'balance', 'user_id'];
 
@@ -43,4 +44,14 @@ class Card extends Model
         $this->attributes['balance'] = $value * 100;
     }
 
+    protected static function boot() {
+        parent::boot();
+    
+        static::deleting(function($card) {
+            foreach ($card->invoices as $invoice) {
+                $invoice->entries()->delete();
+            }
+            $card->invoices()->delete();
+        });
+    }
 }

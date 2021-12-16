@@ -8,12 +8,17 @@ use App\Models\User;
 use App\Models\Parcel;
 use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
 {
-    use UserTrait;
+    use UserTrait, SoftDeletes;
     
     public $fillable =  ['due_date', 'closing_date', 'amount', 'paid', 'card_id', 'user_id'];
+
+    protected $casts = [
+        'paid' => 'boolean',  
+    ];
 
     public function user()
     {

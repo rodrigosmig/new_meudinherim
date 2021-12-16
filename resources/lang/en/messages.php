@@ -110,6 +110,7 @@ return [
     'parcels' => [
         'not_found'     => 'Installment Not Found',
         'select_parcel' => 'Select at least one installment',
-        'anticipate'    => 'Anticipated installments successfully'
+        'anticipate'    => 'Anticipated installments successfully',
+        'parcel_number' => 'The parcel number is required'
     ]
 ];

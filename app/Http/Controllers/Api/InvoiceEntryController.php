@@ -14,7 +14,6 @@ use App\Http\Resources\InvoiceEntryParcelResource;
 use App\Http\Requests\Api\AnticipateParcelsRequest;
 use App\Http\Requests\Api\StoreInvoiceEntryRequest;
 use App\Http\Requests\Api\UpdateInvoiceEntryRequest;
-use App\Http\Resources\InvoiceEntryParcelCollection;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceEntryController extends Controller
@@ -39,8 +38,11 @@ class InvoiceEntryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($card_id, $invoice_id)
+    public function index(Request $request, $card_id, $invoice_id)
     {
+        $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
+        $page = isset($request->page) && is_numeric($request->page) ? $request->page : 1;
+
         $card = $this->cardService->findById($card_id);
 
         if (! $card) {
@@ -51,9 +53,15 @@ class InvoiceEntryController extends Controller
 
         if (! $invoice) {
             return response()->json(['message' => __('messages.entries.invalid_invoice')], Response::HTTP_NOT_FOUND);
-        }
+        }        
 
-        return InvoiceEntryResource::collection($invoice->entries);
+        $entries = $this->entryService->getAllEntriesForInvoice($invoice);
+
+        $entries_collection = InvoiceEntryResource::collection($entries)->toArray($entries);
+
+        $results = paginate($page, $per_page, $entries_collection);
+
+        return response()->json($results);
     }
 
     /**
@@ -74,7 +82,7 @@ class InvoiceEntryController extends Controller
         try {
             $entry = $this->entryService->create($card, $data);
         } catch (InsufficientLimitException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         if (! $entry) {
@@ -126,7 +134,7 @@ class InvoiceEntryController extends Controller
         try {
             $this->entryService->update($entry, $data);
         } catch (InsufficientLimitException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         $this->invoiceRepository->updateInvoiceAmount($entry->invoice);
@@ -149,17 +157,21 @@ class InvoiceEntryController extends Controller
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
 
+        $invoice = $entry->invoice;
+
         $this->entryService->delete($entry);
+
+        $this->invoiceRepository->updateInvoiceAmount($invoice);
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
-    public function nextParcels($entry_id, $card_id, $parcel_number)
+    public function nextParcels($entry_id)
     {
-        $card = $this->cardService->findById($card_id);
+        $parcel_number = request()->get('parcel_number', '');
 
-        if (!$card) {
-            return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
+        if (empty($parcel_number)) {
+            return response()->json(['message' => __('messages.parcels.parcel_number')], Response::HTTP_BAD_REQUEST);
         }
 
         $entry = $this->entryService->findById($entry_id);
@@ -174,7 +186,7 @@ class InvoiceEntryController extends Controller
 
         $parcels = $this->entryService->getOpenParcels($entry, $parcel_number);
 
-        return new InvoiceEntryParcelCollection($parcels);
+        return InvoiceEntryParcelResource::collection($parcels);
 
     }
 

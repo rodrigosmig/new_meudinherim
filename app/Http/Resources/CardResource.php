@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CardResource extends JsonResource
 {
+    public static $wrap = null;
+    
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +16,13 @@ class CardResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "pay_day" => $this->pay_day,
+            "closing_day" => $this->closing_day,
+            "credit_limit" => $this->credit_limit,
+            "balance" => $this->balance
+        ];
     }
 }
