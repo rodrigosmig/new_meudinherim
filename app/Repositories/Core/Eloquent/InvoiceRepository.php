@@ -65,12 +65,12 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      * 
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getInvoicesByStatus($card, $paid = false)
+    public function getInvoicesByStatus($card, $paid = false,  $per_page = 10)
     {
         return $card->invoices()
                 ->where('paid', $paid)
-                ->orderByDesc('due_date')
-                ->get();
+                ->orderBy('due_date')
+                ->paginate($per_page);
     }
 
     /**

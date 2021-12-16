@@ -176,9 +176,9 @@ class InvoiceEntryTest extends TestCase
         $response = $this->postJson("/api/cards/{$card->id}/entries", $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.date', $data['date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value']);
+            ->assertJsonPath('date', $data['date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value']);
     }
 
     public function testGetInvoiceEntryWithUnauthenticatedUser()
@@ -289,9 +289,9 @@ class InvoiceEntryTest extends TestCase
         $response = $this->getJson("/api/invoice-entries/{$entry->id}");
         
         $response->assertStatus(200)
-            ->assertJsonPath('data.id', $entry->id)
-            ->assertJsonPath('data.date', $entry->date)
-            ->assertJsonPath('data.value', $entry->value);
+            ->assertJsonPath('id', $entry->id)
+            ->assertJsonPath('date', $entry->date)
+            ->assertJsonPath('value', $entry->value);
     }
 
     public function testUpdateInvoiceEntryWithUnauthenticatedUser()
@@ -383,9 +383,9 @@ class InvoiceEntryTest extends TestCase
         $response = $this->putJson("/api/invoice-entries/{$entry->id}", $data);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.date', $data['date'])
-            ->assertJsonPath('data.description', $data['description'])
-            ->assertJsonPath('data.value', $data['value']);
+            ->assertJsonPath('date', $data['date'])
+            ->assertJsonPath('description', $data['description'])
+            ->assertJsonPath('value', $data['value']);
     }
 
     public function testDeleteInvoiceEntryWithUnauthenticatedUser()
@@ -432,7 +432,7 @@ class InvoiceEntryTest extends TestCase
 
         $entry = 'test';
         
-        $response = $this->getJson("/api/invoice_entries/{$entry}/card_id/{$card}/parcel_number/1/next-parcels");
+        $response = $this->getJson("/api/invoice_entries/{$entry}/next-parcels");
         
         $response->assertStatus(401)
             ->assertJsonPath('message', 'Unauthenticated.');
@@ -499,7 +499,7 @@ class InvoiceEntryTest extends TestCase
             'invoice_id'    => $invoice3->id
         ]);
 
-        $response = $this->getJson("/api/invoice_entries/{$entry->id}/card_id/{$card->id}/parcel_number/1/next-parcels");
+        $response = $this->getJson("/api/invoice_entries/{$entry->id}/next-parcels?parcel_number=1");
         
         $response->assertStatus(200)
             ->assertJsonCount(2, 'data');

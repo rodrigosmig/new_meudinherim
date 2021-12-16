@@ -14,6 +14,7 @@ use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class InvoiceEntryService
 {
@@ -37,7 +38,9 @@ class InvoiceEntryService
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
 
-        if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
+        $data['installment'] = isset($data['installment']) && $data['installment'] ? true : false;
+
+        if ($data['installment']) {
             $entry =  $this->createInvoiceEntryParcels($card, $data);
         } else {
             $entry = $this->createEntry($card, $data);
@@ -256,8 +259,10 @@ class InvoiceEntryService
         $parcelRepository = app(ParcelRepositoryInterface::class);
         
         $parcels = $parcelRepository->getParcelsOfInvoice($invoice);
+
+        $all = $entries->concat($parcels);
         
-        return $entries->concat($parcels);
+        return $all->sortBy('date');
     }
 
     /**

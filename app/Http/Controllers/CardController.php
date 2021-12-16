@@ -157,8 +157,8 @@ class CardController extends Controller
 
         $data = [
             'title'     => __('global.invoices'),
-            'open_invoices'  => $this->service->getInvoicesByStatus($card),
-            'paid_invoices'  => $this->service->getInvoicesByStatus($card, $paid = true),
+            'open_invoices'  => $this->service->getInvoicesByStatus($card, false, 1000),
+            'paid_invoices'  => $this->service->getInvoicesByStatus($card, $paid = true, 1000),
             'card' => $card
         ];
 

@@ -46,9 +46,12 @@ Route::group([
     Route::get('accounts/balance/{id?}', 'Api\\AccountController@balance');
     Route::apiResource('accounts', 'Api\\AccountController', ["as" => "api"]);
 
-    //Cards
+    //Credit-Card
     Route::apiResource('cards', 'Api\\CardController', ["as" => "api"]);
-
+    Route::get('cards/{card_id}/invoices', 'Api\\CardController@invoices');
+    Route::get('cards/{card_id}/invoices/{invoice_id}', 'Api\\CardController@getInvoice');
+    Route::get('cards/invoices/open', 'Api\\CardController@getInvoicesForMenu');
+    
     //Payables
     Route::apiResource('payables', 'Api\\PayableController', ["as" => "api"]);
     Route::post('payables/{id}/payment', 'Api\\PayableController@payment');
@@ -65,7 +68,7 @@ Route::group([
     Route::get('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@show');
     Route::put('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@update');
     Route::delete('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@destroy');
-    Route::get('invoice_entries/{entry_id}/card_id/{card_id}/parcel_number/{parcel_number}/next-parcels', 'Api\\InvoiceEntryController@nextParcels');
+    Route::get('invoice_entries/{entry_id}/next-parcels', 'Api\\InvoiceEntryController@nextParcels');
     Route::post('invoice_entries/{entry_id}/anticipate-parcels', 'Api\\InvoiceEntryController@anticipateParcels');
 
     //Account entries
