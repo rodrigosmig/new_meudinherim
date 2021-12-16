@@ -59,14 +59,4 @@ class AccountsScheduling extends Model
     {
         return $this->paid == true;
     }
-
-    /**
-     * Checks if the account is parcel
-     *
-     * @return bool
-     */
-    public function isParcel()
-    {
-        return isset($this->parcelable_type) && isset($this->parcelable_id) && $this->parcelable_type === AccountsScheduling::class;
-    }
 }

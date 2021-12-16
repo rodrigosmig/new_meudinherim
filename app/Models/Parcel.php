@@ -73,6 +73,8 @@ class Parcel extends Model
      */
     public function isParcel()
     {
-        return isset($this->parcelable_type) && isset($this->parcelable_id) && $this->parcelable_type === AccountsScheduling::class;
+        return isset($this->parcelable_type) 
+            && isset($this->parcelable_id) 
+            && ($this->parcelable_type === AccountsScheduling::class || $this->parcelable_type === InvoiceEntry::class);
     }
 }

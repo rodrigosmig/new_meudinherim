@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Models\Parcel;
 use App\Models\Invoice;
 use App\Traits\HasParcel;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceEntry extends Model
 {
-    use UserTrait, HasCategory, HasParcel;
+    use UserTrait, HasCategory, HasParcel, SoftDeletes;
     
     /**
      * The table associated with the model.

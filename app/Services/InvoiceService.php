@@ -6,6 +6,7 @@ use DateTime;
 use App\Models\Card;
 use App\Models\Invoice;
 use App\Models\InvoiceEntry;
+use App\Http\Resources\InvoiceResource;
 
 class InvoiceService
 {
@@ -61,58 +62,6 @@ class InvoiceService
     }
 
     /**
-     * Creates a entry for the invoice
-     *
-     * @return InvoiceEntry
-     */
-    public function createEntry(Invoice $invoice, array $data): ?InvoiceEntry
-    {
-        $data['user_id'] = auth()->user()->id;
-
-        if (isset($data['installment']) && isset($data['installments_number']) && $data['installments_number'] > 1) {
-            for ($i = 0; $i < $data['installments_number']; $i++) { 
-                var_dump("teste");
-            }
-        } else {
-            $entry = $invoice->entries()->create($data);
-        }
-        
-        if ($entry) {
-            $this->updateInvoiceAmount($invoice);
-        }
-           
-        return $entry;
-    }
-
-    /**
-     * Updates invoice amount
-     *
-     * @param Invoice $invoice
-     * @return bool
-     */  
-    /* public function updateInvoiceAmount(Invoice $invoice): bool
-    {
-        $total = $this->getInvoiceTotalAmount($invoice);
-
-        return $invoice->update(['amount' => $total]);
-    } */
-
-    /* public function getInvoiceTotalAmount(Invoice $invoice): float
-    {
-        $total = 0;
-
-        foreach ($invoice->entries as $entry) {
-            if ($entry->category->type === $entry->category::INCOME) {
-                $total -= $entry->value;
-            } else {
-                $total += $entry->value;
-            }
-        }
-
-        return $total;
-    } */
-
-    /**
      * Returns an array with the total invoices of the lasts six months
      * The array key represents the month number
      *
@@ -165,6 +114,32 @@ class InvoiceService
                 ->first();
             
             $result[$card->name] = $invoice;
+            $total += $invoice->amount;
+        }
+
+        $result['total'] = $total;
+        
+        return $result;
+    }
+
+    /**
+     * Returns the most recent open invoice
+     *
+     * @return array
+     */ 
+    public function getOpenInvoicesForApi(): array
+    {
+        $cards  = auth()->user()->cards;
+        $result = [];
+        $total  = 0;
+
+        foreach ($cards as $card) {            
+            $invoice = $card->invoices()
+                ->where('paid', false)
+                ->orderBy('due_date')
+                ->first();
+
+            $result['invoices'][] = new InvoiceResource($invoice);
             $total += $invoice->amount;
         }
 

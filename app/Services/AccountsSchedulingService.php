@@ -258,31 +258,4 @@ class AccountsSchedulingService
             'paid' => $total_paid
         ];
     }
-
-    /**
-     * @param int $current_page
-     * @param int $per_page
-     * @param array $payables
-     * @return array
-     */
-    public function paginate($current_page, $per_page, $payables): array
-    {
-        $totalRegisters = count($payables);
-        $last_page = ceil($totalRegisters / $per_page);
-
-        if ($current_page > $last_page) {
-            $current_page = $last_page;
-        }
-
-        $starting_point = ($current_page * $per_page) - $per_page;
-        
-        $items = array_slice($payables, $starting_point, $per_page);
-
-        $result = new Paginator($items, $totalRegisters, $per_page, $current_page, [
-            'path' => request()->url(),
-            'query' => request()->query(),
-        ]);
-
-        return $result->toArray();
-    }
 }

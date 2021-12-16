@@ -56,7 +56,7 @@ class ReceivableController extends Controller
 
         $receivables_collection = AccountsSchedulingResource::collection($receivables)->toArray($receivables);
 
-        $results = $this->service->paginate($page, $per_page, $receivables_collection);
+        $results = paginate($page, $per_page, $receivables_collection);
 
         return response()->json($results);
     }

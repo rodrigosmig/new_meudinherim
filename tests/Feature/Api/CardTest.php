@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\Card;
 use App\Models\User;
 use App\Models\Invoice;
+use App\Models\InvoiceEntry;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -76,10 +77,10 @@ class CardTest extends TestCase
         $response = $this->postJson('/api/cards', $data);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.name', $data['name'])
-            ->assertJsonPath('data.pay_day', $data['pay_day'])
-            ->assertJsonPath('data.closing_day', $data['closing_day'])
-            ->assertJsonPath('data.credit_limit', $data['credit_limit']);
+            ->assertJsonPath('name', $data['name'])
+            ->assertJsonPath('pay_day', $data['pay_day'])
+            ->assertJsonPath('closing_day', $data['closing_day'])
+            ->assertJsonPath('credit_limit', $data['credit_limit']);
     }
 
     public function testGetCardsWithUnauthenticatedUser()
@@ -148,8 +149,8 @@ class CardTest extends TestCase
         $response = $this->getJson("/api/cards/{$card->id}");
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.id', $card->id)
-                ->assertJsonPath('data.name', $card->name);
+                ->assertJsonPath('id', $card->id)
+                ->assertJsonPath('name', $card->name);
     }
 
     public function testUpdateCardWithUnauthenticatedUser()
@@ -227,10 +228,10 @@ class CardTest extends TestCase
         $response = $this->putJson("/api/cards/{$card->id}", $data);
 
         $response->assertStatus(200)
-                ->assertJsonPath('data.name', $data['name'])
-                ->assertJsonPath('data.pay_day', $data['pay_day'])
-                ->assertJsonPath('data.closing_day', $data['closing_day'])
-                ->assertJsonPath('data.credit_limit', $data['credit_limit']);
+                ->assertJsonPath('name', $data['name'])
+                ->assertJsonPath('pay_day', $data['pay_day'])
+                ->assertJsonPath('closing_day', $data['closing_day'])
+                ->assertJsonPath('credit_limit', $data['credit_limit']);
     }
 
     public function testDeleteCardWithUnauthenticatedUser()
@@ -239,7 +240,8 @@ class CardTest extends TestCase
 
         $response = $this->putJson("/api/cards/{$card}");
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
     }
 
     public function testDeleteNonExistentCard()
@@ -255,7 +257,7 @@ class CardTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testFailedToDeleteACardAssociatedWithInvoices()
+    public function testDeleteACardAssociatedWithInvoicesSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
@@ -269,8 +271,7 @@ class CardTest extends TestCase
 
         $response = $this->deleteJson("/api/cards/{$card->id}");
 
-        $response->assertStatus(400)
-                ->assertJsonPath('message', $message);
+        $response->assertStatus(204);
     }
 
     public function testDeleteCardSuccessfully()
@@ -284,5 +285,132 @@ class CardTest extends TestCase
         $response = $this->deleteJson("/api/cards/{$card->id}");
 
         $response->assertStatus(204);
+    }
+
+    public function testGetInvoicesWithUnauthenticatedUser()
+    {
+        $response = $this->getJson("/api/cards/1/invoices");
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testGetOpenInvoicesSuccessfully()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice = factory(Invoice::class)->create();
+        $card = $invoice->card;
+
+        $new_invoice = factory(Invoice::class)->create([
+            'due_date' => now()->modify("+1 month")->format('Y-m-d'),
+            'card_id' => $card->id,
+        ]);
+
+        $response = $this->getJson("/api/cards/{$card->id}/invoices");
+
+        $response->assertStatus(200)
+                ->assertJsonCount(2, 'data');
+    }
+
+    public function testGetPaidInvoicesSuccessfully()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice = factory(Invoice::class)->create();
+        $card = $invoice->card;
+
+        $new_invoice = factory(Invoice::class)->create([
+            'due_date' => now()->modify("+1 month")->format('Y-m-d'),
+            'card_id' => $card->id,
+        ]);
+
+        $paid_invoice = factory(Invoice::class)->create([
+            'due_date'  => now()->modify("+1 month")->format('Y-m-d'),
+            'card_id'   => $card->id,
+            'paid'      => true
+        ]);
+
+        $response = $this->getJson("/api/cards/{$card->id}/invoices?status=paid");
+
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data');
+    }
+
+    public function testGetAInvoiceWithUnauthenticatedUser()
+    {
+        $response = $this->getJson("/api/cards/1/invoices/1");
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testGetAInvalidInvoice()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $message = __('messages.invoices.api_not_found');
+
+        $invoice = factory(Invoice::class)->create();
+        $card = $invoice->card;
+
+        $response = $this->getJson("/api/cards/{$card->id}/invoices/test");
+
+        $response->assertStatus(404);
+    }
+
+    public function testGetAInvoiceSuccessfully()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice = factory(Invoice::class)->create();
+        $card = $invoice->card;
+
+        $response = $this->getJson("/api/cards/{$card->id}/invoices/{$invoice->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('id', $invoice->id)
+            ->assertJsonPath('due_date', $invoice->due_date)
+            ->assertJsonPath('closing_date', $invoice->closing_date)
+            ->assertJsonPath('amount', $invoice->amount)
+            ->assertJsonPath('paid', false);
+    }
+
+    public function testGetOpenInvoicesWithUnauthenticatedUser()
+    {
+        $response = $this->getJson("/api/cards/invoices/open");
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testGetLastOpenInvoicesFromAllCards()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice = factory(Invoice::class)->create();
+        $card = $invoice->card;
+
+        $another_invoice_another_card = factory(Invoice::class)->create([
+            'amount' => 125.55
+        ]);
+
+        $total = $invoice->amount + $another_invoice_another_card->amount;
+
+        $response = $this->getJson("/api/cards/invoices/open");
+        
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'invoices')
+            ->assertJsonPath('total', $total);
     }
 }

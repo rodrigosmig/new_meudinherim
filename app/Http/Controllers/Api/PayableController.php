@@ -40,8 +40,8 @@ class PayableController extends Controller
             && $request->to)
         ) {
             $filter = [
-                'from'      => $request->from,
-                'to'        => $request->to,
+                'from'  => $request->from,
+                'to'    => $request->to,
             ];
         }
 
@@ -53,7 +53,7 @@ class PayableController extends Controller
 
         $payables_collection = AccountsSchedulingResource::collection($payables)->toArray($payables);
 
-        $results = $this->service->paginate($page, $per_page, $payables_collection);
+        $results = paginate($page, $per_page, $payables_collection);
 
         return response()->json($results);
     }
