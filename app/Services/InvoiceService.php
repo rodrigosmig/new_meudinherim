@@ -133,6 +133,8 @@ class InvoiceService
         $result = [];
         $total  = 0;
 
+        $result['invoices'] = [];
+
         foreach ($cards as $card) {            
             $invoice = $card->invoices()
                 ->where('paid', false)
