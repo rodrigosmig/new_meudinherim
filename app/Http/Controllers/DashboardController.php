@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Services\InvoiceService;
 use App\Services\DashboardService;
 use App\Services\AccountEntryService;
