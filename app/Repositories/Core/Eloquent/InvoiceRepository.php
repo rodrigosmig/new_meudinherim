@@ -155,4 +155,12 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
 
         return $invoice->update(['amount' => $total]);
     }
+
+    public function getInvoiceAmountForChart($card_id, $month, $year) {
+        return $this->model::join('cards', 'cards.id', '=', 'invoices.card_id')
+            ->where('cards.id', '=', $card_id)
+            ->whereMonth('due_date', $month)
+            ->whereYear('due_date', $year)
+            ->sum('amount');
+    }
 }

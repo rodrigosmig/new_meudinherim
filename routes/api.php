@@ -20,6 +20,13 @@ Route::post('/auth/register', 'Api\\AuthController@register');
 Route::group([
     'middleware' => ['auth:sanctum']
 ], function() {
+    //Dashboard
+    Route::prefix('dashboard')
+        ->group(function() {
+            Route::get('/', 'Api\\DashboardController@dashboard');
+        }
+    );
+
     //Auth
     Route::prefix('auth')
         ->group(function() {
