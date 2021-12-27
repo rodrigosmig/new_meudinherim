@@ -11,4 +11,5 @@ interface InvoiceRepositoryInterface
     public function getInvoiceByDate($card, $date);
     public function getInvoiceById($card, $invoice_id);
     public function getInvoiceTotalAmount($invoice): float;
+    public function getInvoiceAmountForChart($card_id, $month, $year);
 }
