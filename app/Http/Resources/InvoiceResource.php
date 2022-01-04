@@ -23,6 +23,7 @@ class InvoiceResource extends JsonResource
             "amount"        => $this->amount,
             "paid"          => $this->isPaid(),
             "isClosed"      => $this->isClosed(),
+            'hasPayable'    => $this->payable ? true : false,
             "card"          => [
                 'id'    => $this->card->id,
                 'name'  => $this->card->name
