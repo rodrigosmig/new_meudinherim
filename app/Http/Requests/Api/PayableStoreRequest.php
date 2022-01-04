@@ -31,6 +31,7 @@ class PayableStoreRequest extends FormRequest
             'due_date'      => 'required|date_format:Y-m-d',
             'description'   => 'required|min:3',
             'value'         => 'required|numeric|gt:0',
+            'invoice_id'    => 'nullable|numeric',
             'monthly'       => 'nullable',
             'installment'           => 'nullable',
             'installments_number'   => 'nullable|numeric|gt:0',

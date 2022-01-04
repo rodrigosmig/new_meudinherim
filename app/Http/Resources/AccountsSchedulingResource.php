@@ -27,7 +27,7 @@ class AccountsSchedulingResource extends JsonResource
                 "type"  => $this->category->type,
                 "name"  => $this->category->name
             ],
-            "invoice_id" => $this->invoice_id,
+            "invoice" => !$this->invoice_id ? null : ["invoice_id" => $this->invoice->id, "card_id" => $this->invoice->card->id],
             "paid" => $this->paid,
             "monthly" => $this->monthly ? true : false,
             "has_parcels" => $this->has_parcels ?? false,
