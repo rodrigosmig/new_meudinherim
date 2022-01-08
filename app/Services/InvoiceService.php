@@ -142,8 +142,10 @@ class InvoiceService
                 ->orderBy('due_date')
                 ->first();
 
-            $result['invoices'][] = new InvoiceResource($invoice);
-            $total += $invoice->amount;
+            if ($invoice){
+                $result['invoices'][] = new InvoiceResource($invoice);
+                $total += $invoice->amount;
+            }
         }
 
         $result['total'] = $total;
