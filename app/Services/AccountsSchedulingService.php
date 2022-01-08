@@ -236,7 +236,6 @@ class AccountsSchedulingService
 
     /**
      * 
-     *
      * @param Illuminate\Database\Eloquent\Collection $items
      * @return array
      */
@@ -257,5 +256,22 @@ class AccountsSchedulingService
             'open' => $total_open,
             'paid' => $total_paid
         ];
+    }
+
+    /**
+     * Returns the total amount of items
+     * 
+     * @param Illuminate\Database\Eloquent\Collection $items
+     * @return float
+     */
+    public function getItemsTotalAmount($items): float
+    {
+        $total = 0;
+
+        foreach ($items as $item) {
+            $total += $item->value;
+        }
+
+        return $total;
     }
 }
