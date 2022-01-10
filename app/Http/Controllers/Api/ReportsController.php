@@ -42,13 +42,13 @@ class ReportsController extends Controller
             $payables = $this->accountsSchedulingService->getAccountsSchedulingsByType(Category::EXPENSE, $filter);
             
             $data['payables'] = [
-                'items' => AccountsSchedulingResource::collection($payables)->toArray($payables),
+                'items' => AccountsSchedulingResource::collection($payables),
                 'total' => $this->accountsSchedulingService->getItemsTotalAmount($payables)
             ];
 
             $receivables = $this->accountsSchedulingService->getAccountsSchedulingsByType(Category::INCOME, $filter);
             $data['receivables'] = [
-                'items' => AccountsSchedulingResource::collection($receivables)->toArray($receivables),
+                'items' => AccountsSchedulingResource::collection($receivables),
                 'total' => $this->accountsSchedulingService->getItemsTotalAmount($receivables)
             ];
         }
