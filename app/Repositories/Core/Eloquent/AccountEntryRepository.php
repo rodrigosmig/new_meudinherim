@@ -88,9 +88,9 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id): array
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
     {       
         return $this->model::with('account')
                 ->with('category')
@@ -98,7 +98,6 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
                 ->where('date', '>=', $from)
                 ->where('date', '<=', $to)
                 ->orderBy('date')
-                ->get()
-                ->toArray();
+                ->get();
     }
 }

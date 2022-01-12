@@ -40,7 +40,7 @@ class CategoryService
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getCategoriesByType($type, $per_page) 
+    public function getCategoriesByType($type, $per_page = 100) 
     {
         return $this->repository->getCategoriesByType($type, $per_page);
     }
@@ -179,9 +179,9 @@ class CategoryService
         return $this->repository->getAllCategories($per_page);
     }
 
-    public function getTotalByCategoryType($categoryType, array $filter)
+    public function getTotalOfInvoiceEntriesByCategoryType($categoryType, array $filter)
     {
-        $entries = $this->repository->getTotalByCategoryType($categoryType, $filter);
+        $entries = $this->repository->getInvoiceEntriesByCategoryType($categoryType, $filter);
 
         $result = [];
 
@@ -203,6 +203,24 @@ class CategoryService
 
             return $a['total'] < $b['total'] ? 1 : -1;
         });
+
+        return $result;
+    }
+
+    public function getTotalOfInvoiceEntriesByCategoryTypeForApi($categoryType, array $filter)
+    {
+        $entries = $this->getTotalOfInvoiceEntriesByCategoryType($categoryType, $filter);
+
+        $result = [];
+
+        foreach ($entries as $key => $value) {
+            $result[] = [
+                "category"  => $key,
+                "id"        => $value['id'],
+                "total"     => $value['total'],
+                "quantity"  => $value['quantity']
+            ];
+        }
 
         return $result;
     }

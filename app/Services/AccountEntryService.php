@@ -13,10 +13,8 @@ class AccountEntryService
 
     public function __construct(AccountEntryRepositoryInterface $repository, Account $account)
     {
-        $this->repository    = $repository;
-        
+        $this->repository    = $repository;        
         $this->account          = $account;
-        $this->repository    = $repository;
     }
 
     /**
@@ -58,8 +56,8 @@ class AccountEntryService
     public function getEntriesByAccountId($account_id, array $filter = [], $per_page = 10)
     {
         $range_date = [
-            'from'  => (new DateTime)->modify('-30 days')->format('Y-m-d'),
-            'to'    => date('Y-m-d')
+            'from'  => date('Y-m-01'),
+            'to'    => date('Y-m-t')
         ];
 
         if ($filter && isset($filter['from']) && isset($filter['to'])) {
@@ -149,7 +147,7 @@ class AccountEntryService
      * @return array
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
-    {       
+    {
         return $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
     }
 
@@ -158,10 +156,10 @@ class AccountEntryService
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
-    {       
+    {
         return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
     }
 
