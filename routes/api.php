@@ -88,6 +88,8 @@ Route::group([
 
     //Reports
     Route::get('reports/accounts', 'Api\\ReportsController@accounts');
+    Route::get('reports/total-by-category', 'Api\\ReportsController@getTotalByCategory');
+    Route::get('reports/total-by-category/details', 'Api\\ReportsController@getTotalByCategoryDetailed');
 });
 
 Route::fallback('Api\\FallbackController@fallback');

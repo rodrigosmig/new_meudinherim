@@ -34,9 +34,9 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
+    public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter)
     {
         $mutator = 100;
         return $this->model::selectRaw("categories.name as category, categories.id, SUM(invoice_entries.value) / {$mutator} as total, count(*) as quantity")
@@ -47,8 +47,7 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
             ->where('has_parcels', false)
             ->orderByDesc('total')
             ->groupBy('categories.name', 'categories.id')
-            ->get()
-            ->toArray();
+            ->get();
     }
 
     /**
@@ -56,9 +55,9 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id): array
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
     {
         return $this->model::with('invoice.card')
             ->with('category')
@@ -66,8 +65,7 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
             ->whereBetween('date', [$from, $to])
             ->where('has_parcels', false)
             ->orderBy('date')
-            ->get()
-            ->toArray();
+            ->get();
     }
 
     /**
