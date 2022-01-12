@@ -14,7 +14,6 @@ use App\Repositories\Interfaces\ParcelRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class InvoiceEntryService
 {
@@ -184,17 +183,17 @@ class InvoiceEntryService
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
+    public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter)
     {
         $entries = $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
 
-        $parcelRepository = app(Parcelrepositoryinterface::class);
+        $parcelRepository = app(ParcelRepositoryinterface::class);
 
         $parcels = $parcelRepository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
 
-        return array_merge($parcels, $entries);
+        return $entries->concat($parcels);
     }
 
     /**
@@ -202,7 +201,7 @@ class InvoiceEntryService
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
     {
@@ -212,20 +211,9 @@ class InvoiceEntryService
 
         $parcels = $parcelRepository->getParcelsByCategoryAndRangeDate($from, $to, $category_id);
 
-        $result = array_merge($parcels, $entries);
-        
-        usort($result, function($a, $b) {
-            $v1 = new DateTime($a['date']);
-            $v2 = new DateTime($b['date']);
+        $result = $entries->concat($parcels);
 
-            if ($v1 == $v2) {
-                return 0;
-            }
-
-            return $v1 < $v2 ? -1 : 1;
-        });
-
-        return (array) $result;
+        return $result->sortBy('date');
     }
 
     /**

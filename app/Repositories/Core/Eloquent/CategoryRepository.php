@@ -61,7 +61,7 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
         return $this->model::createWithoutEvents($data);
     }
 
-    public function getTotalByCategoryType($categoryType, array $filter): array
+    public function getInvoiceEntriesByCategoryType($categoryType, array $filter): array
     {
         $invoice_entry_query = $this->model::getQueryForInvoiceEntryGroupedByCategory()
             ->where('categories.type', $categoryType)

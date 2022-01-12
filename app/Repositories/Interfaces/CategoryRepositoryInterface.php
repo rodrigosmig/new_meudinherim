@@ -9,5 +9,5 @@ interface CategoryRepositoryInterface
     public function getIncomeCategoriesForForm();
     public function getExpenseCategoriesForForm();
     public function createWithoutEvents($data);
-    public function getTotalByCategoryType($categoryType, array $filter): array;
+    public function getInvoiceEntriesByCategoryType($categoryType, array $filter): array;
 }

@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Models\Account;
 use App\Models\AccountEntry;
 use Laravel\Sanctum\Sanctum;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AccountTest extends TestCase
 {

@@ -77,9 +77,9 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
      *
      * @param int $categoryType
      * @param array $filter
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getParcelsByCategoryAndRangeDate($from, $to, $category_id): array
+    public function getParcelsByCategoryAndRangeDate($from, $to, $category_id)
     {
         return $this->model::with('invoice.card')
             ->with('category')
@@ -87,8 +87,26 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
             ->where('date', '>=', $from)
             ->where('date', '<=', $to)
             ->orderBy('date')
-            ->get()
-            ->toArray();
+            ->get();
+    }
+
+    /**
+     * Returns the total amount of parcels for the given category id and range date
+     *
+     * @param int $categoryType
+     * @param array $filter
+     * @return array
+     */ 
+    public function getTotalByCategoryTypeForRangeDate($category_type, array $filter)
+    {
+        $mutator = 100;
+        return $this->model::selectRaw("categories.name as category, categories.id, SUM(parcels.value) / {$mutator} as total, count(*) as quantity")
+            ->join('categories', 'categories.id', '=', 'parcels.category_id')
+            ->where('categories.type', $category_type)
+            ->whereBetween('date', [$filter['from'], $filter['to']])
+            ->orderByDesc('total')
+            ->groupBy('categories.name', 'categories.id')
+            ->get();
     }
 
     /**

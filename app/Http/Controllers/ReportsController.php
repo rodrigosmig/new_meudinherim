@@ -111,7 +111,7 @@ class ReportsController extends Controller
 
             $data['incomes']    = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::INCOME, $filter);
             $data['expenses']   = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);            
-            $data['cards']      = $this->categoryService->getTotalByCategoryType(Category::EXPENSE, $filter);
+            $data['cards']      = $this->categoryService->getTotalOfInvoiceEntriesByCategoryType(Category::EXPENSE, $filter);
             $data['from'] = $filter['from'];
             $data['to'] = $filter['to'];
         }
