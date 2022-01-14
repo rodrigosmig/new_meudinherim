@@ -31,7 +31,7 @@ class AccountPayableNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail'];
     }
 
     /**
@@ -65,19 +65,6 @@ class AccountPayableNotification extends Notification
     {
         return [
             //
-        ];
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toDatabase($notifiable)
-    {
-        return [
-            'payables' => $this->payables
         ];
     }
 }

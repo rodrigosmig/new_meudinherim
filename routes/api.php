@@ -90,6 +90,11 @@ Route::group([
     Route::get('reports/accounts', 'Api\\ReportsController@accounts');
     Route::get('reports/total-by-category', 'Api\\ReportsController@getTotalByCategory');
     Route::get('reports/total-by-category/details', 'Api\\ReportsController@getTotalByCategoryDetailed');
+
+    //Notifications
+    Route::get('notifications', 'Api\\NotificationController@index');
+    Route::get('notifications/all-as-read', 'Api\\NotificationController@markAllAsRead');
+    Route::put('notifications/{id}', 'Api\\NotificationController@markAsRead');
 });
 
 Route::fallback('Api\\FallbackController@fallback');

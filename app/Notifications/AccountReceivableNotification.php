@@ -30,7 +30,7 @@ class AccountReceivableNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail'];
     }
 
     /**
@@ -64,19 +64,6 @@ class AccountReceivableNotification extends Notification
     {
         return [
             //
-        ];
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toDatabase($notifiable)
-    {
-        return [
-            'receivables' => $this->receivables
         ];
     }
 }
