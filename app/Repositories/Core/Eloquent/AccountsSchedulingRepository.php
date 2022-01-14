@@ -4,6 +4,7 @@ namespace App\Repositories\Core\Eloquent;
 
 use DateTime;
 use App\Models\AccountsScheduling;
+use App\Models\Parcel;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\AccountsSchedulingRepositoryInterface;
 
@@ -53,6 +54,7 @@ class AccountsSchedulingRepository extends BaseEloquentRepository implements Acc
             ->join('categories', 'categories.id', '=', 'accounts_schedulings.category_id')
             ->where('categories.type', $categoryType)
             ->where('due_date', now()->format('Y-m-d'))
+            ->where('has_parcels', false)
             ->where('paid', false)
             ->where('accounts_schedulings.user_id', $user->id)
             ->get();

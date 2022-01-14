@@ -34,17 +34,8 @@ class UserNotificationsViewComposer
      */
     public function compose(View $view)
     {
-        $count = 0;
-        
-        foreach ($this->notifications as $notification) {
-            foreach ($notification->data as $key => $data) {
-                $count += count($data);
-            }
-            
-        }
-
         $view->with([
-            'count' => $count,
+            'count' => count($this->notifications),
             'unread_notifications' => $this->notifications,
         ]);
     }
