@@ -7,24 +7,22 @@
         <h5 class="dropdown-item text-center">{{ __('global.notifications') }}</h5>
         <div class="dropdown-divider"></div>
         @forelse ($unread_notifications as $notification)
-            @foreach ($notification->data as $key => $data)
-                @foreach ($data as $item)
-                    <a href='{{ route('notifications.as_read', [$notification->id, $item['id']]) }}' class="dropdown-item">
-                        <div class="media">                
-                            <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    <b>
-                                        {{ __('global.' . $key ) }}
-                                    </b>
-                                </h3>
-                                <p class="text-sm text-muted">{{ __('global.description') }}: {{ $item['description'] }}</p>
-                                <p class="text-sm text-muted">{{ __('global.due_date') }}: <b>{{ toBrDate($item['due_date']) }}</b></p>
-                                <p class="text-sm text-muted">{{ __('global.value') }}:  <b>{{ toBrMoney($item['value']) }}</b></p>
-                            </div>
+            @foreach ($notification->data as $key => $item)
+                <a href='{{ route('notifications.as_read', [$notification->id, $item['id']]) }}' class="dropdown-item">
+                    <div class="media">                
+                        <div class="media-body">
+                            <h3 class="dropdown-item-title">
+                                <b>
+                                    {{ __('global.' . $key ) }}
+                                </b>
+                            </h3>
+                            <p class="text-sm text-muted">{{ __('global.description') }}: {{ $item['description'] }}</p>
+                            <p class="text-sm text-muted">{{ __('global.due_date') }}: <b>{{ toBrDate($item['due_date']) }}</b></p>
+                            <p class="text-sm text-muted">{{ __('global.value') }}:  <b>{{ toBrMoney($item['value']) }}</b></p>
                         </div>
-                    </a>
-                    <div class="dropdown-divider"></div>                               
-                @endforeach
+                    </div>
+                </a>
+                <div class="dropdown-divider"></div>                               
             @endforeach
             @empty
                 <a href="" class="dropdown-item">

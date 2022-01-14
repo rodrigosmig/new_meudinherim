@@ -31,12 +31,14 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
     }
 
     /**
-     * Returns parcels for a given account scheduling
+     * Returns parcels for a given category type
      *
-     * @param Invoice $invoice
+     * @param int $categoryType
+     * @param array $filter
+     * 
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getParcelsOfAccountsScheduling(int $categoryType, array $filter)
+    public function getParcelsOfAccountsScheduling($categoryType, $filter)
     {
         return $this->model::whereHasMorph(
             'parcelable', 
@@ -52,6 +54,31 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
                     }
                 
             })->get();
+    }
+
+    /**
+     * Returns parcels for a given user and a given category type
+     *
+     * @param User $user
+     * @param int $categoryType
+     * 
+     * @return Illuminate\Database\Eloquent\Collection
+     */ 
+    public function getParcelsOfAccountsSchedulingForCron($user, $categoryType)
+    {
+        return $this->model::withoutGlobalScopes()
+            ->whereHasMorph(
+                'parcelable', 
+                AccountsScheduling::class,
+                function (Builder $query) use ($user, $categoryType) {
+                    $query->join('categories', 'categories.id', '=', 'category_id')
+                        ->withoutGlobalScopes()
+                        ->where('categories.type', $categoryType)
+                        ->where('parcels.due_date',  now()->format('Y-m-d'))
+                        ->where('parcels.paid', false)
+                        ->where('parcels.user_id', $user->id);
+                })  
+                ->get();
     }
 
     /**
@@ -75,8 +102,10 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
     /**
      * Returns the parcels for the given category id and range date
      *
-     * @param int $categoryType
-     * @param array $filter
+     * @param string $from
+     * @param string $to
+     * @param int $category_id
+     * 
      * @return Illuminate\Database\Eloquent\Collection
      */ 
     public function getParcelsByCategoryAndRangeDate($from, $to, $category_id)
@@ -131,9 +160,10 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
      * Returns the nexts parcels for a given parcel number
      *
      * @param InvoiceEntry $invoice_entry
+     * @param int $parcel_number
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getOpenParcels($invoice_entry, int $parcel_number)
+    public function getOpenParcels($invoice_entry, $parcel_number)
     {
         return $invoice_entry->parcels()
                     ->select('parcels.*')

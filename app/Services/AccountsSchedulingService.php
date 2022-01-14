@@ -32,7 +32,11 @@ class AccountsSchedulingService
         if ($data['installment']) {
             return $this->createAccountSchedulingParcels($data);
         } 
-
+        
+        if (app()->runningInConsole()) {
+            unset($data['installment']);
+        }
+        
         return $this->repository->create($data);
     }
 

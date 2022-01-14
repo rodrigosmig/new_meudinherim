@@ -42,6 +42,10 @@ class InvoiceEntryService
         if ($data['installment']) {
             $entry =  $this->createInvoiceEntryParcels($card, $data);
         } else {
+            if (app()->runningInConsole()) {
+                unset($data['installment']);
+            }
+            
             $entry = $this->createEntry($card, $data);
         }
 
