@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Services\InvoiceService;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Services\AccountEntryService;
@@ -20,17 +21,20 @@ class ReportsController extends Controller
     protected $accountEntryService;
     protected $invoiceEntryService;
     protected $categoryService;
+    protected $invoiceService;
 
     public function __construct(
         AccountsSchedulingService $accountsSchedulingService,
         AccountEntryService $accountEntryService,
         InvoiceEntryService $invoiceEntryService,
-        CategoryService $categoryService
+        CategoryService $categoryService,
+        InvoiceService $invoiceService
     ) {
         $this->accountsSchedulingService    = $accountsSchedulingService;
         $this->accountEntryService          = $accountEntryService;
         $this->invoiceEntryService          = $invoiceEntryService;
         $this->categoryService              = $categoryService;
+        $this->invoiceService               = $invoiceService;
     }
     
     /**
@@ -65,6 +69,10 @@ class ReportsController extends Controller
             $data['receivables'] = [
                 'items' => AccountsSchedulingResource::collection($receivables),
                 'total' => $this->accountsSchedulingService->getItemsTotalAmount($receivables)
+            ];
+
+            $data['invoices'] = [
+                'total' => $this->invoiceService->getTotalOfOpenInvoices(['from' => $filter['from'], 'to' => $filter['to']])
             ];
         }
 

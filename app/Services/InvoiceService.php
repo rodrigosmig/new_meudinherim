@@ -154,6 +154,30 @@ class InvoiceService
     }
 
     /**
+     * Returns the total of all open invoices for a given range date
+     *
+     * @return array
+     */ 
+    public function getTotalOfOpenInvoices($range_date): float
+    {
+        $total = 0;
+
+        $cards = auth()->user()->cards;
+
+        foreach ($cards as $card) {
+            $invoice = $card->invoices()
+                ->whereBetween('due_date', [$range_date['from'], $range_date['to']])
+                ->first();
+
+            if ($invoice) {
+                $total += $invoice->amount;
+            }
+        }
+
+        return $total;
+    }
+
+    /**
      * Returns an array with the total invoices of the lasts six months
      * The array key represents the month number
      *
