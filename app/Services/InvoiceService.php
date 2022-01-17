@@ -6,21 +6,20 @@ use DateTime;
 use App\Models\Card;
 use App\Models\Invoice;
 use App\Http\Resources\InvoiceResource;
-use App\Repositories\Interfaces\InvoiceRepositoryInterface;
+use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceService
 {
     protected $invoice;
 
-    public function __construct(Invoice $invoice, InvoiceRepositoryInterface $invoiceRepository)
+    public function __construct(InvoiceRepository $invoiceRepository)
     {
-        $this->invoice = $invoice;
         $this->invoiceRepository = $invoiceRepository;
     }
 
     public function store(array $data)
     {
-        return $this->invoice->create($data);
+        return $this->invoiceRepository->create($data);
     }
 
     public function update($id, array $data)
@@ -31,7 +30,7 @@ class InvoiceService
             return false;
         }
 
-        return $invoice->update($data);
+        return $this->invoiceRepository->update($data);
     }
 
     public function delete($id)
@@ -42,12 +41,12 @@ class InvoiceService
             return false;
         }
 
-        return $invoice->delete();
+        return $this->invoiceRepository->delete();
     }
 
     public function findById($id)
     {
-        return $this->invoice->find($id);
+        return $this->invoiceRepository->find($id);
     }
 
     /**
@@ -58,8 +57,7 @@ class InvoiceService
      */
     public function getAllInvoicesByStatus($paid = false)
     {
-        return $this->invoice::where('paid', $paid)
-                    ->get();
+        return $this->invoiceRepository->getAllInvoicesByStatus($paid);
     }
 
     /**
@@ -80,12 +78,7 @@ class InvoiceService
                 $month  = $new_date->format('m');
                 $year   = $new_date->format('Y');
 
-                $total = $this->invoice
-                    ->join('cards', 'cards.id', '=', 'invoices.card_id')
-                    ->where('cards.name', '=', $card)
-                    ->whereMonth('due_date', $month)
-                    ->whereYear('due_date', $year)
-                    ->sum('amount');
+                $total = $this->invoiceRepository->getInvoiceAmountForWebChart($card, $month, $year);
 
                 $result[$card][] = $total / 100;
                                 
@@ -109,13 +102,12 @@ class InvoiceService
         $total  = 0;
 
         foreach ($cards as $card) {            
-            $invoice = $card->invoices()
-                ->where('paid', false)
-                ->orderBy('due_date')
-                ->first();
+            $invoice = $this->invoiceRepository->getTheFirstOpenInvoice($card);
             
-            $result[$card->name] = $invoice;
-            $total += $invoice->amount;
+            if ($invoice) {
+                $result[$card->name] = $invoice;
+                $total += $invoice->amount;
+            }
         }
 
         $result['total'] = $total;
@@ -137,10 +129,7 @@ class InvoiceService
         $result['invoices'] = [];
 
         foreach ($cards as $card) {            
-            $invoice = $card->invoices()
-                ->where('paid', false)
-                ->orderBy('due_date')
-                ->first();
+            $invoice = $this->invoiceRepository->getTheFirstOpenInvoice($card);
 
             if ($invoice){
                 $result['invoices'][] = new InvoiceResource($invoice);
@@ -165,13 +154,7 @@ class InvoiceService
         $cards = auth()->user()->cards;
 
         foreach ($cards as $card) {
-            $invoice = $card->invoices()
-                ->whereBetween('due_date', [$range_date['from'], $range_date['to']])
-                ->first();
-
-            if ($invoice) {
-                $total += $invoice->amount;
-            }
+            $total += ($this->invoiceRepository->getTotalOfOpenInvoice($card, $range_date) / 100);
         }
 
         return $total;
@@ -197,7 +180,7 @@ class InvoiceService
                 $month  = $new_date->format('m');
                 $year   = $new_date->format('Y');
 
-                $amount = $this->invoiceRepository->getInvoiceAmountForChart(
+                $amount = $this->invoiceRepository->getInvoicesAmountForChart(
                     $card->id,
                     $month,
                     $year

@@ -156,11 +156,80 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
         return $invoice->update(['amount' => $total]);
     }
 
-    public function getInvoiceAmountForChart($card_id, $month, $year) {
+    /**
+     * Returns the amount of open invoices for a api chart
+     *
+     * @param int $card_id
+     * @param string $month
+     * @param string $year
+     * @return int
+     */
+    public function getInvoicesAmountForChart($card_id, $month, $year) {
         return $this->model::join('cards', 'cards.id', '=', 'invoices.card_id')
             ->where('cards.id', '=', $card_id)
             ->whereMonth('due_date', $month)
             ->whereYear('due_date', $year)
+            ->sum('amount');
+    }
+
+    /**
+     * Returns the amount of open invoices for a web chart
+     *
+     * @param string $card_name
+     * @param string $month
+     * @param string $year
+     * @return int
+     */
+    public function getInvoiceAmountForWebChart($card_name, $month, $year) {
+        return $this->model::join('cards', 'cards.id', '=', 'invoices.card_id')
+            ->where('cards.name', '=', $card_name)
+            ->whereMonth('due_date', $month)
+            ->whereYear('due_date', $year)
+            ->sum('amount');
+    }
+
+    /**
+     * Returns invoices by status
+     *
+     * @param bool $paid
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllInvoicesByStatus($paid = false)
+    {
+        return $this->invoice::where('paid', $paid)
+                    ->get();
+    }
+
+    /**
+     * Returns the first open invoice
+     *
+     * @param Card $card
+     * @param bool $paid 
+     * @return Invoice | null
+     */
+    public function getTheFirstOpenInvoice($card, $paid = false) {
+        return $card->invoices()
+            ->where('paid', $paid)
+            ->orderBy('due_date')
+            ->first();
+    }
+
+    /**
+     * Returns the total of open invoices for a given card and given range date
+     *
+     * @param Card $card
+     * @param array $range_date 
+     * @return int
+     */
+    public function getTotalOfOpenInvoice($card, $range_date): int {
+        return $card->invoices()
+            ->whereBetween('due_date', [$range_date['from'], $range_date['to']])
+            ->where('paid', false)
+            ->whereNotIn('id', function ($query) {
+                $query->select('invoice_id')
+                    ->from('accounts_schedulings')
+                    ->whereColumn('accounts_schedulings.invoice_id', 'invoices.id');
+            })
             ->sum('amount');
     }
 }

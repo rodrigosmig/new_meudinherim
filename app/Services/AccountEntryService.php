@@ -5,16 +5,15 @@ namespace App\Services;
 use DateTime;
 use App\Models\Account;
 use App\Models\AccountEntry;
-use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
+use App\Repositories\Core\Eloquent\AccountEntryRepository;
 
 class AccountEntryService
 {
     protected $repository;
 
-    public function __construct(AccountEntryRepositoryInterface $repository, Account $account)
+    public function __construct(AccountEntryRepository $repository)
     {
-        $this->repository    = $repository;        
-        $this->account          = $account;
+        $this->repository = $repository;        
     }
 
     /**
