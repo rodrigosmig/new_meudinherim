@@ -92,6 +92,7 @@ class Category extends Model
         return $query->selectRaw("categories.name as category, categories.id, SUM(invoice_entries.value) / {$mutator} as total, count(*) as quantity")
             ->join('invoice_entries', 'invoice_entries.category_id', '=', 'categories.id')
             ->where('has_parcels', false)
+            ->whereNull('deleted_at')
             ->orderByDesc('total')
             ->groupBy('categories.name', 'categories.id');
     }
