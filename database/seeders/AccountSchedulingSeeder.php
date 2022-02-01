@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\Services\AccountsSchedulingService;
 
@@ -14,7 +16,6 @@ class AccountSchedulingSeeder extends Seeder
     {
         $service        = app(AccountsSchedulingService::class);
         $jon            = auth()->user();
-        $jon_card       = $jon->cards()->first();
 
         $data = [
             'due_date'      => now()->modify('+5 days')->format('Y-m-d'),

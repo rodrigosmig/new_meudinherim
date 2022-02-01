@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
-use App\Models\Category;
+namespace Database\Seeders;
+
 use App\Services\CategoryService;
 use Illuminate\Database\Seeder;
 
