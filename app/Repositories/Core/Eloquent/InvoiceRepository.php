@@ -62,10 +62,6 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
         ];
     }
 
-    private function isAValidDayOfTheMonth(DateTime $date) {
-        return $date->format('t');
-    }
-
     /**
      * Returns invoices for a given status
      *
