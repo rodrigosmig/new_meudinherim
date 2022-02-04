@@ -43,6 +43,8 @@ class CardService
     {
         $this->repository->update($card, $data);
 
+        $this->invoiceRepository->updateOpenInvoicesDate($card);
+
         $this->updateCardBalance($card);
 
         return $card;

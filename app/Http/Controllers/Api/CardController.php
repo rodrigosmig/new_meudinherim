@@ -14,6 +14,8 @@ use App\Services\InvoiceService;
 
 class CardController extends Controller
 {
+    protected $service;
+
     public function __construct(CardService $cardService)
     {
         $this->service = $cardService;
@@ -80,7 +82,7 @@ class CardController extends Controller
         if (! $card) {
             return response()->json(['message' => __('messages.cards.api_not_found')], Response::HTTP_NOT_FOUND);
         }
-
+        
         $this->service->update($card, $data);
 
         return (new CardResource($card));
