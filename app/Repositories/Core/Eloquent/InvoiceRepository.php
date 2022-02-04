@@ -34,23 +34,22 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      */ 
     public function getDueAndClosingDateForInvoice($card, $date): array
     {
-        $date       = (new DateTime($date));
-        $timestamp  = $date->getTimestamp();
-        $new_date   = getdate($timestamp);        
-        $due_date       = new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $card->pay_day);
-        $closing_date   = new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $card->closing_day);
+        $date           = (new DateTime($date));
+        $due_date       = $this->changeDayOfADate($date, $card->pay_day);
+        $closing_date   = $this->changeDayOfADate($date, $card->closing_day);
 
         if ($card->closing_day > $date->format('t')) { 
-            $closing_date   = new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $date->format('t'));
+            $closing_date = $this->changeDayOfADate($date, $date->format('t'));
         }
 
         if ($due_date < $closing_date) {
             $due_date->modify('+1 month');
         }
-        
-        if ($card->closing_day <= $new_date['mday']) {
+
+        if ($card->closing_day <= $date->format('d')) {
             $closing_date->modify('+1 month');
         }
+        
         
         if ($due_date <= $closing_date) {
             $due_date->modify('+1 month');
@@ -236,5 +235,46 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
                     ->whereColumn('accounts_schedulings.invoice_id', 'invoices.id');
             })
             ->sum('amount');
+    }
+
+    /**
+     * Update the due date and the closing date of all open invoices
+     *
+     * @param Card $card
+     * @return void
+     */
+    public function updateOpenInvoicesDate($card): void {
+        $invoices = $this->getInvoicesByStatus($card, false, 100);
+
+        $now = now();
+
+        foreach ($invoices as $invoice) {
+            if ($invoice->isClosed()) {
+                continue;
+            }
+
+            $invoice_dates = $this->getDueAndClosingDateForInvoice($card, $now->format('Y-m-d'));
+
+            $data = [
+                'due_date'      => $invoice_dates['due_date']->format('Y-m-d'),
+                'closing_date'  => $invoice_dates['closing_date']->format('Y-m-d')
+            ];
+
+            $this->update($invoice, $data);
+
+            $now->modify("+1 month");
+        }
+    }
+
+    /**
+     * Changes the day of a given date
+     *
+     * @param DateTime $date
+     * @param int $new_day
+     * @return DateTime
+     */
+    private function changeDayOfADate(DateTime $date, int $new_day): DateTime {
+        $new_date   = getdate($date->getTimestamp());        
+        return new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $new_day);
     }
 }
