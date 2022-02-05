@@ -28,7 +28,7 @@ class InvoiceEntryTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     public function testCreateInvoiceEntryWhenUnauthenticatedUser()
@@ -78,7 +78,7 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $card = 'Invalid Card';
 
@@ -104,9 +104,9 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $data = [
             'date'                  => now()->format('Y-m-d'),
@@ -136,9 +136,9 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $data = [
             'date'                  => now()->format('Y-m-d'),
@@ -162,9 +162,9 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $data = [
             'date'          => now()->format('Y-m-d'),
@@ -199,9 +199,9 @@ class InvoiceEntryTest extends TestCase
 
         $card = 'Invalid Card';
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
-        $entry = factory(InvoiceEntry::class, 3)->create(['invoice_id' => $invoice->id]);
+        $entry = InvoiceEntry::factory()->count(3)->create(['invoice_id' => $invoice->id]);
 
         $response = $this->getJson("/api/cards/{$card}/invoices/{$invoice->id}/entries");
 
@@ -215,7 +215,7 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $invoice = 'Invalid Invoice';
 
@@ -243,10 +243,10 @@ class InvoiceEntryTest extends TestCase
 
     public function testGetInvoiceEntryFromAnotherUser()
     {
-        $testUser = factory(User::class)->create();
+        $testUser = User::factory()->create();
 
         $entry = InvoiceEntry::withoutEvents(function () use ($testUser) {
-            return factory(InvoiceEntry::class)->create([
+            return InvoiceEntry::factory()->create([
                 'user_id' => $testUser->id
             ]);
         });
@@ -266,9 +266,9 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
-        $entry = factory(InvoiceEntry::class, 3)->create(['invoice_id' => $invoice->id]);
+        $entry = InvoiceEntry::factory()->count(3)->create(['invoice_id' => $invoice->id]);
         
         $response = $this->getJson("/api/cards/{$invoice->card->id}/invoices/{$invoice->id}/entries");
 
@@ -282,9 +282,9 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
-        $entry = factory(InvoiceEntry::class)->create(['invoice_id' => $invoice->id]);
+        $entry = InvoiceEntry::factory()->create(['invoice_id' => $invoice->id]);
         
         $response = $this->getJson("/api/invoice-entries/{$entry->id}");
         
@@ -310,11 +310,11 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
-        $entry = factory(InvoiceEntry::class)->create(['invoice_id' => $invoice->id]);
+        $entry = InvoiceEntry::factory()->create(['invoice_id' => $invoice->id]);
 
         $data = [
             'description'   => 'En',
@@ -346,7 +346,7 @@ class InvoiceEntryTest extends TestCase
 
         $entry = 'entry';
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
 
         $data = [
             'due_date'      => now()->format('Y-m-d'),
@@ -366,11 +366,11 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
-        $entry = factory(InvoiceEntry::class)->create(['invoice_id' => $invoice->id]);
+        $entry = InvoiceEntry::factory()->create(['invoice_id' => $invoice->id]);
 
 
         $data = [
@@ -417,9 +417,9 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
-        $entry = factory(InvoiceEntry::class)->create(['invoice_id' => $invoice->id]);
+        $entry = InvoiceEntry::factory()->create(['invoice_id' => $invoice->id]);
 
         $response = $this->deleteJson("/api/invoice-entries/{$entry->id}");
 
@@ -444,35 +444,35 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
-        $entry = factory(InvoiceEntry::class)->create([
+        $entry = InvoiceEntry::factory()->create([
             'category_id'   => $category->id,
             'has_parcels'   => true,
             'value'         => 300  
         ]);
 
-        $invoice1 = factory(Invoice::class)->create([
+        $invoice1 = Invoice::factory()->create([
             'card_id' => $card->id,
             'due_date'      => now()->modify('+30 days')->format('Y-m-d'),
             'closing_date'  => now()->modify('+24 days')->format('Y-m-d'),
         ]);
 
-        $invoice2 = factory(Invoice::class)->create([
+        $invoice2 = Invoice::factory()->create([
             'card_id' => $card->id,
             'due_date'      => now()->modify('+60 days')->format('Y-m-d'),
             'closing_date'  => now()->modify('+54 days')->format('Y-m-d'),
         ]);
 
-        $invoice3 = factory(Invoice::class)->create([
+        $invoice3 = Invoice::factory()->create([
             'card_id' => $card->id,
             'due_date'      => now()->modify('+90 days')->format('Y-m-d'),
             'closing_date'  => now()->modify('+84 days')->format('Y-m-d'),
         ]);
 
-        $parcel1 = factory(Parcel::class)->create([
+        $parcel1 = Parcel::factory()->create([
             'parcelable_id' => $entry->id,
             'parcel_number' => 1,
             'parcel_total'  => 3,
@@ -481,7 +481,7 @@ class InvoiceEntryTest extends TestCase
             'invoice_id'    => $invoice1->id
         ]);
 
-        $parcel2 = factory(Parcel::class)->create([
+        $parcel2 = Parcel::factory()->create([
             'parcelable_id' => $entry->id,
             'parcel_number' => 2,
             'parcel_total'  => 3,
@@ -490,7 +490,7 @@ class InvoiceEntryTest extends TestCase
             'invoice_id'    => $invoice2->id
         ]);
 
-        $parcel3 = factory(Parcel::class)->create([
+        $parcel3 = Parcel::factory()->create([
             'parcelable_id' => $entry->id,
             'parcel_number' => 3,
             'parcel_total'  => 3,
@@ -511,31 +511,31 @@ class InvoiceEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
-        $entry = factory(InvoiceEntry::class)->create([
+        $entry = InvoiceEntry::factory()->create([
             'category_id'   => $category->id,
             'has_parcels'   => true,
             'value'         => 300  
         ]);
 
-        $invoice1 = factory(Invoice::class)->create([
+        $invoice1 = Invoice::factory()->create([
             'card_id'       => $card->id,
             'amount'        => 100,
             'due_date'      => now()->modify('+30 days')->format('Y-m-d'),
             'closing_date'  => now()->modify('+24 days')->format('Y-m-d'),
         ]);
 
-        $invoice2 = factory(Invoice::class)->create([
+        $invoice2 = Invoice::factory()->create([
             'card_id'       => $card->id,
             'amount'        => 100,
             'due_date'      => now()->modify('+60 days')->format('Y-m-d'),
             'closing_date'  => now()->modify('+54 days')->format('Y-m-d'),
         ]);
 
-        $invoice3 = factory(Invoice::class)->create([
+        $invoice3 = Invoice::factory()->create([
             'card_id'       => $card->id,
             'amount'        => 100,
             'due_date'      => now()->modify('+90 days')->format('Y-m-d'),
@@ -544,7 +544,7 @@ class InvoiceEntryTest extends TestCase
 
         $this->assertEquals(100, $invoice3->amount);
 
-        $parcel1 = factory(Parcel::class)->create([
+        $parcel1 = Parcel::factory()->create([
             'parcelable_id' => $entry->id,
             'parcel_number' => 1,
             'parcel_total'  => 3,
@@ -553,7 +553,7 @@ class InvoiceEntryTest extends TestCase
             'invoice_id'    => $invoice1->id
         ]);
 
-        $parcel2 = factory(Parcel::class)->create([
+        $parcel2 = Parcel::factory()->create([
             'parcelable_id' => $entry->id,
             'parcel_number' => 2,
             'parcel_total'  => 3,
@@ -562,7 +562,7 @@ class InvoiceEntryTest extends TestCase
             'invoice_id'    => $invoice2->id
         ]);
 
-        $parcel3 = factory(Parcel::class)->create([
+        $parcel3 = Parcel::factory()->create([
             'parcelable_id' => $entry->id,
             'parcel_number' => 3,
             'parcel_total'  => 3,

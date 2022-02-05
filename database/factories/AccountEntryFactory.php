@@ -1,20 +1,28 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Account;
 use App\Models\Category;
-use App\Models\AccountEntry;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(AccountEntry::class, function (Faker $faker) {
-    return [
-        'date'          => now()->format('Y-m-d'),
-        'description'   => $faker->randomElement(Account::TYPES),
-        'value'         => 10,
-        'category_id'   => factory(Category::class),
-        'account_id'    => factory(Account::class),
-        'user_id'       => factory(User::class)
-    ];
-});
+class AccountEntryFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'date'          => now()->format('Y-m-d'),
+            'description'   => $this->faker->randomElement(Account::TYPES),
+            'value'         => 10,
+            'category_id'   => Category::factory(),
+            'account_id'    => Account::factory(),
+            'user_id'       => User::factory()
+        ];
+    }
+}

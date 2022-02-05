@@ -8,10 +8,11 @@ use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InvoiceEntry extends Model
 {
-    use UserTrait, HasCategory, HasParcel, SoftDeletes;
+    use UserTrait, HasCategory, HasParcel, SoftDeletes, HasFactory;
     
     /**
      * The table associated with the model.

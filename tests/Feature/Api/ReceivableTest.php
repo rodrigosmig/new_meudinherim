@@ -157,7 +157,7 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::INCOME]);
         
-        factory(AccountsScheduling::class, 2)->create(['category_id' => $category->id]);
+        AccountsScheduling::factory()->count(2)->create(['category_id' => $category->id]);
 
         $response = $this->getJson('api/receivables');
 
@@ -173,12 +173,12 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $older_receivable = factory(AccountsScheduling::class)->create([
+        $older_receivable = AccountsScheduling::factory()->create([
             'due_date'      => now()->format('Y-m-01'),
             'category_id'   => $category->id
         ]);
 
-        $new_receivable = factory(AccountsScheduling::class)->create([
+        $new_receivable = AccountsScheduling::factory()->create([
             'due_date'      => now()->format('Y-m-15'),
             'category_id'   => $category->id
         ]);
@@ -207,10 +207,10 @@ class ReceivableTest extends TestCase
 
     public function testGetReceivableFromAnotherUser()
     {
-        $testUser = factory(User::class)->create();
+        $testUser = User::factory()->create();
 
         $receivable = AccountsScheduling::withoutEvents(function () use ($testUser) {
-            return factory(AccountsScheduling::class)->create([
+            return AccountsScheduling::factory()->create([
                 'user_id' => $testUser->id
             ]);
         });
@@ -232,7 +232,7 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $receivable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);        
+        $receivable = AccountsScheduling::factory()->create(['category_id' => $category->id]);        
 
         $response = $this->getJson("/api/receivables/{$receivable->id}");
 
@@ -280,7 +280,7 @@ class ReceivableTest extends TestCase
             $this->user
         );
 
-        $receivable = factory(AccountsScheduling::class)->create();
+        $receivable = AccountsScheduling::factory()->create();
         
         $data = [
             'due_date'      => 'Invalid date',
@@ -314,13 +314,13 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $receivable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivable = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $data = [
             'due_date'      => now()->modify('+7 days')->format('Y-m-d'),
             'description'   => 'Receivable updated',
             'value'         => 200,
-            'category_id'   => (factory(Category::class)->create(['type' => Category::INCOME]))->id
+            'category_id'   => (Category::factory()->create(['type' => Category::INCOME]))->id
         ];
 
         $response = $this->putJson("/api/receivables/{$receivable->id}", $data);
@@ -363,7 +363,7 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $receivables = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivables = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $message = __('messages.account_scheduling.not_receivable');
 
@@ -383,7 +383,7 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $receivables = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivables = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $response = $this->deleteJson("/api/receivables/{$receivables->id}");
 
@@ -396,11 +396,11 @@ class ReceivableTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
         $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $receivables  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivables  = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $data = [
             'paid_date'     => now()->modify('+1 days')->format('Y-m-d'),
@@ -424,7 +424,7 @@ class ReceivableTest extends TestCase
 
         $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $receivable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $receivable  = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $message_paid_date  = __('validation.date_format', ['attribute' => 'paid date', 'format' => 'Y-m-d']);
         $message_account_id = __('validation.exists', ['attribute' => 'account id']);
@@ -451,16 +451,16 @@ class ReceivableTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
         $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $receivable = factory(AccountsScheduling::class)->create([
+        $receivable = AccountsScheduling::factory()->create([
             'category_id'   => $category->id,
             'paid_date'     => now(),
             'paid'          => true
         ]);
         
-        $entry = factory(AccountEntry::class)->create([
+        $entry = AccountEntry::factory()->create([
             'date'                  => $receivable->paid_date,
             'value'                 => $receivable->value,
             'account_id'            => $account->id,

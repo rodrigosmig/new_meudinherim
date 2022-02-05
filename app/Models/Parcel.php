@@ -7,10 +7,11 @@ use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use App\Models\AccountEntry;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Parcel extends Model
 {
-    use UserTrait, HasCategory;
+    use UserTrait, HasCategory, HasFactory;
     
     public $fillable =  [
         'date',

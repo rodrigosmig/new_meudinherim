@@ -46,7 +46,7 @@ class AuthTest extends TestCase
 
     public function testEmailAlreadyInUse()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $data = [
             'name'      => 'Test Name',
@@ -109,7 +109,7 @@ class AuthTest extends TestCase
 
     public function testLoginSuccesfully()
     {
-        $user = factory(User::class)->create(['password' => Hash::make('12345678')]);
+        $user = User::factory()->create(['password' => Hash::make('12345678')]);
 
         $data = [
             'email'     => $user->email,

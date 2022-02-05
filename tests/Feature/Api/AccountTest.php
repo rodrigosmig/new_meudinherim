@@ -21,7 +21,7 @@ class AccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
     
     public function testCreateAccountWhenUnauthenticatedUser()
@@ -88,7 +88,7 @@ class AccountTest extends TestCase
             $this->user
         );
         
-        factory(Account::class, 2)->create();
+        Account::factory()->count(2)->create();
 
         $response = $this->getJson('api/accounts');
 
@@ -114,10 +114,10 @@ class AccountTest extends TestCase
 
     public function testGetAccountFromAnotherUser()
     {
-        $testUser = factory(User::class)->create();
+        $testUser = User::factory()->create();
 
         $account = Account::withoutEvents(function () use ($testUser) {
-            return factory(Account::class)->create(['user_id' => $testUser->id]);
+            return Account::factory()->create(['user_id' => $testUser->id]);
         });
 
         Sanctum::actingAs(
@@ -135,7 +135,7 @@ class AccountTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
         $response = $this->getJson("/api/accounts/{$account->id}");
 
@@ -178,7 +178,7 @@ class AccountTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
         
         $message_name = __('validation.min.string', ['attribute' => __('validation.attributes.name'), 'min' => 3]);
         $message_type = __('validation.in', ['attribute' => 'type']);
@@ -201,7 +201,7 @@ class AccountTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create(['type' => Account::CHECKING_ACCOUNT]);
+        $account = Account::factory()->create(['type' => Account::CHECKING_ACCOUNT]);
 
         $data = [
             'name' => 'Account Test',
@@ -244,9 +244,9 @@ class AccountTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
         
-        factory(AccountEntry::class)->create(['account_id' => $account->id]);
+        AccountEntry::factory()->create(['account_id' => $account->id]);
 
         $message = __('messages.accounts.not_delete');
 
@@ -262,7 +262,7 @@ class AccountTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
         $response = $this->deleteJson("/api/accounts/{$account->id}");
 

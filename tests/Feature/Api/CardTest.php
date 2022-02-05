@@ -23,7 +23,7 @@ class CardTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     public function testCreateCardWhenUnauthenticatedUser()
@@ -97,7 +97,7 @@ class CardTest extends TestCase
             $this->user
         );
 
-        factory(Card::class, 2)->create();
+        Card::factory()->count(2)->create();
 
         $response = $this->getJson('api/cards');
 
@@ -123,10 +123,10 @@ class CardTest extends TestCase
 
     public function testGetCardFromAnotherUser()
     {
-        $testUser = factory(User::class)->create();
+        $testUser = User::factory()->create();
 
         $card = Card::withoutEvents(function () use ($testUser) {
-            return factory(Card::class)->create(['user_id' => $testUser->id]);
+            return Card::factory()->create(['user_id' => $testUser->id]);
         });
 
         Sanctum::actingAs(
@@ -144,7 +144,7 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $response = $this->getJson("/api/cards/{$card->id}");
 
@@ -189,7 +189,7 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
         
         $message_pay_day        = __('validation.min.numeric', ['attribute' => 'pay day', 'min' => 1]);
         $message_closing_day    = __('validation.max.numeric', ['attribute' => 'closing day', 'max' => 31]);
@@ -216,7 +216,7 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $data = [
             'name'          => 'Card Updated',
@@ -263,9 +263,9 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
         
-        factory(Invoice::class)->create(['card_id' => $card->id]);
+        Invoice::factory()->create(['card_id' => $card->id]);
 
         $message = __('messages.cards.not_delete');
 
@@ -280,7 +280,7 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $card = factory(Card::class)->create();
+        $card = Card::factory()->create();
 
         $response = $this->deleteJson("/api/cards/{$card->id}");
 
@@ -301,10 +301,10 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $card = $invoice->card;
 
-        $new_invoice = factory(Invoice::class)->create([
+        $new_invoice = Invoice::factory()->create([
             'due_date' => now()->modify("+1 month")->format('Y-m-d'),
             'card_id' => $card->id,
         ]);
@@ -321,15 +321,15 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $card = $invoice->card;
 
-        $new_invoice = factory(Invoice::class)->create([
+        $new_invoice = Invoice::factory()->create([
             'due_date' => now()->modify("+1 month")->format('Y-m-d'),
             'card_id' => $card->id,
         ]);
 
-        $paid_invoice = factory(Invoice::class)->create([
+        $paid_invoice = Invoice::factory()->create([
             'due_date'  => now()->modify("+1 month")->format('Y-m-d'),
             'card_id'   => $card->id,
             'paid'      => true
@@ -357,7 +357,7 @@ class CardTest extends TestCase
 
         $message = __('messages.invoices.api_not_found');
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $card = $invoice->card;
 
         $response = $this->getJson("/api/cards/{$card->id}/invoices/test");
@@ -371,7 +371,7 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $card = $invoice->card;
 
         $response = $this->getJson("/api/cards/{$card->id}/invoices/{$invoice->id}");
@@ -398,10 +398,10 @@ class CardTest extends TestCase
             $this->user
         );
 
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $card = $invoice->card;
 
-        $another_invoice_another_card = factory(Invoice::class)->create([
+        $another_invoice_another_card = Invoice::factory()->create([
             'amount' => 125.55
         ]);
 

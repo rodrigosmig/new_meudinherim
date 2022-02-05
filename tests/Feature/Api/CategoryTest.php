@@ -22,7 +22,7 @@ class CategoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     public function testGetCategoriesWithUnauthenticatedUser()
@@ -85,8 +85,8 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
-        $expense_category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $income_categories  = Category::factory()->count(3)->create(['type' => Category::INCOME]);
+        $expense_category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $response = $this->getJson('/api/categories', []);
 
@@ -100,8 +100,8 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
-        $expense_category = factory(Category::class, 3)->create(['type' => Category::EXPENSE]);
+        $income_categories  = Category::factory()->count(3)->create(['type' => Category::INCOME]);
+        $expense_category = Category::factory()->count(3)->create(['type' => Category::EXPENSE]);
 
         $response = $this->getJson('/api/categories?type=1', []);
 
@@ -115,8 +115,8 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $income_categories  = factory(Category::class, 3)->create(['type' => Category::INCOME]);
-        $expense_category = factory(Category::class, 5)->create(['type' => Category::EXPENSE]);
+        $income_categories  = Category::factory()->count(3)->create(['type' => Category::INCOME]);
+        $expense_category = Category::factory()->count(5)->create(['type' => Category::EXPENSE]);
 
         $response = $this->getJson('/api/categories?type=2', []);
 
@@ -139,7 +139,7 @@ class CategoryTest extends TestCase
 
     public function testGetCategoryFromAnotherUser()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $category = Category::createWithoutEvents([
             'name'      => 'Category Test',
@@ -162,7 +162,7 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create();
+        $category = Category::factory()->create();
 
         $response = $this->getJson("/api/categories/{$category->id}");
 
@@ -205,7 +205,7 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
         
         $message_type = __('validation.in', ['attribute' => 'type']);
         $message_name = __('validation.min.string', ['attribute' => __('validation.attributes.name'), 'min' => 3]);
@@ -228,7 +228,7 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             'name' => 'Update Category',
@@ -271,9 +271,9 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
         
-        factory(AccountEntry::class)->create(['category_id' => $category->id]);
+        AccountEntry::factory()->create(['category_id' => $category->id]);
 
         $message = __('messages.categories.not_delete');
 
@@ -289,7 +289,7 @@ class CategoryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
 
         $response = $this->deleteJson("/api/categories/{$category->id}");
 
