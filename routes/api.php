@@ -2,6 +2,15 @@
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PayableController;
+use App\Http\Controllers\Api\ReportsController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ReceivableController;
+use App\Http\Controllers\Api\AccountEntryController;
+use App\Http\Controllers\Api\InvoiceEntryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,25 +32,25 @@ Route::group([
     //Dashboard
     Route::prefix('dashboard')
         ->group(function() {
-            Route::get('/', 'Api\\DashboardController@dashboard');
+            Route::get('/', [DashboardController::class, 'dashboard']);
         }
     );
 
     //Auth
     Route::prefix('auth')
         ->group(function() {
-            Route::post('/logout', 'Api\\AuthController@logout');
-            Route::get('/me', 'Api\\AuthController@profile');
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::get('/me', [AuthController::class, 'profile']);
         }
     );
     
     //User
     Route::prefix('users')
         ->group(function() {
-            Route::get('/', 'Api\\UserController@show');
-            Route::put('/', 'Api\\UserController@update');
-            Route::put('/password', 'Api\\UserController@updatePassword');
-            Route::post('/avatar', 'Api\\UserController@updateAvatar');
+            Route::get('/', [UserController::class, 'show']);
+            Route::put('/', [UserController::class, 'update']);
+            Route::put('/password', [UserController::class, 'updatePassword']);
+            Route::post('/avatar', [UserController::class, 'updateAvatar']);
             
         }
     );
@@ -50,51 +59,57 @@ Route::group([
     Route::apiResource('categories', 'Api\\CategoryController', ["as" => "api"]);
 
     //Accounts
-    Route::get('accounts/balance/{id?}', 'Api\\AccountController@balance');
+    Route::get('accounts/balance/{id?}', [AccountController::class, 'balance']);
     Route::apiResource('accounts', 'Api\\AccountController', ["as" => "api"]);
 
     //Credit-Card
     Route::apiResource('cards', 'Api\\CardController', ["as" => "api"]);
-    Route::get('cards/{card_id}/invoices', 'Api\\CardController@invoices');
-    Route::get('cards/{card_id}/invoices/{invoice_id}', 'Api\\CardController@getInvoice');
-    Route::get('cards/invoices/open', 'Api\\CardController@getInvoicesForMenu');
+    Route::get('cards/{card_id}/invoices', [CardController::class, 'invoices']);
+    Route::get('cards/{card_id}/invoices/{invoice_id}', [CardController::class, 'getInvoice']);
+    Route::get('cards/invoices/open', [CardController::class, 'getInvoicesForMenu']);
     
     //Payables
     Route::apiResource('payables', 'Api\\PayableController', ["as" => "api"]);
-    Route::post('payables/{id}/payment', 'Api\\PayableController@payment');
-    Route::post('payables/{id}/cancel-payment', 'Api\\PayableController@cancelPayment');
+    Route::post('payables/{id}/payment', [PayableController::class, 'payment']);
+    Route::post('payables/{id}/cancel-payment', [PayableController::class, 'cancelPayment']);
 
     //Receivables
     Route::apiResource('receivables', 'Api\\ReceivableController', ["as" => "api"]);
-    Route::post('receivables/{id}/receivement', 'Api\\ReceivableController@payment');
-    Route::post('receivables/{id}/cancel-receivement', 'Api\\ReceivableController@cancelPayment');
+    Route::post('receivables/{id}/receivement', [ReceivableController::class, 'payment']);
+    Route::post('receivables/{id}/cancel-receivement', [ReceivableController::class, 'cancelPayment']);
 
     //Invoice entries
-    Route::get('cards/{card_id}/invoices/{invoice_id}/entries', 'Api\\InvoiceEntryController@index');
-    Route::post('cards/{card_id}/entries', 'Api\\InvoiceEntryController@store');
-    Route::get('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@show');
-    Route::put('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@update');
-    Route::delete('invoice-entries/{entry_id}', 'Api\\InvoiceEntryController@destroy');
-    Route::get('invoice_entries/{entry_id}/next-parcels', 'Api\\InvoiceEntryController@nextParcels');
-    Route::post('invoice_entries/{entry_id}/anticipate-parcels', 'Api\\InvoiceEntryController@anticipateParcels');
+    Route::get('cards/{card_id}/invoices/{invoice_id}/entries', [InvoiceEntryController::class, 'index']);
+    Route::post('cards/{card_id}/entries', [InvoiceEntryController::class, 'store']);
+    Route::get('invoice-entries/{entry_id}', [InvoiceEntryController::class, 'show']);
+    Route::put('invoice-entries/{entry_id}', [InvoiceEntryController::class, 'update']);
+    Route::delete('invoice-entries/{entry_id}', [InvoiceEntryController::class, 'destroy']);
+    Route::get('invoice_entries/{entry_id}/next-parcels', [InvoiceEntryController::class, 'nextParcels']);
+    Route::post('invoice_entries/{entry_id}/anticipate-parcels', [InvoiceEntryController::class, 'anticipateParcels']);
 
     //Account entries
-    Route::get('accounts/{account_id}/entries', 'Api\\AccountEntryController@index');
-    Route::post('account-entries', 'Api\\AccountEntryController@store');
-    Route::get('account-entries/{entry_id}', 'Api\\AccountEntryController@show');
-    Route::put('account-entries/{entry_id}', 'Api\\AccountEntryController@update');
-    Route::delete('account-entries/{entry_id}', 'Api\\AccountEntryController@destroy');
-    Route::post('account-entries/account-transfer', 'Api\\AccountEntryController@accountTransfer');
+    Route::get('accounts/{account_id}/entries', [AccountEntryController::class, 'index']);
+    Route::post('account-entries', [AccountEntryController::class, 'store']);
+    Route::get('account-entries/{entry_id}', [AccountEntryController::class, 'show']);
+    Route::put('account-entries/{entry_id}', [AccountEntryController::class, 'update']);
+    Route::delete('account-entries/{entry_id}', [AccountEntryController::class, 'destroy']);
+    Route::post('account-entries/account-transfer', [AccountEntryController::class, 'accountTransfer']);
 
     //Reports
-    Route::get('reports/accounts', 'Api\\ReportsController@accounts');
-    Route::get('reports/total-by-category', 'Api\\ReportsController@getTotalByCategory');
-    Route::get('reports/total-by-category/details', 'Api\\ReportsController@getTotalByCategoryDetailed');
+    Route::prefix('reports')
+        ->group(function () {
+            Route::get('/accounts', [ReportsController::class, 'accounts']);
+            Route::get('/total-by-category', [ReportsController::class, 'getTotalByCategory']);
+            Route::get('/total-by-category/details', [ReportsController::class, 'getTotalByCategoryDetailed']);
+        });
 
     //Notifications
-    Route::get('notifications', 'Api\\NotificationController@index');
-    Route::get('notifications/all-as-read', 'Api\\NotificationController@markAllAsRead');
-    Route::put('notifications/{id}', 'Api\\NotificationController@markAsRead');
+    Route::prefix('notifications')
+        ->group(function () {
+            Route::get('', [NotificationController::class, 'index']);
+            Route::get('/all-as-read', [NotificationController::class, 'markAllAsRead']);
+            Route::put('/{id}', [NotificationController::class, 'markAsRead']);
+        });
 });
 
 Route::fallback('Api\\FallbackController@fallback');
