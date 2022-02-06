@@ -12,7 +12,7 @@ class AccountRepository extends BaseEloquentRepository implements AccountReposit
 
     public function getAccountsForForm() 
     {
-        return 'aaaa';
+        return auth()->user()->accounts()->pluck('name', 'id');
     }
 
     /**
