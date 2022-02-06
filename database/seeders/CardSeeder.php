@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\User;
+namespace Database\Seeders;
+
 use App\Services\CardService;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Auth;
 
 class CardSeeder extends Seeder
 {

@@ -7,10 +7,11 @@ use App\Traits\UserTrait;
 use App\Models\AccountEntry;
 use App\Models\AccountBalance;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Account extends Model
 {
-    use UserTrait;
+    use UserTrait, HasFactory;
     
     const MONEY             = 'money';
     const SAVINGS           = 'savings';

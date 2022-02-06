@@ -7,10 +7,11 @@ use App\Models\Invoice;
 use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Card extends Model
 {
-    use UserTrait, SoftDeletes;
+    use UserTrait, SoftDeletes, HasFactory;
 
     protected $fillable = ['name', 'pay_day', 'closing_day', 'credit_limit', 'balance', 'user_id'];
 

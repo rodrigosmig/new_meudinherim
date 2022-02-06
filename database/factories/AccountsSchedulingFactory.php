@@ -1,18 +1,26 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Category;
-use Faker\Generator as Faker;
-use App\Models\AccountsScheduling;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(AccountsScheduling::class, function (Faker $faker) {
-    return [
-        'due_date'      => now()->format('Y-m-d'),
-        'description'   => $faker->sentence,
-        'value'         => 100,
-        'category_id'   => factory(Category::class),
-        'user_id'       => factory(User::class)
-    ];
-});
+class AccountsSchedulingFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'due_date'      => now()->format('Y-m-d'),
+            'description'   => $this->faker->sentence,
+            'value'         => 100,
+            'category_id'   => Category::factory(),
+            'user_id'       => User::factory()
+        ];
+    }
+}

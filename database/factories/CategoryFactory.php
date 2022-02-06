@@ -1,15 +1,25 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Category;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Category::class, function (Faker $faker) {
-    return [
-        'name'      => $faker->name,
-        'type'      => $faker->randomElement([Category::EXPENSE, Category::INCOME]),
-        'user_id'   => factory(User::class)
-    ];
-});
+class CategoryFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'name'      => $this->faker->name,
+            'type'      => $this->faker->randomElement([Category::EXPENSE, Category::INCOME]),
+            'user_id'   => (User::factory())
+        ];
+    }
+}
+

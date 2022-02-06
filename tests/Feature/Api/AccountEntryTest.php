@@ -22,7 +22,7 @@ class AccountEntryTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     public function testCreateAccountEntryWhenUnauthenticatedUser()
@@ -74,7 +74,7 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             'date'          => now()->format('Y-m-d'),
@@ -85,7 +85,7 @@ class AccountEntryTest extends TestCase
         ];
 
         $response = $this->postJson("/api/account-entries", $data);
-        $response->dump();
+
         $response->assertStatus(422)
             ->assertExactJson(['account_id' => [__('validation.exists', ['attribute' => 'account id'])]]);
     }
@@ -96,9 +96,9 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
         $data = [
             'date'          => now()->format('Y-m-d'),
@@ -158,10 +158,10 @@ class AccountEntryTest extends TestCase
 
     public function testGetAccountEntryFromAnotherUser()
     {
-        $testUser = factory(User::class)->create();
+        $testUser = User::factory()->create();
 
         $entry = AccountEntry::withoutEvents(function () use ($testUser) {
-            return factory(AccountEntry::class)->create([
+            return AccountEntry::factory()->create([
                 'user_id' => $testUser->id
             ]);
         });
@@ -181,9 +181,9 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
-        $entry = factory(AccountEntry::class, 3)->create(['account_id' => $account->id]);
+        $entry = AccountEntry::factory()->count(3)->create(['account_id' => $account->id]);
         
         $response = $this->getJson("/api/accounts/{$account->id}/entries");
 
@@ -197,16 +197,16 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $category   = factory(Category::class)->create(['type' => Category::EXPENSE]);
-        $account    = factory(Account::class)->create();
+        $category   = Category::factory()->create(['type' => Category::EXPENSE]);
+        $account    = Account::factory()->create();
 
-        $older_entry = factory(AccountEntry::class)->create([
+        $older_entry = AccountEntry::factory()->create([
             'date'          => now()->format('Y-m-01'),
             'account_id'    => $account->id, 
             'category_id'   => $category->id
         ]);
 
-        $new_entry = factory(AccountEntry::class)->create([
+        $new_entry = AccountEntry::factory()->create([
             'date'          => now()->format('Y-m-15'),
             'account_id'    => $account->id,
             'category_id'   => $category->id
@@ -225,9 +225,9 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
-        $entry = factory(AccountEntry::class)->create(['account_id' => $account->id]);
+        $entry = AccountEntry::factory()->create(['account_id' => $account->id]);
         
         $response = $this->getJson("/api/account-entries/{$entry->id}");
         
@@ -253,9 +253,9 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
-        $entry = factory(AccountEntry::class)->create(['account_id' => $account->id]);
+        $entry = AccountEntry::factory()->create(['account_id' => $account->id]);
 
         $data = [
             'date'          => 'Invalid date',
@@ -291,9 +291,9 @@ class AccountEntryTest extends TestCase
 
         $entry = 'entry';
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
         $data = [
             'date'      => now()->format('Y-m-d'),
@@ -314,11 +314,11 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
-        $entry = factory(AccountEntry::class)->create(['account_id' => $account->id]);
+        $entry = AccountEntry::factory()->create(['account_id' => $account->id]);
 
         $data = [
             'date'          => now()->modify('+3 days')->format('Y-m-d'),
@@ -365,9 +365,9 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
-        $entry = factory(AccountEntry::class)->create(['account_id' => $account->id]);
+        $entry = AccountEntry::factory()->create(['account_id' => $account->id]);
 
         $response = $this->deleteJson("/api/account-entries/{$entry->id}");
 
@@ -424,10 +424,10 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $source_account = factory(Account::class)->create();
+        $source_account = Account::factory()->create();
 
-        $source_category        = factory(Category::class)->create(['type' => Category::EXPENSE]);
-        $destination_category   = factory(Category::class)->create(['type' => Category::INCOME]);
+        $source_category        = Category::factory()->create(['type' => Category::EXPENSE]);
+        $destination_category   = Category::factory()->create(['type' => Category::INCOME]);
 
         $data = [
             "description"               => "Test description",
@@ -452,10 +452,10 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $source_account = factory(Account::class)->create();
+        $source_account = Account::factory()->create();
 
-        $source_category = factory(Category::class)->create(['type' => Category::INCOME]);
-        $destination_category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $source_category = Category::factory()->create(['type' => Category::INCOME]);
+        $destination_category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             "description" => "Test description",
@@ -486,11 +486,11 @@ class AccountEntryTest extends TestCase
             $this->user
         );
 
-        $source_account         = factory(Account::class)->create();
-        $destination_account    = factory(Account::class)->create();
+        $source_account         = Account::factory()->create();
+        $destination_account    = Account::factory()->create();
 
-        $source_category = factory(Category::class)->create(['type' => Category::EXPENSE]);
-        $destination_category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $source_category = Category::factory()->create(['type' => Category::EXPENSE]);
+        $destination_category = Category::factory()->create(['type' => Category::INCOME]);
 
         $data = [
             "description" => "Test description",

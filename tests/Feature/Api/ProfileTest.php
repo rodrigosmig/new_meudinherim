@@ -18,7 +18,7 @@ class ProfileTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create(['password' => Hash::make('12345678')]);
+        $this->user = User::factory()->create(['password' => Hash::make('12345678')]);
     }
     
     public function testShowProfileWhenUnauthenticatedUser()
@@ -78,7 +78,7 @@ class ProfileTest extends TestCase
             $this->user
         );
 
-        $new_user = factory(User::class)->create();
+        $new_user = User::factory()->create();
         
         $message_name = __('validation.min.string', ['attribute' => __('validation.attributes.name'), 'min' => 3]);
         $message_email = __('validation.unique', ['attribute' => 'e-mail']);

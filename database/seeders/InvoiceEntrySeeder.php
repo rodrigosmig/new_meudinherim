@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Services\CardService;
 use Illuminate\Database\Seeder;
 use App\Services\InvoiceEntryService;

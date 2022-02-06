@@ -23,7 +23,7 @@ class PayableTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     public function testCreatePayableWhenUnauthenticatedUser()
@@ -69,7 +69,7 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
 
         $message = __('validation.exists', ['attribute' => 'category id']);
 
@@ -93,7 +93,7 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             'due_date'              => now()->format('Y-m-d'),
@@ -117,7 +117,7 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             'due_date'              => now()->format('Y-m-d'),
@@ -147,7 +147,7 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             'due_date'      => now()->format('Y-m-d'),
@@ -179,9 +179,9 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
         
-        factory(AccountsScheduling::class, 2)->create(['category_id' => $category->id]);
+        AccountsScheduling::factory()->count(2)->create(['category_id' => $category->id]);
 
         $response = $this->getJson('api/payables');
 
@@ -195,14 +195,14 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $older_payable = factory(AccountsScheduling::class)->create([
+        $older_payable = AccountsScheduling::factory()->create([
             'due_date'      => now()->format('Y-m-01'),
             'category_id'   => $category->id
         ]);
 
-        $new_payable = factory(AccountsScheduling::class)->create([
+        $new_payable = AccountsScheduling::factory()->create([
             'due_date'      => now()->format('Y-m-15'),
             'category_id'   => $category->id
         ]);
@@ -231,10 +231,10 @@ class PayableTest extends TestCase
 
     public function testGetPayableFromAnotherUser()
     {
-        $testUser = factory(User::class)->create();
+        $testUser = User::factory()->create();
 
         $payable = AccountsScheduling::withoutEvents(function () use ($testUser) {
-            return factory(AccountsScheduling::class)->create([
+            return AccountsScheduling::factory()->create([
                 'user_id' => $testUser->id
             ]);
         });
@@ -254,9 +254,9 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $payable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);        
+        $payable = AccountsScheduling::factory()->create(['category_id' => $category->id]);        
 
         $response = $this->getJson("/api/payables/{$payable->id}");
 
@@ -283,7 +283,7 @@ class PayableTest extends TestCase
 
         $payable = 'payable';
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
         $data = [
             'due_date'      => now()->format('Y-m-d'),
@@ -303,7 +303,7 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $payable = factory(AccountsScheduling::class)->create();
+        $payable = AccountsScheduling::factory()->create();
         
         $data = [
             'due_date'      => 'Invalid date',
@@ -335,15 +335,15 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $payable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $payable  = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $data = [
             'due_date'      => now()->modify('+7 days')->format('Y-m-d'),
             'description'   => 'Payable updated',
             'value'         => 200,
-            'category_id'   => (factory(Category::class)->create(['type' => Category::EXPENSE]))->id
+            'category_id'   => (Category::factory()->create(['type' => Category::EXPENSE]))->id
         ];
 
         $response = $this->putJson("/api/payables/{$payable->id}", $data);
@@ -384,9 +384,9 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::INCOME]);
+        $category = Category::factory()->create(['type' => Category::INCOME]);
 
-        $payable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $payable = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $message = __('messages.account_scheduling.not_payable');
 
@@ -404,9 +404,9 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $payable = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $payable = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $response = $this->deleteJson("/api/payables/{$payable->id}");
 
@@ -419,11 +419,11 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
+        $account = Account::factory()->create();
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $payable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $payable  = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $data = [
             'paid_date'     => now()->modify('+1 days')->format('Y-m-d'),
@@ -445,9 +445,9 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $payable  = factory(AccountsScheduling::class)->create(['category_id' => $category->id]);
+        $payable  = AccountsScheduling::factory()->create(['category_id' => $category->id]);
 
         $message_paid_date  = __('validation.date_format', ['attribute' => 'paid date', 'format' => 'Y-m-d']);
         $message_account_id = __('validation.exists', ['attribute' => 'account id']);
@@ -474,16 +474,16 @@ class PayableTest extends TestCase
             $this->user
         );
 
-        $account = factory(Account::class)->create();
-        $category = factory(Category::class)->create(['type' => Category::EXPENSE]);
+        $account = Account::factory()->create();
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
 
-        $payable = factory(AccountsScheduling::class)->create([
+        $payable = AccountsScheduling::factory()->create([
             'category_id'   => $category->id,
             'paid_date'     => now(),
             'paid'          => true
         ]);
         
-        $entry = factory(AccountEntry::class)->create([
+        $entry = AccountEntry::factory()->create([
             'date'                  => $payable->paid_date,
             'value'                 => $payable->value,
             'account_id'            => $account->id,
