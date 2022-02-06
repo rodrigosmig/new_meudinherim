@@ -120,7 +120,7 @@ class ReportsController extends Controller
         $entries = [];
 
         if (!$category_id || !$from || !$to || !$type) {
-            return response()->json(['status' => 'error', 'message' => __('messages.entries.not_found')], Response::HTTP_BAD_REQUEST);
+            return response()->json(['status' => 'error', 'message' => __('messages.not_found')], Response::HTTP_NOT_FOUND);
         }
 
         if ($type === 'account') {
