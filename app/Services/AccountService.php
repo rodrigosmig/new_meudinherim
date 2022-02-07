@@ -203,22 +203,13 @@ class AccountService
     }
 
     /**
-     * returns the balance of all user accounts
+     * returns the balance of given account
      *
+     * @param Account $account
      * @return array
      */  
-    public function getAccountBalance($id): array
-    {
-        if (!$id || $id == "null") {
-            return $this->getAllAccountBalances();
-        }
-
-        $account = $this->findById($id);
-
-        if (!$account) {
-            return [];
-        }
-        
+    public function getAccountBalance($account): array
+    {      
         $balances['balances'][] = [
             'account_id'    => $account->id,
             'account_name'  => $account->name,

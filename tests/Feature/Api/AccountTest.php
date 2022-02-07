@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Account;
 use App\Models\AccountEntry;
 use Laravel\Sanctum\Sanctum;
+use App\Models\AccountBalance;
+use Database\Factories\AccountBalanceFactory;
 
 class AccountTest extends TestCase
 {
@@ -269,4 +271,69 @@ class AccountTest extends TestCase
         $response->assertStatus(204);
     }
 
+    public function testGetAccountBalanceWhenUnauthenticatedUser() 
+    {
+        $response = $this->getJson('/api/accounts/balance/1');
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testGetAccountBalanceWithInvalidAccount() 
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $response = $this->getJson('/api/accounts/balance/invalid_account');
+
+        $message = __('messages.accounts.api_not_found');
+
+        $response->assertStatus(404)
+            ->assertJsonPath('message', $message);
+    }
+
+    public function testGetAccountBalanceAllAccounts() 
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $account_balance1 = AccountBalance::factory()->create();
+
+        $account_balance2 = AccountBalance::factory()->create();
+
+        $total = $account_balance1->current_balance + $account_balance2->current_balance;
+
+        $response = $this->getJson('/api/accounts/balance/all');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'balances')
+            ->assertJsonPath('total', $total);
+    }
+
+    public function testGetBalanceFromAnAccount() 
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $account_balance = AccountBalance::factory()->create();
+
+        $others_balances = AccountBalance::factory()->count(3)->create();
+
+        $response = $this->getJson("/api/accounts/balance/" . $account_balance->account->id);
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'balances')
+            ->assertJsonStructure([
+                'balances' =>[
+                    [
+                        'account_id',
+                        'account_name',
+                        'balance',
+                    ]
+                ],
+            ]);
+    }
 }

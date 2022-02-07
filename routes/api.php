@@ -5,12 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\PayableController;
 use App\Http\Controllers\Api\ReportsController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ReceivableController;
 use App\Http\Controllers\Api\AccountEntryController;
 use App\Http\Controllers\Api\InvoiceEntryController;
+use App\Http\Controllers\Api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
