@@ -108,8 +108,18 @@ class AccountController extends Controller
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
-    public function balance(Request $request, $id)
+    public function balance($id)
     {
-        return $this->service->getAccountBalance($id);
+        if ($id === 'all') {
+            return $this->service->getAllAccountBalances();
+        }
+
+        $account = $this->service->findById($id);
+
+        if (! $account) {
+            return response()->json(['message' => __('messages.accounts.api_not_found')], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->service->getAccountBalance($account);
     }
 }

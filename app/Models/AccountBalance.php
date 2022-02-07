@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Models\Account;
 use App\Traits\UserTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AccountBalance extends Model
 {
-    use UserTrait;
+    use UserTrait, HasFactory;
 
     protected $fillable = ['date', 'previous_balance', 'current_balance'];
     
