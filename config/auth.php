@@ -114,4 +114,6 @@ return [
 
     'password_timeout' => 10800,
 
+    'reset_password_url' => env('RESET_PASSWORD_URL')
+
 ];
