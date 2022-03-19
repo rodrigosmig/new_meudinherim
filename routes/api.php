@@ -27,6 +27,8 @@ use App\Http\Controllers\Api\NotificationController;
 
 Route::post('auth/login', 'Api\\AuthController@login');
 Route::post('/auth/register', 'Api\\AuthController@register');
+Route::post('/auth/forgot-password', 'Api\\ForgotPasswordController@forgotPassword');
+Route::post('/auth/reset-password', 'Api\\ForgotPasswordController@resetPassword');
 
 Route::group([
     'middleware' => ['auth:sanctum']

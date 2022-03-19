@@ -6,6 +6,7 @@ use App\Models\Category;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -74,25 +75,10 @@ class User extends Authenticatable
         return Storage::url($this->avatar);
     }
 
-    // Rest omitted for brevity
-
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
+    public function sendPasswordResetNotification($token)
     {
-        return $this->getKey();
-    }
+        $url = env('RESET_PASSWORD_URL') . 'reset-password?token=' . $token;
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
+        $this->notify(new ResetPasswordNotification($url));
     }
 }
