@@ -72,32 +72,42 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
     {       
-        return $this->model::selectRaw('categories.name as category, categories.id, SUM(account_entries.value) / 100 as total, count(*) as quantity')
+        $query = $this->model::selectRaw('categories.name as category, categories.id, SUM(account_entries.value) / 100 as total, count(*) as quantity')
             ->join('categories', 'categories.id', '=', 'account_entries.category_id')
             ->where('categories.type', $categoryType)
             ->where('date', '>=', $filter['from'])
             ->where('date', '<=', $filter['to'])
             ->orderByDesc('total')
-            ->groupBy('categories.name', 'categories.id')
-            ->get()
-            ->toArray();
+            ->groupBy('categories.name', 'categories.id');
+            
+        if (isset($filter['account_id'])) {
+            $query->where('account_entries.account_id', $filter['account_id']);
+        }
+            
+        return $query->get()->toArray();
     }
 
     /**
      * Returns the entries for the given category id and range date
      *
-     * @param int $categoryType
-     * @param array $filter
+     * @param string $from
+     * @param string $to
+     * @param int $category_id
+     * @param int $account_id
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id = null)
     {       
-        return $this->model::with('account')
+        $query = $this->model::with('account')
                 ->with('category')
                 ->where('category_id', $category_id)
                 ->where('date', '>=', $from)
-                ->where('date', '<=', $to)
-                ->orderBy('date')
-                ->get();
+                ->where('date', '<=', $to);                
+        
+        if ($account_id) {
+            $query->where('account_id', $account_id);
+        }
+                
+        return $query->orderBy('date')->get();
     }
 }

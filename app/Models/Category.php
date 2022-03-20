@@ -109,6 +109,7 @@ class Category extends Model
         $mutator = 100;
         return $query->selectRaw("categories.name as category, categories.id, SUM(parcels.value) / {$mutator} as total, count(*) as quantity")
             ->join('parcels', 'parcels.category_id', '=', 'categories.id')
+            ->where('anticipated', false)
             ->orderByDesc('total')
             ->groupBy('categories.name', 'categories.id');
     }
