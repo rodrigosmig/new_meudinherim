@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\Api;
 
-use App\Models\AccountEntry;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Account;
 use App\Models\Invoice;
 use App\Models\Category;
+use App\Models\AccountEntry;
 use App\Models\InvoiceEntry;
 use Laravel\Sanctum\Sanctum;
 use App\Models\AccountsScheduling;
@@ -195,27 +196,27 @@ class ReportTest extends TestCase {
             ->assertJsonCount(4, 'receivables.items');           
     }
 
-    public function testTotalByCategoryReportWhenUnauthenticatedUser()
+    public function testTotalAccountByCategoryReportWhenUnauthenticatedUser()
     {
-        $response = $this->getJson('/api/reports/total-by-category');
+        $response = $this->getJson('/api/reports/total-account-by-category');
 
         $response->assertStatus(401)
             ->assertJsonPath('message', 'Unauthenticated.');
     }
 
-    public function testTotalByCategoryReportWithoutParameter()
+    public function testTotalByAccountCategoryReportWithoutParameter()
     {
         Sanctum::actingAs(
             $this->user
         );
         
-        $response = $this->getJson('/api/reports/total-by-category');
+        $response = $this->getJson('/api/reports/total-account-by-category');
 
         $response->assertStatus(200)
             ->assertJsonCount(0);            
     }
 
-    public function testGetExpenseCategoriesOnTotalByCategoryReport()
+    public function testGetExpenseCategoriesOnTotalAccountByCategoryReport()
     {
         Sanctum::actingAs(
             $this->user
@@ -239,15 +240,14 @@ class ReportTest extends TestCase {
         $to = now()->modify('+5 days')->format('Y-m-d');
         $status = 'open';
         
-        $response = $this->getJson("/api/reports/total-by-category?from=$from&to=$to&status=$status");
+        $response = $this->getJson("/api/reports/total-account-by-category?from=$from&to=$to&status=$status");
 
         $response->assertStatus(200)
             ->assertJsonCount(0, 'incomes')
-            ->assertJsonCount(2, 'expenses')
-            ->assertJsonCount(0, 'creditCard');
+            ->assertJsonCount(2, 'expenses');
     }
 
-    public function testGetIncomeCategoriesOnTotalByCategoryReport()
+    public function testGetIncomeCategoriesOnTotalAccountByCategoryReport()
     {
         Sanctum::actingAs(
             $this->user
@@ -271,15 +271,72 @@ class ReportTest extends TestCase {
         $to = now()->modify('+5 days')->format('Y-m-d');
         $status = 'open';
         
-        $response = $this->getJson("/api/reports/total-by-category?from=$from&to=$to&status=$status");
+        $response = $this->getJson("/api/reports/total-account-by-category?from=$from&to=$to&status=$status");
 
         $response->assertStatus(200)
             ->assertJsonCount(2, 'incomes')
-            ->assertJsonCount(0, 'expenses')
-            ->assertJsonCount(0, 'creditCard');
+            ->assertJsonCount(0, 'expenses');
     }
 
-    public function testGeCreditCardCategoriesOnTotalByCategoryReport()
+    public function testGetCategoriesFromASelectedAccount()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $account1 = Account::factory()->create();
+        $account2 = Account::factory()->create();
+
+        $category1 = Category::factory()->create(['type' => Category::INCOME]);
+        $category2 = Category::factory()->create(['type' => Category::EXPENSE]);
+
+        AccountEntry::factory()->count(2)->create([
+            'date'        => now()->modify('+4 days')->format('Y-m-d'),
+            'category_id' => $category1->id,
+            'value'       => 15,
+            'account_id'  => $account1->id
+        ]);
+        AccountEntry::factory()->count(2)->create([
+            'date'        => now()->modify('+4 days')->format('Y-m-d'),
+            'category_id' => $category2->id,
+            'value'       => 15,
+            'account_id'  => $account2->id
+        ]);
+
+        $from = now()->format('Y-m-d');
+        $to = now()->modify('+5 days')->format('Y-m-d');
+        $status = 'open';
+        
+        $response = $this->getJson("/api/reports/total-account-by-category?from=$from&to=$to&status=$status&account_id=$account1->id");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'incomes')
+            ->assertJsonCount(0, 'expenses');
+    }
+
+    public function testTotalCreditByCategoryReportWhenUnauthenticatedUser()
+    {
+        $response = $this->getJson('/api/reports/total-credit-by-category');
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testTotalCreditByAccountCategoryReportWithoutParameter()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+        
+        $response = $this->getJson('/api/reports/total-credit-by-category');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(0);            
+    }
+
+
+
+    public function testGetCreditCardCategoriesOnTotalCreditByCategoryReport()
     {
         Sanctum::actingAs(
             $this->user
@@ -303,22 +360,11 @@ class ReportTest extends TestCase {
         $to = now()->modify('+5 days')->format('Y-m-d');
         $status = 'open';
         
-        $response = $this->getJson("/api/reports/total-by-category?from=$from&to=$to&status=$status");
+        $response = $this->getJson("/api/reports/total-credit-by-category?from=$from&to=$to&status=$status");
 
         $response->assertStatus(200)
-            ->assertJsonCount(0, 'incomes')
-            ->assertJsonCount(0, 'expenses')
-            ->assertJsonCount(2, 'creditCard');
+            ->assertJsonCount(2, 'data');
     }
-
-
-
-
-
-
-
-
-
 
     public function testTotalByCategoryDetailsWhenUnauthenticatedUser()
     {
@@ -360,5 +406,40 @@ class ReportTest extends TestCase {
 
         $response->assertStatus(200)
             ->assertJsonCount(5, 'data');
+    }
+
+    public function testGetTotalByCategoryDetailedFromAGivenAccountId()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+
+        $account1 = Account::factory()->create();
+        $account2 = Account::factory()->create();
+
+        $category = Category::factory()->create(['type' => Category::EXPENSE]);
+
+        AccountEntry::factory()->create([
+            'date'        => now()->modify('+4 days')->format('Y-m-d'),
+            'category_id' => $category->id,
+            'value'       => 15,
+            'account_id'  => $account1->id
+        ]);
+        AccountEntry::factory()->create([
+            'date'        => now()->modify('+4 days')->format('Y-m-d'),
+            'category_id' => $category->id,
+            'value'       => 15,
+            'account_id'  => $account2->id
+        ]);
+
+        $from = now()->format('Y-m-d');
+        $to = now()->modify('+5 days')->format('Y-m-d');
+        $type = 'account';
+        
+        $response = $this->getJson("/api/reports/total-by-category/details?category_id=$category->id&from=$from&to=$to&type=$type&account_id=$account1->id");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'data');
     }
 }
