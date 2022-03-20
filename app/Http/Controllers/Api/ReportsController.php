@@ -83,7 +83,7 @@ class ReportsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getTotalByCategory(Request $request)
+    public function getTotalAccountByCategory(Request $request)
     {
         $filter = [];
         $data = [];
@@ -98,9 +98,37 @@ class ReportsController extends Controller
                 'to'        => $request->to,
             ];
 
+            if (isset($request->account_id) && $request->account_id != 0) {
+                $filter['account_id'] = $request->account_id;
+            }
+
             $data['incomes']    = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::INCOME, $filter);
-            $data['expenses']   = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);            
-            $data['creditCard'] = $this->categoryService->getTotalOfInvoiceEntriesByCategoryTypeForApi(Category::EXPENSE, $filter);
+            $data['expenses']   = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);
+        }
+
+        return response()->json($data, Response::HTTP_OK);
+    }
+
+    /**
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getTotalCreditByCategory(Request $request)
+    {
+        $filter = [];
+        $data = [];
+
+        if (isset($request->from)
+            && $request->from
+            && isset($request->to)
+            && $request->to
+        ) {
+            $filter = [
+                'from'      => $request->from,
+                'to'        => $request->to,
+            ];
+           
+            $data['data'] = $this->categoryService->getTotalOfInvoiceEntriesByCategoryTypeForApi(Category::EXPENSE, $filter);
         }
 
         return response()->json($data, Response::HTTP_OK);
@@ -116,6 +144,7 @@ class ReportsController extends Controller
         $from = $request->query('from', '');
         $to = $request->query('to', '');
         $type = $request->query('type', '');
+        $account_id = $request->query('account_id', null);
 
         $entries = [];
 
@@ -124,7 +153,7 @@ class ReportsController extends Controller
         }
 
         if ($type === 'account') {
-            $entries = $this->accountEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+            $entries = $this->accountEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id);
             return AccountsReportResource::collection($entries);
         } 
         

@@ -103,7 +103,8 @@ Route::group([
     Route::prefix('reports')
         ->group(function () {
             Route::get('/accounts', [ReportsController::class, 'accounts']);
-            Route::get('/total-by-category', [ReportsController::class, 'getTotalByCategory']);
+            Route::get('/total-account-by-category', [ReportsController::class, 'getTotalAccountByCategory']);
+            Route::get('/total-credit-by-category', [ReportsController::class, 'getTotalCreditByCategory']);
             Route::get('/total-by-category/details', [ReportsController::class, 'getTotalByCategoryDetailed']);
         });
 

@@ -157,9 +157,9 @@ class AccountEntryService
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id)
     {
-        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id);
     }
 
     /**

@@ -115,6 +115,7 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
             ->where('category_id', $category_id)
             ->where('date', '>=', $from)
             ->where('date', '<=', $to)
+            ->where('anticipated', false)
             ->orderBy('date')
             ->get();
     }

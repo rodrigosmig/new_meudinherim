@@ -125,6 +125,7 @@ class ReportsController extends Controller
         $from = $request->query('from', '');
         $to = $request->query('to', '');
         $type = $request->query('type', '');
+        $account_id = $request->query('account_id', null);
         $entries = [];
 
         if (! $category_id || ! $from || ! $to || ! $type) {
@@ -132,7 +133,7 @@ class ReportsController extends Controller
         }
 
         if ($type === 'account') {
-            $entries = $this->accountEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+            $entries = $this->accountEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id);
         } elseif ($type === 'card') {
             $entries = $this->invoiceEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
         }
