@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,10 +27,11 @@ class UserStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'required|string|max:2048|min:3',
-            'email'     => 'required|email|max:255|unique:users',
-            'password'  => 'required|min:8|confirmed',
-            'enable_notification' => 'nullable'
+            'name'                  => 'bail|required|string|max:2048|min:3',
+            'email'                 => 'bail|required|email|max:255|unique:users',
+            'password'              => 'bail|required|min:8|confirmed',
+            'enable_notification'   => 'nullable',
+            'reCaptchaToken'        => ['bail', 'required', new ReCaptcha]
         ];
     }
 
