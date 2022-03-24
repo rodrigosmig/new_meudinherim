@@ -119,6 +119,6 @@ return [
     ],
 
     'recaptcha' => [
-        'invalid_token' => 'O token do reCaptcha é inválido. Você não é humano!'
+        'invalid_token' => 'O token do reCaptcha é inválido.'
     ]
 ];

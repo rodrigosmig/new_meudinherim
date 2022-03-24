@@ -30,7 +30,7 @@ class LoginRequest extends FormRequest
             'email'             => 'bail|required|email',
             'password'          => 'bail|required',
             'device'            => 'bail|required',
-            'reCaptchaToken'    => ['bail', 'required', new ReCaptcha]
+            'reCaptchaToken'    => 'required',
         ];
     }
 

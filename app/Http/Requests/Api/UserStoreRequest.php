@@ -31,7 +31,7 @@ class UserStoreRequest extends FormRequest
             'email'                 => 'bail|required|email|max:255|unique:users',
             'password'              => 'bail|required|min:8|confirmed',
             'enable_notification'   => 'nullable',
-            'reCaptchaToken'        => ['bail', 'required', new ReCaptcha]
+            'reCaptchaToken'        => 'required',
         ];
     }
 

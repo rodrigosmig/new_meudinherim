@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use GuzzleHttp\Client;
+use App\Models\Account;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Interfaces\ProfileRepositoryInterface;
@@ -73,11 +76,26 @@ class ProfileService
     }
 
     /**
+     * Creates the default user account
+     *
+     * @return void
+     */
+    public function createDefaultUserAccount()
+    {
+        $user = auth()->user();
+
+        $user->accounts()->create([
+            'name'      => __('global.money'),
+            'type'      => Account::MONEY,
+        ]);
+    }
+
+    /**
      * Returns users with notification enabled
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return User
      */
-    public function createUser(array $data)
+    public function createUser(array $data): User
     {
         $enable_notification = isset($data['enable_notification']) && $data['enable_notification'] == 'true' ? true : false;
 
@@ -87,5 +105,28 @@ class ProfileService
             'password' => Hash::make($data['password']),
             'enable_notification' => $enable_notification
         ]);
+    }
+
+    /**
+     * validates google recaptcha token
+     *
+     * @return bool
+     */
+    public function validateRecaptcha(string $token): bool
+    {
+        $client = new Client();
+
+        $response = $client->post(config('auth.google_recaptcha_url'),
+            ['form_params'=>
+                [
+                    'secret'    => config('auth.google_recaptcha_secret'),
+                    'response'  => $token
+                 ]
+            ]
+        );
+
+        $body = json_decode((string)$response->getBody());
+
+        return $body->success;
     }
 }
