@@ -112,5 +112,9 @@ return [
         'select_parcel' => 'Select at least one installment',
         'anticipate'    => 'Anticipated installments successfully',
         'parcel_number' => 'The parcel number is required'
+    ],
+
+    'recaptcha' => [
+        'invalid_token' => 'The reCaptcha token is invalid.'
     ]
 ];

@@ -16,10 +16,24 @@ use App\Http\Requests\Api\UserStoreRequest;
 
 class AuthController extends Controller
 {
+    protected $profileService;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(ProfileService $profileService){
+        $this->profileService = $profileService;
+    }
+
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        $userService = app(ProfileService::class);
+        
+        if (!$this->profileService->validateRecaptcha($data['reCaptchaToken'])) {
+            return response()->json(['error' => __('messages.recaptcha.invalid_token')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $credentials = request(['email', 'password']);
 
@@ -27,7 +41,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid Credentials'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $user = $userService->findByEmail($credentials['email']);
+        $user = $this->profileService->findByEmail($credentials['email']);
 
         $token = $user->createToken($data['device'])->plainTextToken;
 
@@ -41,7 +55,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([], 204);
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -52,25 +66,25 @@ class AuthController extends Controller
      */
     public function register(UserStoreRequest $request)
     {
-        $userService        = app(ProfileService::class);
-        $categoryService    = app(CategoryService::class);
+        $categoryService = app(CategoryService::class);
 
         $data = $request->validated();
 
-        $user = $userService->createUser($data);
+        if (!$this->profileService->validateRecaptcha($data['reCaptchaToken'])) {
+            return response()->json(['error' => __('messages.recaptcha.invalid_token')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = $this->profileService->createUser($data);
 
         auth()->login($user);
 
         $categoryService->createDefaultCategories();
-        
-        Account::create([
-            'name'      => __('global.money'),
-            'type'      => Account::MONEY,
-        ]);
+
+        $this->profileService->createDefaultUserAccount();
 
         auth()->logout();
 
-        return new UserResource($user);
+        return response()->json(new UserResource($user), Response::HTTP_CREATED);
     }
 
     public function profile()

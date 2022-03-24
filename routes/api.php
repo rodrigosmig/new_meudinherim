@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\PayableController;
 use App\Http\Controllers\Api\ReportsController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ReCaptchaController;
 use App\Http\Controllers\Api\ReceivableController;
 use App\Http\Controllers\Api\AccountEntryController;
 use App\Http\Controllers\Api\InvoiceEntryController;
@@ -25,10 +26,10 @@ use App\Http\Controllers\Api\NotificationController;
 |
 */
 
-Route::post('auth/login', 'Api\\AuthController@login');
-Route::post('/auth/register', 'Api\\AuthController@register');
-Route::post('/auth/forgot-password', 'Api\\ForgotPasswordController@forgotPassword');
-Route::post('/auth/reset-password', 'Api\\ForgotPasswordController@resetPassword');
+Route::post('auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
+Route::post('/auth/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
 Route::group([
     'middleware' => ['auth:sanctum']

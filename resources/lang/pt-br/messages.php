@@ -116,5 +116,9 @@ return [
         'select_parcel' => 'Selecione pelo menos uma parcela',
         'anticipate'    => 'Parcelas antecipadas com sucesso',
         'parcel_number' => 'O número de parcelas é obrigatório'
+    ],
+
+    'recaptcha' => [
+        'invalid_token' => 'O token do reCaptcha é inválido.'
     ]
 ];
