@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'DashboardController@home');
+/* Route::get('/', 'DashboardController@home');
 
 Auth::routes();
 
@@ -91,4 +92,8 @@ Route::group([
     //Notifications
     Route::get('notifications', 'NotificationController@all_read')->name('notifications.all_read');
     Route::get('notifications/{notification_id}/account/{account_id}', 'NotificationController@show')->name('notifications.as_read');
+}); */
+
+Route::fallback(function () {
+    return Redirect::away(config('app.url'));
 });
