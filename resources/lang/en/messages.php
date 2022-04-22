@@ -98,7 +98,7 @@ return [
         'password_updated'      => 'Password updated successfully',
         'profile_updated'       => 'Profile updated successfully',
         'invalid_user'          => 'Invalid User',
-        'avatar_updated'        => 'Avatar updated successfully',
+        'avatar_updated'        => 'Avatar updated successfully'
     ],
 
     'mail' => [
@@ -116,5 +116,13 @@ return [
 
     'recaptcha' => [
         'invalid_token' => 'The reCaptcha token is invalid.'
+    ],
+
+    'emails' => [
+        'user_not_found'    => 'User Not Found',
+        'already_verified'  => 'E-mail already verified',
+        'resend_success'    => 'Verification link has been sent to your email',
+        'verify_success'    => 'E-mail successfully verified',
+        'invalid_token'     => 'Invalid verification token'
     ]
 ];

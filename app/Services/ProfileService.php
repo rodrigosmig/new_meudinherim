@@ -23,6 +23,11 @@ class ProfileService
         return $this->repository->findByEmail($email);
     }
 
+    public function findById($id)
+    {
+        return $this->repository->findById($id);
+    }
+
     public function updatePassword(array $data): bool
     {
         $user = auth()->user();
@@ -32,13 +37,17 @@ class ProfileService
         ]);
     }
 
-    public function updateProfile(array $data): bool
+    public function updateProfile(array $data): void
     {
         $data['enable_notification'] = isset($data['enable_notification']) && $data['enable_notification'] ? true : false;
         
         $user = auth()->user();
+
+        if ($user->email !== $data['email']) {
+            $data['email_verified_at'] = null;            
+        }
         
-        return $this->repository->update($user, $data);
+        $this->repository->update($user, $data);
     }
 
     public function updateAvatar(array $data): void
@@ -70,7 +79,7 @@ class ProfileService
         return $this->repository->getUsersForNotification();
     }
 
-    public function getApiUser()
+    public function getApiUser(): User
     {
         return auth()->user();
     }

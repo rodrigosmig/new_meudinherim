@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CardController;
@@ -8,12 +7,14 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\PayableController;
 use App\Http\Controllers\Api\ReportsController;
+use App\Http\Controllers\Api\FallbackController;
 use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\ReCaptchaController;
 use App\Http\Controllers\Api\ReceivableController;
 use App\Http\Controllers\Api\AccountEntryController;
 use App\Http\Controllers\Api\InvoiceEntryController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\VerificationController;
+use App\Http\Controllers\Api\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +32,11 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
 Route::post('/auth/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
+Route::get('/auth/verify-email/{id}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+Route::post('/auth/resend-email', [VerificationController::class, 'resend'])->name('verification.resend');
+
 Route::group([
-    'middleware' => ['auth:sanctum']
+    'middleware' => ['auth:sanctum', 'verified']
 ], function() {
     //Dashboard
     Route::prefix('dashboard')
@@ -118,4 +122,4 @@ Route::group([
         });
 });
 
-Route::fallback('Api\\FallbackController@fallback');
+Route::fallback([FallbackController::class, 'fallback']);

@@ -76,6 +76,8 @@ class AuthController extends Controller
 
         $user = $this->profileService->createUser($data);
 
+        $user->sendEmailVerificationNotification();
+
         auth()->login($user);
 
         $categoryService->createDefaultCategories();

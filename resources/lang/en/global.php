@@ -139,6 +139,7 @@ return [
     'anticipate'                    => 'Anticipate',
     'remaining'                     => 'Remaining',
     'anticipated'                   => 'Anticipated',
+    'hello'                         => 'Hello!',
 
     'default_categories' => [
         'salary'            => 'Salary',
