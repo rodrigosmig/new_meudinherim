@@ -141,6 +141,7 @@ return [
     'anticipate'                    => 'Antecipar',
     'remaining'                     => 'Valor restante',
     'anticipated'                   => 'Antecipado',
+    'hello'                         => 'Olá!',
 
     'default_categories' => [
         'salary'            => 'Salário',

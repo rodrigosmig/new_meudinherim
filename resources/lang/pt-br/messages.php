@@ -102,7 +102,7 @@ return [
         'password_updated'      => 'Senha alterada com sucesso',
         'profile_updated'       => 'Perfil atualizado com sucesso',
         'invalid_user'          => 'Usuário Inválido',
-        'avatar_updated'        => 'Avatar atualizado com sucesso',
+        'avatar_updated'        => 'Avatar atualizado com sucesso'
     ],
 
     'mail' => [
@@ -120,5 +120,13 @@ return [
 
     'recaptcha' => [
         'invalid_token' => 'O token do reCaptcha é inválido.'
+    ],
+
+    'emails' => [
+        'user_not_found'    => 'Usuário não encontrado',
+        'already_verified'  => 'E-mail já verificado',
+        'resend_success'    => 'O link de verificação foi enviado para seu email',
+        'verify_success'    => 'E-mail verificado com sucesso',
+        'invalid_token'     => 'Token de verificação inválido'
     ]
 ];

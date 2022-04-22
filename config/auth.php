@@ -114,7 +114,7 @@ return [
 
     'password_timeout' => 10800,
 
-    'reset_password_url' => env('RESET_PASSWORD_URL'),
+    'front_end_url' => env('FRONT_END_URL'),
 
     'google_recaptcha_secret'   => env('GOOGLE_RECAPTCHA_SECRET'),
     'google_recaptcha_url'      => env('GOOGLE_RECAPTCHA_URL')
