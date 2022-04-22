@@ -36,7 +36,7 @@ Route::get('/auth/verify-email/{id}', [VerificationController::class, 'verify'])
 Route::post('/auth/resend-email', [VerificationController::class, 'resend'])->name('verification.resend');
 
 Route::group([
-    'middleware' => ['auth:sanctum', 'verified']
+    'middleware' => ['auth:sanctum']
 ], function() {
     //Dashboard
     Route::prefix('dashboard')
