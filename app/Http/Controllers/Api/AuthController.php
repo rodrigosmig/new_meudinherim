@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
-use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\ProfileService;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\UserStoreRequest;
 

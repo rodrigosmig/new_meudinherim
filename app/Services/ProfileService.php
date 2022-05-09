@@ -123,6 +123,10 @@ class ProfileService
      */
     public function validateRecaptcha(string $token): bool
     {
+        if (config('app.env') !== 'production') {
+            return true;
+        }
+
         $client = new Client();
 
         $response = $client->post(config('auth.google_recaptcha_url'),

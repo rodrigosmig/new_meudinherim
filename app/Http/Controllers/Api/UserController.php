@@ -42,9 +42,9 @@ class UserController extends Controller
 
         $user = $this->service->getApiUser();
 
-        if (!$user->hasVerifiedEmail()) {
+        /* if (!$user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
-        }
+        } */
 
         return new UserResource($user);
     }
