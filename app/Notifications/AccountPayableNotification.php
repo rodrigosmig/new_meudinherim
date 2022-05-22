@@ -50,8 +50,6 @@ class AccountPayableNotification extends Notification
             $mail->line(__('global.account') . ": " . $payable->description . " - " . __('global.value') . ": " . toBrMoney($payable->value));
         }
 
-        $mail->action(__("global.view_accounts"), route('payables.index'));
-
         return $mail;
     }
 

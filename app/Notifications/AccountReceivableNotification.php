@@ -49,8 +49,6 @@ class AccountReceivableNotification extends Notification
             $mail->line(__('global.account') . ": " . $receivable->description . " - " . __('global.value') . ": " . toBrMoney($receivable->value));
         }
 
-        $mail->action(__("global.view_accounts"), route('receivables.index'));
-
         return $mail;
     }
 
