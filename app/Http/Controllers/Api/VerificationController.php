@@ -25,10 +25,6 @@ class VerificationController extends Controller
     
     public function verify($user_id, Request $request)
     {
-        if (!$request->hasValidSignature()) {
-            return response()->json(["message" =>  __('messages.emails.invalid_token')], Response::HTTP_FORBIDDEN);
-        }
-
         $user = $this->profileService->findById($user_id);
 
         if (! $user) {
@@ -37,6 +33,10 @@ class VerificationController extends Controller
 
         if($user->hasVerifiedEmail()) {
             return response()->json(['message' => __('messages.emails.already_verified')], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!$request->hasValidSignature()) {
+            return response()->json(["message" =>  __('messages.emails.invalid_token')], Response::HTTP_FORBIDDEN);
         }
 
         $user->markEmailAsVerified();

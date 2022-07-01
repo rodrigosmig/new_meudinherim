@@ -32,11 +32,11 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
 Route::post('/auth/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
-Route::get('/auth/verify-email/{id}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+Route::get('/auth/verify-email/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::post('/auth/resend-email', [VerificationController::class, 'resend'])->name('verification.resend');
 
 Route::group([
-    'middleware' => ['auth:sanctum']
+    'middleware' => ['auth:sanctum', 'verified']
 ], function() {
     //Dashboard
     Route::prefix('dashboard')

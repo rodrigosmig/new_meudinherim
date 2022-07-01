@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'email'                 => $this->email,
             'avatar'                => $this->hasAvatar() ? url("storage/{$this->avatar}") : '',
             'enable_notification'   => $this->enable_notification ? true : false,
-            'hasEmailVerified'      => true
+            'hasEmailVerified'      => $this->hasVerifiedEmail()
         ];
     }
 }
