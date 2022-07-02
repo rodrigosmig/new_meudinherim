@@ -40,6 +40,10 @@ class AuthServiceProvider extends ServiceProvider
                 ]
             );
 
+            if(app()->environment('production')) {
+                $verifyUrl = str_replace("http://", "https://", $verifyUrl);
+            }
+
             return $url . "?url=" . urlencode($verifyUrl);
         });
     }
