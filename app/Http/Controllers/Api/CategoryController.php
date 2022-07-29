@@ -27,12 +27,16 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        if (isset($request->form) && $request->form == 'true') {
+            return response()->json($this->service->getAllCategoriesForApiForm());
+        }
+
         $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
 
         $filter = [
             'active' => (isset($request->active) && $request->active == 'false') ? false : true,
-            'type'   => isset($request->type) ? $request->type : 'all'
-        ];
+            'type'   => isset($request->type) ? $request->type : 'all',
+        ];       
 
         return CategoryResource::collection($this->service->getCategories($filter, $per_page));
     }
