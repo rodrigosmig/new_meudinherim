@@ -21,6 +21,8 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
         $query = $this->model::orderBy('name');
 
         $active_categories = (isset($filter['active']) && !$filter['active']) ? false : true;
+
+        $query->where('active', $active_categories);
         
         if (isset($filter['type']) && in_array($filter['type'], [Category::INCOME, Category::EXPENSE])) {
             $query->where('type', $filter['type']);
@@ -31,7 +33,6 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
         }
 
         return $query
-            ->where('active', $active_categories)
             ->paginate($per_page);
     }
 
