@@ -42,7 +42,7 @@ class CategoryService
      */
     public function getCategoriesByType($type, $per_page = 100) 
     {
-        return $this->repository->getCategoriesByType($type, $per_page);
+        return $this->repository->getCategories(['type' => $type], $per_page);
     }
 
     /**
@@ -52,7 +52,12 @@ class CategoryService
      */
     public function getIncomeCategoriesForForm()
     {
-        return $this->repository->getIncomeCategoriesForForm();
+        $filter = [
+            'type'      => Category::INCOME,
+            'isForm'    => true
+        ];
+
+        return $this->repository->getCategories($filter, 1000);
     }
 
     /**
@@ -88,7 +93,12 @@ class CategoryService
      */
     public function getExpenseCategoriesForForm() 
     {
-        return $this->repository->getExpenseCategoriesForForm();
+        $filter = [
+            'type'      => Category::EXPENSE,
+            'isForm'    => true
+        ];
+
+        return $this->repository->getCategories($filter, 1000);
     }
 
     /**
@@ -174,9 +184,19 @@ class CategoryService
         return $categories;
     }
 
+    public function getAllInactiveCategories(int $per_page)
+    {
+        return $this->repository->getCategories(['active' => false], $per_page);
+    }
+
+    public function getCategories(array $filter, int $per_page)
+    {
+        return $this->repository->getCategories($filter, $per_page);
+    }
+
     public function getAllCategories(int $per_page)
     {
-        return $this->repository->getAllCategories($per_page);
+        return $this->repository->getCategories([], $per_page);
     }
 
     public function getTotalOfInvoiceEntriesByCategoryType($categoryType, array $filter)

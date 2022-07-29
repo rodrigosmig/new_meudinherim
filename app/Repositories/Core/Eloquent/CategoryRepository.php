@@ -11,49 +11,28 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
     protected $model = Category::class;
 
     /**
-     * Get categories of a given type
+     * Get categories according to the given filter
      *
+     * @param string $type
+     * @param int $per_page
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getCategoriesByType(string $type, int $per_page) {
+    public function getCategories(array $filter, int $per_page) {
+        $query = $this->model::orderBy('name');
 
-        return $this->model::where('type', $type)
-            ->orderBy('name')
+        $active_categories = (isset($filter['active']) && !$filter['active']) ? false : true;
+        
+        if (isset($filter['type']) && in_array($filter['type'], [Category::INCOME, Category::EXPENSE])) {
+            $query->where('type', $filter['type']);
+        }
+        
+        if(isset($filter['isForm']) && $filter['isForm']) {
+            return $query->pluck('name', 'id');
+        }
+
+        return $query
+            ->where('active', $active_categories)
             ->paginate($per_page);
-    }
-
-    /**
-     * Get categories all categories
-     *
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    public function getAllCategories(int $per_page)
-    {
-
-        return $this->model::orderBy('name')->paginate($per_page);
-    }
-
-    /**
-     * Get income categories for form
-     *
-     * @return array
-     */
-    public function getIncomeCategoriesForForm()
-    {
-        return $this->model::where('type', $this->model::INCOME)
-            ->orderBy('name')
-            ->pluck('name', 'id'); 
-    }
-
-    /**
-     * Get expense categories for form
-     *
-     * @return array
-     */
-    public function getExpenseCategoriesForForm() {
-        return $this->model::where('type', $this->model::EXPENSE)
-            ->orderBy('name')
-            ->pluck('name', 'id');
     }
 
     public function createWithoutEvents($data)
