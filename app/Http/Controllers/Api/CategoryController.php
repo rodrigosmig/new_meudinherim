@@ -13,6 +13,8 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
+    private $service;
+
     public function __construct(CategoryService $service)
     {
         $this->service = $service;
@@ -27,15 +29,12 @@ class CategoryController extends Controller
     {
         $per_page = isset($request->per_page) && is_numeric(($request->per_page)) ? $request->per_page : 10;
 
-        if (isset($request->type) && $request->type === "all") {
-            return response()->json($this->service->getAllCategoriesForApiForm());
-        }
+        $filter = [
+            'active' => (isset($request->active) && $request->active == 'false') ? false : true,
+            'type'   => isset($request->type) ? $request->type : 'all'
+        ];
 
-        if (isset($request->type) && in_array($request->type, [Category::INCOME, Category::EXPENSE])) {
-            return CategoryResource::collection($this->service->getCategoriesByType($request->type, $per_page));
-        }
-
-        return CategoryResource::collection($this->service->getAllCategories($per_page));
+        return CategoryResource::collection($this->service->getCategories($filter, $per_page));
     }
 
     /**

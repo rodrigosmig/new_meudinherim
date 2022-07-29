@@ -295,4 +295,51 @@ class CategoryTest extends TestCase
 
         $response->assertStatus(204);
     }
+
+    public function testGetInactiveCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        Category::factory()->count(2)->create([
+            'type'      => Category::INCOME,
+            'active'    => false
+        ]);
+
+        $response = $this->getJson("/api/categories?active=false");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'data');
+    }
+    
+    public function testGetActiveCategories()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        Category::factory()->create([
+            'type'      => Category::INCOME,
+            'active'    => false
+        ]);
+
+        Category::factory()->create([
+            'type'      => Category::EXPENSE,
+            'active'    => false
+        ]);
+
+        Category::factory()->count(2)->create([
+            'type'      => Category::INCOME
+        ]);
+
+        Category::factory()->count(2)->create([
+            'type'      => Category::EXPENSE
+        ]);
+
+        $response = $this->getJson("/api/categories?active=true");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(4, 'data');
+    }
 }

@@ -31,7 +31,8 @@ class CategoryUpdateStoreRequest extends FormRequest
                 'required',
                 Rule::in([1, 2])
             ],
-            'name' => 'required|min:3|max:191'
+            'name' => 'required|min:3|max:191',
+            'active' => 'nullable',
         ];
     }
 
