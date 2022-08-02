@@ -90,7 +90,15 @@ class AccountTest extends TestCase
             $this->user
         );
         
-        Account::factory()->count(2)->create();
+        Account::factory()->count(3)->create([
+            'active'    => false,
+            'user_id'   => $this->user->id
+        ]);
+
+        Account::factory()->count(2)->create([
+            'active'    => true,
+            'user_id'   => $this->user->id
+        ]);
 
         $response = $this->getJson('api/accounts');
 
@@ -335,5 +343,27 @@ class AccountTest extends TestCase
                     ]
                 ],
             ]);
+    }
+
+    public function testGetInactiveAccounts()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        Account::factory()->count(3)->create([
+            'active'    => false,
+            'user_id'   => $this->user->id
+        ]);
+
+        Account::factory()->count(2)->create([
+            'active'    => true,
+            'user_id'   => $this->user->id
+        ]);
+
+        $response = $this->getJson("/api/accounts?active=false");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(3, 'data');
     }
 }

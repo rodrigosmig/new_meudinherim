@@ -52,9 +52,9 @@ class AccountService
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAccounts() 
+    public function getAccounts(bool $status = true) 
     {
-        return $this->repository->getAccounts();
+        return $this->repository->getAccounts($status);
     }
 
     /**

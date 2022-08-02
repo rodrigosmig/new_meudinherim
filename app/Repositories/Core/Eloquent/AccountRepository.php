@@ -12,7 +12,7 @@ class AccountRepository extends BaseEloquentRepository implements AccountReposit
 
     public function getAccountsForForm() 
     {
-        return auth()->user()->accounts()->pluck('name', 'id');
+        return $this->model::where('active', true)->pluck('name', 'id');
     }
 
     /**
@@ -20,9 +20,9 @@ class AccountRepository extends BaseEloquentRepository implements AccountReposit
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAccounts() 
+    public function getAccounts(bool $status = true) 
     {
-        return auth()->user()->accounts;
+        return $this->model::where('active', $status)->get();
     }
 
     public function getTypeList()

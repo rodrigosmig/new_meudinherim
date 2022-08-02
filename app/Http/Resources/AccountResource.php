@@ -25,6 +25,7 @@ class AccountResource extends JsonResource
                 'desc'  => toCategoryType($this->type)
             ],
             'balance'       => $this->balance,
+            'active'        => $this->active,
             'created_at'    => $this->created_at
         ];
     }
