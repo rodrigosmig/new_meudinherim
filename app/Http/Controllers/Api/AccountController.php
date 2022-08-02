@@ -12,6 +12,8 @@ use App\Http\Requests\Api\AccountUpdateStoreRequest;
 
 class AccountController extends Controller
 {
+    private AccountService $service;
+
     public function __construct(AccountService $service)
     {
         $this->service = $service;
@@ -22,9 +24,11 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $accounts = $this->service->getAccounts();
+        $status = (isset($request->active) && $request->active == 'false') ? false : true;
+
+        $accounts = $this->service->getAccounts($status);
 
         return AccountResource::collection($accounts);
     }

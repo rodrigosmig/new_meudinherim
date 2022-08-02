@@ -32,7 +32,8 @@ class AccountUpdateStoreRequest extends FormRequest
                 'required',
                 Rule::in(Account::TYPES)
             ],
-            'name' => 'required|min:3|max:191'
+            'name' => 'required|min:3|max:191',
+            'active' => 'nullable',
         ];
     }
 

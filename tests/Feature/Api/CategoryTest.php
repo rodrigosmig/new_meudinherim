@@ -79,16 +79,37 @@ class CategoryTest extends TestCase
     }
     
 
-    public function testGetCategoriesSuccessfully()
+    public function testGetActiveCategoriesSuccessfully()
     {
         Sanctum::actingAs(
             $this->user
         );
 
-        $income_categories  = Category::factory()->count(3)->create(['type' => Category::INCOME]);
-        $expense_category = Category::factory()->create(['type' => Category::EXPENSE]);
+        Category::factory()->count(3)->create([
+            'type'      => Category::INCOME,
+            'active'    => true,
+            'user_id'   => $this->user->id
+        ]);
 
-        $response = $this->getJson('/api/categories', []);
+        Category::factory()->create([
+            'type'      => Category::EXPENSE,
+            'active'    => true,
+            'user_id'   => $this->user->id
+        ]);
+
+        Category::factory()->count(2)->create([
+            'type'      => Category::INCOME,
+            'active'    => false,
+            'user_id'   => $this->user->id
+        ]);
+
+        Category::factory()->count(3)->create([
+            'type'      => Category::EXPENSE,
+            'active'    => false,
+            'user_id'   => $this->user->id
+        ]);
+
+        $response = $this->getJson('/api/categories');
 
         $response->assertStatus(200)
             ->assertJsonCount(4, 'data');
@@ -304,42 +325,13 @@ class CategoryTest extends TestCase
 
         Category::factory()->count(2)->create([
             'type'      => Category::INCOME,
-            'active'    => false
+            'active'    => false,
+            'user_id'   => $this->user->id
         ]);
 
         $response = $this->getJson("/api/categories?active=false");
 
         $response->assertStatus(200)
             ->assertJsonCount(2, 'data');
-    }
-    
-    public function testGetActiveCategories()
-    {
-        Sanctum::actingAs(
-            $this->user
-        );
-
-        Category::factory()->create([
-            'type'      => Category::INCOME,
-            'active'    => false
-        ]);
-
-        Category::factory()->create([
-            'type'      => Category::EXPENSE,
-            'active'    => false
-        ]);
-
-        Category::factory()->count(2)->create([
-            'type'      => Category::INCOME
-        ]);
-
-        Category::factory()->count(2)->create([
-            'type'      => Category::EXPENSE
-        ]);
-
-        $response = $this->getJson("/api/categories?active=true");
-
-        $response->assertStatus(200)
-            ->assertJsonCount(4, 'data');
     }
 }

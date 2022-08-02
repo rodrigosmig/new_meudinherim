@@ -34,7 +34,11 @@ class Account extends Model
 
     protected $appends = ['balance'];
 
-    protected $fillable = ['type','name', 'user_id'];
+    protected $fillable = ['type','name', 'active', 'user_id'];
+
+    protected $casts = [
+        'active' => 'boolean',  
+    ];
 
     public function user()
     {
