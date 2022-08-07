@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Model;
 
 interface InvoiceRepositoryInterface
@@ -13,4 +14,5 @@ interface InvoiceRepositoryInterface
     public function getInvoiceTotalAmount($invoice): float;
     public function getInvoicesAmountForChart($card_id, $month, $year);
     public function getInvoiceAmountForWebChart($card_name, $month, $year);
+    public function updateInvoiceAmount(Invoice $invoice): bool;
 }
