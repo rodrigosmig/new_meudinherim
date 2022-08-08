@@ -55,7 +55,7 @@ class CardService
         return $this->repository->delete($card);
     }
 
-    public function findById($id)
+    public function findById($id): ?Card
     {
         return $this->repository->findById($id);
     }

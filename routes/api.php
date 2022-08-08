@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\InvoiceEntryController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,8 @@ Route::group([
     Route::get('cards/{card_id}/invoices', [CardController::class, 'invoices']);
     Route::get('cards/{card_id}/invoices/{invoice_id}', [CardController::class, 'getInvoice']);
     Route::get('cards/invoices/open', [CardController::class, 'getInvoicesForMenu']);
+    Route::post('cards/invoices/partial-payment', [InvoiceController::class, 'partialPayment']);
+    Route::put('cards/invoices/{invoice_id}/paid', [InvoiceController::class, 'setAsPaid']);
     
     //Payables
     Route::apiResource('payables', 'Api\\PayableController', ["as" => "api"]);

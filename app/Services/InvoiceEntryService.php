@@ -18,6 +18,8 @@ use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
 class InvoiceEntryService
 {
     protected $repository;
+    protected $invoiceRepository;
+    protected $parcelRepository;
 
     public function __construct(InvoiceEntryRepositoryInterface $repository, 
         InvoiceRepositoryInterface $invoiceRepository,
@@ -263,10 +265,10 @@ class InvoiceEntryService
      * @param Invoice $invoice
      * @return Parcel
      */ 
-    public function findParcel($invoice_entry_id, $parcel_id): ?Parcel
+    /* public function findParcel($invoice_entry_id, $parcel_id): ?Parcel
     {
         return $this->parcelRepository->findParcelsOfInvoiceEntry($invoice_entry_id, $parcel_id);
-    }
+    } */
 
     /**
      * Returns entries for a given invoice

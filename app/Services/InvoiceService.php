@@ -4,17 +4,26 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\Card;
-use App\Models\Invoice;
 use App\Http\Resources\InvoiceResource;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceService
 {
-    protected $invoice;
+    protected $invoiceRepository;
+    protected $accountEntryService;
+    protected $accountService;
+    protected $invoiceEntryService;
 
-    public function __construct(InvoiceRepository $invoiceRepository)
-    {
+    public function __construct(
+        InvoiceRepository $invoiceRepository,
+        AccountEntryService $accountEntryService,
+        AccountService $accountService,
+        InvoiceEntryService $invoiceEntryService
+    ){
         $this->invoiceRepository = $invoiceRepository;
+        $this->accountEntryService = $accountEntryService;
+        $this->accountService = $accountService;
+        $this->invoiceEntryService = $invoiceEntryService;
     }
 
     public function store(array $data)
@@ -22,15 +31,9 @@ class InvoiceService
         return $this->invoiceRepository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update($invoice, array $data)
     {
-        $invoice = $this->findById($id);
-
-        if (! $invoice) {
-            return false;
-        }
-
-        return $this->invoiceRepository->update($data);
+        return $this->invoiceRepository->update($invoice, $data);
     }
 
     public function delete($id)
@@ -41,12 +44,12 @@ class InvoiceService
             return false;
         }
 
-        return $this->invoiceRepository->delete();
+        return $this->invoiceRepository->delete($invoice);
     }
 
     public function findById($id)
     {
-        return $this->invoiceRepository->find($id);
+        return $this->invoiceRepository->findById($id);
     }
 
     /**
@@ -197,5 +200,56 @@ class InvoiceService
         }
 
         return $result;
+    }
+
+    /**
+     * Create a partial payment for a open invoice
+     *
+     * @return array
+     */ 
+    public function createPartialPayment($data)
+    {
+        $card = $this->getCard($data['card_id']);
+        $invoiceEntryData = $this->getEntryData('card', $data);
+        $this->invoiceEntryService->create($card, $invoiceEntryData);
+
+        $accountEntryData = $this->getEntryData('account', $data);
+        $this->accountEntryService->create($data['account_id'], $accountEntryData);
+        $this->updateAccountBalance($data['account_id'], $data['date']);
+    }
+
+    private function getEntryData($type, $data) 
+    {
+        $entryData = [
+            'date'          => $data['date'],
+            'description'   => $data['description'],
+            'value'         => $data['value'],
+        ];
+
+        if ($type === 'account') {
+            $entryData['category_id'] = $data['expense_category_id'];
+
+            return $entryData;
+        }
+
+        $entryData['category_id'] = $data['income_category_id'];
+
+        return $entryData;
+    }
+
+    private function getCard($id): Card
+    {
+        $cardService = app(CardService::class);
+
+        return $cardService->findById($id);
+    }
+
+    private function updateAccountBalance($id, $date)
+    {
+        $accountService = app(AccountService::class);
+
+        $account = $accountService->findById($id);
+
+        return $accountService->updateBalance($account, $date);
     }
 }
