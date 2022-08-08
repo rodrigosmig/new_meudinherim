@@ -5,7 +5,6 @@ namespace App\Services;
 use DateTime;
 use App\Models\Card;
 use App\Http\Resources\InvoiceResource;
-use App\Models\Account;
 use App\Repositories\Core\Eloquent\InvoiceRepository;
 
 class InvoiceService
@@ -32,14 +31,8 @@ class InvoiceService
         return $this->invoiceRepository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update($invoice, array $data)
     {
-        $invoice = $this->findById($id);
-
-        if (! $invoice) {
-            return false;
-        }
-
         return $this->invoiceRepository->update($invoice, $data);
     }
 

@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\Account;
 use App\Models\Card;
 use App\Models\Category;
+use App\Models\Invoice;
 use App\Models\User;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -129,5 +130,56 @@ class InvoiceTest extends TestCase
             "income_category_id"        => $income_category->id,
             "expense_category_id"       => $expense_category->id,
         ];
+    }
+
+    public function testSetInvoiceAsPaidWhenUnauthenticatedUser()
+    {
+        $invoice_id = 'invoice id';
+        $response = $this->putJson("/api/cards/invoices/{$invoice_id}/paid", []);
+
+        $response->assertStatus(401)
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
+    public function testSetInvoiceAsPaidWhenTheInvoiceDoesNotExist()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice_id = 'invoice id';
+
+        $response = $this->putJson("/api/cards/invoices/{$invoice_id}/paid", []);
+
+        $response->assertStatus(404);
+    }
+
+    public function testSetInvoiceAsPaidWhenTheInvoiceIsPaid()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice = Invoice::factory()->create(['paid' => true]);
+
+        $message = __('messages.invoices.is_paid');
+
+        $response = $this->putJson("/api/cards/invoices/{$invoice->id}/paid", []);
+
+        $response->assertStatus(400)
+            ->assertJsonPath('message', $message);
+    }
+
+    public function testSetInvoiceAsPaidSuccessfully()
+    {
+        Sanctum::actingAs(
+            $this->user
+        );
+
+        $invoice = Invoice::factory()->create();
+
+        $response = $this->putJson("/api/cards/invoices/{$invoice->id}/paid", []);
+
+        $response->assertStatus(200);
     }
 }

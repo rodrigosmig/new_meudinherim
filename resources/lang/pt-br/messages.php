@@ -49,6 +49,7 @@ return [
         'update'            => 'Fatura atualizado com sucesso',
         'delete'            => 'Fatura deletado com sucesso',
         'ajax_text'         => 'A fatura será excluída permanentemente',
+        'is_paid'           => 'Fatura já está paga'
     ],
 
     'entries' => [

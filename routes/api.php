@@ -78,6 +78,7 @@ Route::group([
     Route::get('cards/{card_id}/invoices/{invoice_id}', [CardController::class, 'getInvoice']);
     Route::get('cards/invoices/open', [CardController::class, 'getInvoicesForMenu']);
     Route::post('cards/invoices/partial-payment', [InvoiceController::class, 'partialPayment']);
+    Route::put('cards/invoices/{invoice_id}/paid', [InvoiceController::class, 'setAsPaid']);
     
     //Payables
     Route::apiResource('payables', 'Api\\PayableController', ["as" => "api"]);
