@@ -75,7 +75,7 @@ class AccountEntryService
      * @param string $date
      * @return array
      */ 
-    public function getTotalOfSixMonthsByCategoryTypeAndDate($categoryType, $date): array
+    public function getTotalOfSixMonthsByCategoryTypeAndDate($categoryType, $date, $to_dashboard = false): array
     {
         $new_date   = (new DateTime($date))->modify('-5 months');
         $result     = [];
@@ -84,7 +84,7 @@ class AccountEntryService
             $month  = $new_date->format('m');
             $year   = $new_date->format('Y');
 
-            $total = $this->repository->getTotalTypeOfCategory($categoryType, $month, $year);
+            $total = $this->repository->getTotalTypeOfCategory($categoryType, $month, $year, $to_dashboard);
 
             $result[] = $total / 100;
 
@@ -101,14 +101,14 @@ class AccountEntryService
      * @param string $date
      * @return array
      */ 
-    public function getTotalByCategoryForChart($categoryType, $date): array
+    public function getTotalByCategoryForChart($categoryType, $date, $to_dashboard = false): array
     {
         $new_date   = new DateTime($date);
         $month      = $new_date->format('m');
         $year       = $new_date->format('Y');
         $result     = [];
         
-        $categories = $this->repository->getTotalByCategory($categoryType, $month, $year);
+        $categories = $this->repository->getTotalByCategory($categoryType, $month, $year, $to_dashboard);
 
         foreach ($categories as $category) {
             $result[] = [
@@ -127,13 +127,13 @@ class AccountEntryService
      * @param string $date
      * @return float
      */ 
-    public function getTotalMonthlyByCategory($categoryType, $date): float
+    public function getTotalMonthlyByCategory($categoryType, $date, $to_dashboard = false): float
     {
         $new_date   = new DateTime($date);
         $month      = $new_date->format('m');
         $year       = $new_date->format('Y');
         
-        $total = $this->repository->getTotalTypeOfCategory($categoryType, $month, $year);
+        $total = $this->repository->getTotalTypeOfCategory($categoryType, $month, $year, $to_dashboard);
 
         return $total / 100;
     }

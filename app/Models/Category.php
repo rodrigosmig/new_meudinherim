@@ -14,10 +14,11 @@ class Category extends Model
     const INCOME    = 1;
     const EXPENSE   = 2;
 
-    protected $fillable = ['type','name', 'active', 'user_id'];
+    protected $fillable = ['name','type', 'user_id', 'active', 'show_in_dashboard'];
 
     protected $casts = [
-        'active' => 'boolean',  
+        'active'            => 'boolean',
+        'show_in_dashboard'  => 'boolean',
     ];
 
     public function user()

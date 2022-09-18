@@ -34,14 +34,21 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
      * @param string $year
      * @return int
      */ 
-    public function getTotalTypeOfCategory($categoryType, $month, $year): int
-    {
-        return $this->model::select('account_entries.id')
-                ->join('categories', 'categories.id', '=', 'account_entries.category_id')
-                ->where('categories.type', $categoryType)
-                ->whereMonth('date', $month)
-                ->whereYear('date', $year)
-                ->sum('value');;
+    public function getTotalTypeOfCategory($categoryType, $month, $year, $to_dashboard = false): int
+    {   
+        //$show_in_dashboard = $to_dashboard ? false : true;
+
+        $query = $this->model::select('account_entries.id')
+            ->join('categories', 'categories.id', '=', 'account_entries.category_id')
+            ->where('categories.type', $categoryType)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year);
+
+        if ($to_dashboard) {
+            $query->where('categories.show_in_dashboard', true);
+        }
+        
+        return $query->sum('value');
     }
 
     /**
@@ -51,15 +58,20 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
      * @param string $date
      * @return array
      */ 
-    public function getTotalByCategory($categoryType, $month, $year): array
-    {       
-        return $this->model::selectRaw('categories.name, SUM(account_entries.value) as total')
+    public function getTotalByCategory($categoryType, $month, $year, $to_dashboard = false): array
+    {
+        $query = $this->model::selectRaw('categories.name, SUM(account_entries.value) as total')
             ->join('categories', 'categories.id', '=', 'account_entries.category_id')
             ->where('categories.type', $categoryType)
             ->whereMonth('date', $month)
             ->whereYear('date', $year)
-            ->groupBy('categories.name')
-            ->get()
+            ->groupBy('categories.name');
+
+        if ($to_dashboard) {
+            $query->where('categories.show_in_dashboard', true);
+        }
+        
+        return $query->get()
             ->toArray();
     }
 
