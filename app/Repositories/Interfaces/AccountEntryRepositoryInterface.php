@@ -9,8 +9,8 @@ interface AccountEntryRepositoryInterface
     public function delete($category);
     public function findById($id);
     public function getEntriesByAccountId($account_id, array $range_date);
-    public function getTotalTypeOfCategory($categoryType, $month, $year): int;
-    public function getTotalByCategory($categoryType, $month, $year): array;
+    public function getTotalTypeOfCategory($categoryType, $month, $year, $to_dashboard = false): int;
+    public function getTotalByCategory($categoryType, $month, $year, $to_dashboard = false): array;
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array;
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id);
 }

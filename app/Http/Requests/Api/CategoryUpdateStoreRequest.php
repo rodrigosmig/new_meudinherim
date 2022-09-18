@@ -33,6 +33,7 @@ class CategoryUpdateStoreRequest extends FormRequest
             ],
             'name' => 'required|min:3|max:191',
             'active' => 'nullable',
+            'show_in_dashboard' => 'nullable',
         ];
     }
 

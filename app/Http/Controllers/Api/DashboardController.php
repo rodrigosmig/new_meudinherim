@@ -60,18 +60,18 @@ class DashboardController extends Controller
         $data = [
             'months' => $this->dashboardService->getMonths($date),
             'total' => [
-                'income'    => $this->entriesService->getTotalMonthlyByCategory(Category::INCOME, $date),
-                'expense'   => $this->entriesService->getTotalMonthlyByCategory(Category::EXPENSE, $date),
+                'income'    => $this->entriesService->getTotalMonthlyByCategory(Category::INCOME, $date, true),
+                'expense'   => $this->entriesService->getTotalMonthlyByCategory(Category::EXPENSE, $date, true),
                 'invoices'  => $this->invoiceEntryService->getTotalMonthlyByCategory(Category::EXPENSE, $date),
             ],
             'pieChart' => [
-                'income_category'         => $this->entriesService->getTotalByCategoryForChart(Category::INCOME, $date),
-                'expense_category'        => $this->entriesService->getTotalByCategoryForChart(Category::EXPENSE, $date),
+                'income_category'         => $this->entriesService->getTotalByCategoryForChart(Category::INCOME, $date, true),
+                'expense_category'        => $this->entriesService->getTotalByCategoryForChart(Category::EXPENSE, $date, true),
                 'card_expense_category'   => $this->invoiceEntryService->getTotalByCategoryForChart($date),
             ],
             'barChart' => [
-                'income'    => $this->entriesService->getTotalOfSixMonthsByCategoryTypeAndDate(Category::INCOME, $date),
-                'expense'   => $this->entriesService->getTotalOfSixMonthsByCategoryTypeAndDate(Category::EXPENSE, $date),
+                'income'    => $this->entriesService->getTotalOfSixMonthsByCategoryTypeAndDate(Category::INCOME, $date, true),
+                'expense'   => $this->entriesService->getTotalOfSixMonthsByCategoryTypeAndDate(Category::EXPENSE, $date, true),
             ],
             'lineChart' => [
                 'invoices' => $this->invoiceService->getInvoiceAmountForSixMonthsForChart($date),
