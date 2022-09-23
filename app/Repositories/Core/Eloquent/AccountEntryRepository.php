@@ -22,7 +22,8 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
         return $this->model::where('account_id', $account_id)
                 ->where('date', '>=', $range_date['from'])
                 ->where('date', '<=', $range_date['to'])
-                ->orderBy('date')
+                ->orderBy('date', 'asc')
+                ->orderBy('id', 'asc')
                 ->paginate($per_page);
     }
 
