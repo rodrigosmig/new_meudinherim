@@ -10,4 +10,5 @@ interface ParcelRepositoryInterface
     public function findParcelsOfAccountsScheduling($account_scheduling_id, $parcel_id);
     public function findParcelOfInvoiceEntry($invoice_entry_id, $parcel_id);
     public function getOpenParcels($invoice_entry, int $parcel_number);
+    public function getTotalByCategoryTypeForRangeDate($category_type, array $filter);
 }

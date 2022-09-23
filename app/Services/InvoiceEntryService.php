@@ -195,9 +195,7 @@ class InvoiceEntryService
     {
         $entries = $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
 
-        $parcelRepository = app(ParcelRepositoryinterface::class);
-
-        $parcels = $parcelRepository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
+        $parcels = $this->parcelRepository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
 
         return $entries->concat($parcels);
     }
@@ -258,17 +256,6 @@ class InvoiceEntryService
         
         return $all->sortBy('date');
     }
-
-    /**
-     * Returns entries for a given invoice
-     *
-     * @param Invoice $invoice
-     * @return Parcel
-     */ 
-    /* public function findParcel($invoice_entry_id, $parcel_id): ?Parcel
-    {
-        return $this->parcelRepository->findParcelsOfInvoiceEntry($invoice_entry_id, $parcel_id);
-    } */
 
     /**
      * Returns entries for a given invoice
