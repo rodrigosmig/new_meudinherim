@@ -192,10 +192,14 @@ class AccountsSchedulingService
      * @param mixed $account_scheduling
      * @return bool
      */
-    public function cancelPayment($account_scheduling): bool
+    public function cancelPayment($account_scheduling)
     {
         $account        = $account_scheduling->accountEntry->account;
         $payment_date   = $account_scheduling->paid_date;
+
+        if ($account_scheduling->monthly) {
+            $this->deleteNextMonthlyAccountScheduling($account_scheduling);
+        }
 
         $this->repository->deleteAccountEntry($account_scheduling);
 
@@ -215,8 +219,6 @@ class AccountsSchedulingService
         } 
 
         $this->updateAccountBalance($account, $payment_date);
-               
-        return true;
     }
 
     private function updateAccountBalance($account, $date): void
@@ -277,5 +279,14 @@ class AccountsSchedulingService
         }
 
         return $total;
+    }
+
+    private function deleteNextMonthlyAccountScheduling($account_scheduling) 
+    {
+        $next_account_scheduling = $this->repository->getNextAccountScheduling($account_scheduling);
+
+        if ($next_account_scheduling) {
+            $next_account_scheduling->delete();
+        }
     }
 }
