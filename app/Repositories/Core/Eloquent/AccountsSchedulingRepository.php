@@ -115,4 +115,24 @@ class AccountsSchedulingRepository extends BaseEloquentRepository implements Acc
             'monthly'       => $account_scheduling->monthly
         ]);
     }
+
+    /**
+     * Returns the account scheduling of the next month
+     *
+     * @param AccountsScheduling $account_scheduling
+     * @return AccountsScheduling
+     */
+    public function getNextAccountScheduling($account_scheduling)
+    {
+        $date = new DateTime($account_scheduling->due_date);
+        $next_month = $date->modify('+1 month');
+
+        return $this->model::where('due_date', $next_month->format('Y-m-d'))
+            ->where('description', $account_scheduling->description)
+            ->where('category_id', $account_scheduling->category_id)
+            ->where('monthly', $account_scheduling->monthly)
+            ->where('has_parcels', $account_scheduling->has_parcels)
+            ->where('value', $account_scheduling->value * 100)
+            ->first();
+    }
 }

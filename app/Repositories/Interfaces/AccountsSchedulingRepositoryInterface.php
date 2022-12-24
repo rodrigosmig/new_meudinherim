@@ -10,4 +10,5 @@ interface AccountsSchedulingRepositoryInterface
     public function createParcels($account_scheduling, array $data);
     public function createMonthlyPayment($account_scheduling): void;
     public function deleteParcels($account_scheduling): void;
+    public function getNextAccountScheduling($account_scheduling);
 }

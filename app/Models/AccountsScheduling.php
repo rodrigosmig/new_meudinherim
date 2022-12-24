@@ -28,7 +28,8 @@ class AccountsScheduling extends Model
 
     protected $casts = [
         'paid'          => 'boolean',
-        'has_parcels'   => 'boolean',        
+        'has_parcels'   => 'boolean',
+        'monthly'       => 'boolean'
     ];
 
     public function accountEntry()
