@@ -4,7 +4,6 @@ namespace App\Services;
 
 use DateTime;
 use App\Models\Card;
-use App\Models\Parcel;
 use App\Models\Invoice;
 use App\Models\Category;
 use App\Models\InvoiceEntry;
@@ -21,7 +20,8 @@ class InvoiceEntryService
     protected $invoiceRepository;
     protected $parcelRepository;
 
-    public function __construct(InvoiceEntryRepositoryInterface $repository, 
+    public function __construct(
+        InvoiceEntryRepositoryInterface $repository,
         InvoiceRepositoryInterface $invoiceRepository,
         ParcelRepositoryInterface $parcelRepository
     ) {
@@ -31,7 +31,7 @@ class InvoiceEntryService
     }
 
     public function create(Card $card, array $data)
-    {      
+    {
         $categoryRepository = app(CategoryRepositoryInterface::class);
         $category = $categoryRepository->findById($data['category_id']);
 
@@ -59,12 +59,12 @@ class InvoiceEntryService
 
     /**
      * Create the invoice entry
-     */ 
+     */
     public function createEntry(Card $card, $data)
     {
         $invoice = $this->invoiceRepository->getInvoiceByDate($card, $data['date']);
 
-        if (! $invoice) {
+        if (!$invoice) {
             return false;
         }
 
@@ -72,7 +72,7 @@ class InvoiceEntryService
 
         $entry = $this->repository->create($data);
 
-        if (! $entry->hasParcels()) {
+        if (!$entry->hasParcels()) {
             $this->invoiceRepository->updateInvoiceAmount($invoice);
         }
 
@@ -81,7 +81,7 @@ class InvoiceEntryService
 
     /**
      * Creates all the invoice entry parcels
-     */ 
+     */
     public function createInvoiceEntryParcels(Card $card, array $data)
     {
         $data['has_parcels'] = true;
@@ -103,7 +103,7 @@ class InvoiceEntryService
             $invoice = $this->invoiceRepository->getInvoiceByDate($card, $date->format('Y-m-d'));
 
             $parcel_data['date']            = $date->format('Y-m-d');
-            $parcel_data['description']     = $entry->description . " {$parceling}/{$total_parcels}" ;           
+            $parcel_data['description']     = $entry->description . " {$parceling}/{$total_parcels}";
             $parcel_data['parcel_number']   = $parceling;
             $parcel_data['invoice_id']      = $invoice->id;
 
@@ -161,7 +161,7 @@ class InvoiceEntryService
      * @param string $date
      * @param int $category_type
      * @return array
-     */ 
+     */
     public function getTotalByCategoryForChart($date, $category_type = Category::EXPENSE): array
     {
         $new_date   = new DateTime($date);
@@ -190,7 +190,7 @@ class InvoiceEntryService
      * @param int $categoryType
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
-     */ 
+     */
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter)
     {
         $entries = $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
@@ -206,7 +206,7 @@ class InvoiceEntryService
      * @param int $categoryType
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
-     */ 
+     */
     public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
     {
         $entries = $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
@@ -226,7 +226,7 @@ class InvoiceEntryService
      * @param int $categoryType
      * @param string $date
      * @return float
-     */ 
+     */
     public function getTotalMonthlyByCategory($categoryType, $date): float
     {
         $new_date   = new DateTime($date);
@@ -243,7 +243,7 @@ class InvoiceEntryService
      *
      * @param Invoice $invoice
      * @return Illuminate\Database\Eloquent\Collection
-     */ 
+     */
     public function getAllEntriesForInvoice(Invoice $invoice)
     {
         $entries = $this->repository->getEntries($invoice);
@@ -263,7 +263,7 @@ class InvoiceEntryService
      * @param InvoiceEntry $invoice_entry
      * @param int $parcel_number
      * @return Illuminate\Database\Eloquent\Collection
-     */ 
+     */
     public function getOpenParcels($invoice_entry, int $parcel_number)
     {
         return $this->parcelRepository->getOpenParcels($invoice_entry, $parcel_number);
@@ -275,7 +275,7 @@ class InvoiceEntryService
      * @param InvoiceEntry $invoice_entry
      * @param array $parcels_ids
      * @return bool
-     */ 
+     */
     public function parcelsExists(InvoiceEntry $invoice_entry, array $parcels_ids): bool
     {
         $count = 0;
@@ -291,11 +291,11 @@ class InvoiceEntryService
     }
 
     /**
-     * Anticipates the parcels for the current invoice 
+     * Anticipates the parcels for the current invoice
      *
      * @param array $parcels_ids
      * @return bool
-     */ 
+     */
     public function anticipateParcels(Card $card, array $parcels_ids)
     {
         foreach($parcels_ids as $parcel_id) {
