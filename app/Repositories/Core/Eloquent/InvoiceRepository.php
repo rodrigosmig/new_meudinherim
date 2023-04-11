@@ -66,7 +66,7 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      *
      * @param Card $card
      * @param bool $paid
-     * 
+     *
      * @return Illuminate\Database\Eloquent\Collection
      */
     public function getInvoicesByStatus($card, $paid = false,  $per_page = 10)
@@ -82,7 +82,7 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      *
      * @param Card $card
      * @param string $date
-     * 
+     *
      * @return Invoice
      */
     public function getInvoiceByDate($card, $date)
@@ -96,7 +96,7 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
             ->orderBy('closing_date', 'ASC')
             ->first();
         
-        if (! $invoice && (new DateTime($date)) >= (new DateTime('today'))) {
+        if (!$invoice) {
             $invoice = $this->createInvoice($card, $date);
         }
 
@@ -274,7 +274,7 @@ class InvoiceRepository extends BaseEloquentRepository implements InvoiceReposit
      * @return DateTime
      */
     private function changeDayOfADate(DateTime $date, int $new_day): DateTime {
-        $new_date   = getdate($date->getTimestamp());        
+        $new_date   = getdate($date->getTimestamp());
         return new DateTime($new_date['year'] . '-' . $new_date['mon'] . '-' . $new_day);
     }
 }
