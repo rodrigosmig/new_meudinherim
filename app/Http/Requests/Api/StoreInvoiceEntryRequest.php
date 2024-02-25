@@ -41,7 +41,8 @@ class StoreInvoiceEntryRequest extends FormRequest
             'value'                 => 'required|numeric|gt:0',
             'installment'           => 'nullable',
             'installments_number'   => 'nullable|numeric|gt:0',
-            'installment_value'     => 'nullable|numeric|gt:0'
+            'installment_value'     => 'nullable|numeric|gt:0',
+            'tags'                  => 'nullable|array'
         ];
     }
 

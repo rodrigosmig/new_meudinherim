@@ -19,15 +19,18 @@ class InvoiceEntryService
     protected $repository;
     protected $invoiceRepository;
     protected $parcelRepository;
+    protected $tagService;
 
     public function __construct(
         InvoiceEntryRepositoryInterface $repository,
         InvoiceRepositoryInterface $invoiceRepository,
-        ParcelRepositoryInterface $parcelRepository
+        ParcelRepositoryInterface $parcelRepository,
+        TagService $tagService
     ) {
         $this->repository           = $repository;
         $this->invoiceRepository    = $invoiceRepository;
         $this->parcelRepository     = $parcelRepository;
+        $this->tagService           = $tagService;
     }
 
     public function create(Card $card, array $data)
@@ -72,6 +75,10 @@ class InvoiceEntryService
 
         $entry = $this->repository->create($data);
 
+        if (isset($data["tags"]) && $data["tags"]) {
+            $this->tagService->createInvoiceEntryTags($entry, $data["tags"]);
+        }
+
         if (!$entry->hasParcels()) {
             $this->invoiceRepository->updateInvoiceAmount($invoice);
         }
@@ -108,6 +115,11 @@ class InvoiceEntryService
             $parcel_data['invoice_id']      = $invoice->id;
 
             $parcel = $this->repository->createInvoiceEntryParcel($entry, $parcel_data);
+
+            if ($entry->tags) {
+                dd($entry->tags);
+
+            }
 
             $this->invoiceRepository->updateInvoiceAmount($invoice);
 
