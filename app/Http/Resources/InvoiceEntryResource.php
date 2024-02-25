@@ -16,6 +16,14 @@ class InvoiceEntryResource extends JsonResource
      */
     public function toArray($request)
     {
+        $tags = [];
+
+        if($this->tags) {
+            foreach ($this->tags as $tag) {
+                $tags[] = $tag->name;
+            }
+        }
+    
         return [
             "id"            => $this->id,
             "date"          => $this->date,
@@ -34,6 +42,7 @@ class InvoiceEntryResource extends JsonResource
             "total_purchase"    => $this->isParcel() ? $this->parcelable->value : null,
             "parcelable_id"     => $this->isParcel() ? $this->parcelable_id : null,
             "anticipated"       => $this->anticipated,
+            "tags"              => $tags,
             "created_at"        => $this->created_at,
         ];
     }

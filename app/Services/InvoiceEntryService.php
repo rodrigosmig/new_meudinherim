@@ -117,8 +117,7 @@ class InvoiceEntryService
             $parcel = $this->repository->createInvoiceEntryParcel($entry, $parcel_data);
 
             if ($entry->tags) {
-                dd($entry->tags);
-
+                $this->tagService->createParcelTags($parcel, $entry->tags);
             }
 
             $this->invoiceRepository->updateInvoiceAmount($invoice);

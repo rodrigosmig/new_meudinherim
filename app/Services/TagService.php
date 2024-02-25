@@ -29,7 +29,7 @@ class TagService
         $unique_tags = $this->getUniqueTags($tags);
         $existents_tags = [];
         $no_existents_tags = [];
-        
+
         foreach ($unique_tags as $tag) {
             $exists_tag = $this->findTagByName($entry, $tag["name"]);
             if ($exists_tag) {
@@ -44,6 +44,16 @@ class TagService
         foreach($no_existents_tags as $new_tag) {
             $entry->tags()->create($new_tag);
         }
+    }
+
+    public function createParcelTags($parcel, $tags)
+    {
+        $id_tags = [];
+        foreach($tags as $tag) {
+            $id_tags[] = $tag->id;
+        }
+
+        $parcel->tags()->sync($id_tags);
     }
 
     /**
