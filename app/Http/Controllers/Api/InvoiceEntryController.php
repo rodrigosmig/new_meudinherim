@@ -130,7 +130,7 @@ class InvoiceEntryController extends Controller
         if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
-
+        
         try {
             $this->entryService->update($entry, $data);
         } catch (InsufficientLimitException $e) {

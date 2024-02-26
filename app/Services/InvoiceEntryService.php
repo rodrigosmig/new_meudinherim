@@ -139,6 +139,10 @@ class InvoiceEntryService
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
 
+        if (isset($data["tags"])) {
+            $this->tagService->createInvoiceEntryTags($entry, $data["tags"]);
+        }
+
         return $this->repository->update($entry, $data);
     }
 
