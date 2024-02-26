@@ -86,4 +86,9 @@ class TagService
         return Tag::where("name", $name)
                 ->first();
     }
+
+    public function getTags()
+    {
+        return Tag::get();
+    }
 }

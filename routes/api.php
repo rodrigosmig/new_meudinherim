@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +123,12 @@ Route::group([
             Route::get('', [NotificationController::class, 'index']);
             Route::get('/all-as-read', [NotificationController::class, 'markAllAsRead']);
             Route::put('/{id}', [NotificationController::class, 'markAsRead']);
+        });
+    
+    //Tags
+    Route::prefix('tags')
+        ->group(function () {
+            Route::get('', [TagController::class, 'index']);
         });
 });
 
