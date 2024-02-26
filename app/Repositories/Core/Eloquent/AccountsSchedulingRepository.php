@@ -92,6 +92,7 @@ class AccountsSchedulingRepository extends BaseEloquentRepository implements Acc
     public function deleteParcels($account_scheduling): void
     {
         foreach ($account_scheduling->parcels as $parcel) {
+            $parcel->tags()->sync([]);
             $parcel->delete();
         }
     }

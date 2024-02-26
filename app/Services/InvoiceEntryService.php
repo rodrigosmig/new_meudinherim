@@ -151,6 +151,7 @@ class InvoiceEntryService
         if ($entry->hasParcels()) {
             $this->deleteParcels($entry);
         }
+        $entry->tags()->sync([]);
         return $this->repository->delete($entry);
     }
 
@@ -158,7 +159,7 @@ class InvoiceEntryService
     {
         foreach ($entry->parcels as $parcel) {
             $invoice = $parcel->invoice;
-
+            $parcel->tags()->sync([]);
             $parcel->delete();
 
             $this->invoiceRepository->updateInvoiceAmount($invoice);

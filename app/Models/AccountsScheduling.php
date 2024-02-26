@@ -6,12 +6,13 @@ use App\Traits\HasParcel;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use App\Models\AccountEntry;
+use App\Traits\HasTag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AccountsScheduling extends Model
 {
-    use UserTrait, HasCategory, HasParcel, HasFactory;
+    use UserTrait, HasCategory, HasParcel, HasFactory, HasTag;
     
     public $fillable =  [
         'due_date', 

@@ -44,6 +44,7 @@ class PayableStoreRequest extends FormRequest
                         ->where('type', Category::EXPENSE);
                 })
             ],
+            'tags'          => 'nullable|array'
         ];
     }
 

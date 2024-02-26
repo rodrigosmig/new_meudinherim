@@ -40,6 +40,7 @@ class PayableUpdateRequest extends FormRequest
                         ->where('type', Category::EXPENSE);
                 })
             ],
+            'tags'          => 'nullable|array'
         ];
     }
 
