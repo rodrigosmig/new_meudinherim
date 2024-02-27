@@ -78,6 +78,28 @@ class TagService
         }
     }
 
+    public function createAccountEntryTag($entry, $tags)
+    {
+        $unique_tags = $this->getUniqueTags($tags);
+        $existents_tags = [];
+        $no_existents_tags = [];
+
+        foreach ($unique_tags as $tag) {
+            $exists_tag = $this->findTagByName($entry, $tag["name"]);
+            if ($exists_tag) {
+                $existents_tags[] = $exists_tag->id;
+            } else {
+                $no_existents_tags[] = $tag;
+            }
+        }
+
+        $entry->tags()->sync($existents_tags);
+
+        foreach($no_existents_tags as $new_tag) {
+            $entry->tags()->create($new_tag);
+        }
+    }
+
     /**
      * Find tag by name
      */ 

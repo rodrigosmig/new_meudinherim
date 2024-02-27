@@ -10,10 +10,12 @@ use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
 class AccountEntryService
 {
     protected $repository;
+    protected $tagService;
 
-    public function __construct(AccountEntryRepositoryInterface $repository)
+    public function __construct(AccountEntryRepositoryInterface $repository, TagService $tagService)
     {
         $this->repository = $repository;        
+        $this->tagService = $tagService;        
     }
 
     /**
@@ -27,11 +29,21 @@ class AccountEntryService
     {
         $data['account_id'] = $account_id;
 
-        return $this->repository->create($data);
+        $entry = $this->repository->create($data);
+
+        if (isset($data["tags"]) && $data["tags"]) {
+            $this->tagService->createAccountEntryTag($entry, $data["tags"]);
+        }
+
+        return $entry;
     }
 
     public function update(AccountEntry $entry, array $data)
     {
+        if (isset($data["tags"])) {
+            $this->tagService->createInvoiceEntryTags($entry, $data["tags"]);
+        }
+
         return $this->repository->update($entry, $data);;
     }
 

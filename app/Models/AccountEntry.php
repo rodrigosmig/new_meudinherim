@@ -7,12 +7,13 @@ use App\Models\Account;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use App\Models\AccountsScheduling;
+use App\Traits\HasTag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AccountEntry extends Model
 {
-    use UserTrait, HasCategory, HasFactory;
+    use UserTrait, HasCategory, HasFactory, HasTag;
     
     /**
      * The table associated with the model.

@@ -30,8 +30,6 @@ class InvoiceEntryController extends Controller
         $this->entryService         = $entryService;
         $this->cardService          = $cardService;
         $this->invoiceRepository    = $invoiceRepository;
-
-        $this->title = __('global.invoice_entry');
     }
     /**
      * Display a listing of the resource.

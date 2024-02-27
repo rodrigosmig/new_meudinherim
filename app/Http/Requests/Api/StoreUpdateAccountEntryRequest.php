@@ -46,6 +46,7 @@ class StoreUpdateAccountEntryRequest extends FormRequest
             'date'          => 'required|date_format:Y-m-d',
             'description'   => 'required|min:3',
             'value'         => 'required|numeric|gt:0',
+            'tags'          => 'nullable|array'
         ];
     }
 
