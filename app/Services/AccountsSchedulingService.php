@@ -17,11 +17,13 @@ class AccountsSchedulingService
 {
     protected $repository;
     protected $parcelRepository;
+    protected $tagService;
 
-    public function __construct(AccountsSchedulingRepositoryInterface $repository, ParcelRepositoryInterface $parcelRepository)
+    public function __construct(AccountsSchedulingRepositoryInterface $repository, ParcelRepositoryInterface $parcelRepository, TagService $tagService)
     {
         $this->repository       = $repository;
         $this->parcelRepository = $parcelRepository;
+        $this->tagService       = $tagService;
     }
 
     public function create(array $data)
@@ -36,8 +38,14 @@ class AccountsSchedulingService
         if (app()->runningInConsole()) {
             unset($data['installment']);
         }
+
+        $account_scheduling = $this->repository->create($data);
         
-        return $this->repository->create($data);
+        if (isset($data["tags"]) && $data["tags"]) {
+            $this->tagService->createAccountSchedulingTag($account_scheduling, $data["tags"]);
+        }
+
+        return $account_scheduling;
     }
 
     /**
@@ -51,6 +59,10 @@ class AccountsSchedulingService
         $data['has_parcels'] = true;
 
         $account_scheduling = $this->repository->create($data);
+
+        if (isset($data["tags"]) && $data["tags"]) {
+            $this->tagService->createAccountSchedulingTag($account_scheduling, $data["tags"]);
+        }
 
         $parcels        = [];
         $total_parcels  = $data['installments_number'];
@@ -70,6 +82,10 @@ class AccountsSchedulingService
 
             $parcel = $this->repository->createParcels($account_scheduling, $parcel_data);
 
+            if ($account_scheduling->tags) {
+                $this->tagService->createParcelTags($parcel, $account_scheduling->tags);
+            }
+
             $parcels[] = $parcel;
 
             $date = $date->modify('+1 month');
@@ -81,6 +97,10 @@ class AccountsSchedulingService
     public function update(AccountsScheduling $account_scheduling, $data)
     {
         $data['monthly'] = isset($data['monthly']) && $data['monthly'] ? true : false;
+
+        if (isset($data["tags"])) {
+            $this->tagService->createInvoiceEntryTags($account_scheduling, $data["tags"]);
+        }
         
         return $this->repository->update($account_scheduling, $data);
     }
@@ -90,6 +110,8 @@ class AccountsSchedulingService
         if ($account_scheduling->hasParcels()) {
             $this->repository->deleteParcels($account_scheduling);
         }
+
+        $account_scheduling->tags()->sync([]);
 
         return $this->repository->delete($account_scheduling);
     }

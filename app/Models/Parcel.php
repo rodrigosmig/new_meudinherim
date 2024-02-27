@@ -6,12 +6,13 @@ use App\Models\Invoice;
 use App\Traits\UserTrait;
 use App\Traits\HasCategory;
 use App\Models\AccountEntry;
+use App\Traits\HasTag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Parcel extends Model
 {
-    use UserTrait, HasCategory, HasFactory;
+    use UserTrait, HasCategory, HasFactory, HasTag;
     
     public $fillable =  [
         'date',

@@ -17,6 +17,13 @@ class AccountEntryResource extends JsonResource
     public function toArray($request)
     {
         $accountScheduling = null;
+        $tags = [];
+
+        if($this->tags) {
+            foreach ($this->tags as $tag) {
+                $tags[] = $tag->name;
+            }
+        }
 
         if ($this->accountScheduling) {
             $accountScheduling = [
@@ -52,6 +59,7 @@ class AccountEntryResource extends JsonResource
                 "name"  => $this->account->name,
                 "type"  => $this->account->type
             ],
+            "tags"      => $tags,
             "created_at"            => $this->created_at,
         ];
     }

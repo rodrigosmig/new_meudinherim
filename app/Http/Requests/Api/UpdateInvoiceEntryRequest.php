@@ -37,6 +37,7 @@ class UpdateInvoiceEntryRequest extends FormRequest
             ],
             'description'   => 'required|min:3',
             'value'         => 'required|numeric|gt:0',
+            'tags'          => 'nullable|array'
         ];
     }
 

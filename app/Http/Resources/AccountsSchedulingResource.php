@@ -16,6 +16,14 @@ class AccountsSchedulingResource extends JsonResource
      */
     public function toArray($request)
     {
+        $tags = [];
+
+        if($this->tags) {
+            foreach ($this->tags as $tag) {
+                $tags[] = $tag->name;
+            }
+        }
+
         return [
             "id" => $this->id,
             "due_date" => $this->due_date,
@@ -35,6 +43,7 @@ class AccountsSchedulingResource extends JsonResource
             "total_purchase" => $this->isParcel() ? $this->parcelable->value : null,
             "parcel_number" => $this->isParcel() ? $this->parcel_number : null,
             "parcelable_id" => $this->isParcel() ? $this->parcelable_id : null,
+            "tags"          => $tags,
             "created_at" => $this->created_at->format('Y-m-d'),
         ];
     }

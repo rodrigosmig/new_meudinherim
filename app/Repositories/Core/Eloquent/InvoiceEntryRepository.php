@@ -3,6 +3,7 @@
 namespace App\Repositories\Core\Eloquent;
 
 use App\Models\InvoiceEntry;
+use App\Models\Tag;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
 

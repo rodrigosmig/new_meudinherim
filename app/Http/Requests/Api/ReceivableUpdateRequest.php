@@ -40,6 +40,7 @@ class ReceivableUpdateRequest extends FormRequest
                         ->where('type', Category::INCOME);
                 })
             ],
+            'tags'          => 'nullable|array'
         ];
     }
 

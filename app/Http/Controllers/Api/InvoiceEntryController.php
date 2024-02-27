@@ -30,8 +30,6 @@ class InvoiceEntryController extends Controller
         $this->entryService         = $entryService;
         $this->cardService          = $cardService;
         $this->invoiceRepository    = $invoiceRepository;
-
-        $this->title = __('global.invoice_entry');
     }
     /**
      * Display a listing of the resource.
@@ -130,7 +128,7 @@ class InvoiceEntryController extends Controller
         if (! $entry) {
             return response()->json(['message' => __('messages.entries.api_not_found')], Response::HTTP_NOT_FOUND);
         }
-
+        
         try {
             $this->entryService->update($entry, $data);
         } catch (InsufficientLimitException $e) {

@@ -19,15 +19,18 @@ class InvoiceEntryService
     protected $repository;
     protected $invoiceRepository;
     protected $parcelRepository;
+    protected $tagService;
 
     public function __construct(
         InvoiceEntryRepositoryInterface $repository,
         InvoiceRepositoryInterface $invoiceRepository,
-        ParcelRepositoryInterface $parcelRepository
+        ParcelRepositoryInterface $parcelRepository,
+        TagService $tagService
     ) {
         $this->repository           = $repository;
         $this->invoiceRepository    = $invoiceRepository;
         $this->parcelRepository     = $parcelRepository;
+        $this->tagService           = $tagService;
     }
 
     public function create(Card $card, array $data)
@@ -72,6 +75,10 @@ class InvoiceEntryService
 
         $entry = $this->repository->create($data);
 
+        if (isset($data["tags"]) && $data["tags"]) {
+            $this->tagService->createInvoiceEntryTags($entry, $data["tags"]);
+        }
+
         if (!$entry->hasParcels()) {
             $this->invoiceRepository->updateInvoiceAmount($invoice);
         }
@@ -109,6 +116,10 @@ class InvoiceEntryService
 
             $parcel = $this->repository->createInvoiceEntryParcel($entry, $parcel_data);
 
+            if ($entry->tags) {
+                $this->tagService->createParcelTags($parcel, $entry->tags);
+            }
+
             $this->invoiceRepository->updateInvoiceAmount($invoice);
 
             $parcels[] = $parcel;
@@ -128,6 +139,10 @@ class InvoiceEntryService
             throw new InsufficientLimitException(__('messages.entries.insufficient_limit'));
         }
 
+        if (isset($data["tags"])) {
+            $this->tagService->createInvoiceEntryTags($entry, $data["tags"]);
+        }
+
         return $this->repository->update($entry, $data);
     }
 
@@ -136,6 +151,7 @@ class InvoiceEntryService
         if ($entry->hasParcels()) {
             $this->deleteParcels($entry);
         }
+        $entry->tags()->sync([]);
         return $this->repository->delete($entry);
     }
 
@@ -143,7 +159,7 @@ class InvoiceEntryService
     {
         foreach ($entry->parcels as $parcel) {
             $invoice = $parcel->invoice;
-
+            $parcel->tags()->sync([]);
             $parcel->delete();
 
             $this->invoiceRepository->updateInvoiceAmount($invoice);
