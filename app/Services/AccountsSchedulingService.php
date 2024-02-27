@@ -185,6 +185,14 @@ class AccountsSchedulingService
         
         $entry = $accountEntryRepository->create($entryData);
 
+        if($account_scheduling->tags->isNotEmpty()) {
+            $tags = [];
+            foreach ($account_scheduling->tags as $tag) {
+                $tags[] = $tag->name;
+            }
+            $this->tagService->createAccountEntryTag($entry, $tags);
+        }
+
         if (! $account_scheduling->isParcel()) {
             $entry->accountScheduling()->associate($account_scheduling);
             
