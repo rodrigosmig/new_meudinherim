@@ -86,8 +86,16 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
     {       
         $query = $this->model::selectRaw('categories.name as category, categories.id, SUM(account_entries.value) / 100 as total, count(*) as quantity')
-            ->join('categories', 'categories.id', '=', 'account_entries.category_id')
-            ->where('categories.type', $categoryType)
+            ->join('categories', 'categories.id', '=', 'account_entries.category_id');
+            
+        if (isset($filter["tags"]) && !empty($filter["tags"])) {
+            $query->join('taggables', function($join)            {
+                $join->on('taggables.taggable_id', '=', 'account_entries.id');
+                $join->where('taggables.taggable_type','=', AccountEntry::class);
+            });
+        }   
+            
+        $query->where('categories.type', $categoryType)
             ->where('date', '>=', $filter['from'])
             ->where('date', '<=', $filter['to'])
             ->orderByDesc('total')
@@ -96,7 +104,11 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
         if (isset($filter['account_id'])) {
             $query->where('account_entries.account_id', $filter['account_id']);
         }
-            
+
+        if (isset($filter["tags"]) && !empty($filter["tags"])) {
+            $query->whereIn("taggables.tag_id", $filter["tags"]);
+        }
+
         return $query->get()->toArray();
     }
 

@@ -15,7 +15,7 @@ class AccountEntryService
     public function __construct(AccountEntryRepositoryInterface $repository, TagService $tagService)
     {
         $this->repository = $repository;        
-        $this->tagService = $tagService;        
+        $this->tagService = $tagService;
     }
 
     /**
@@ -159,6 +159,13 @@ class AccountEntryService
      */ 
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
     {
+        if (isset($filter["tags"]) && !empty($filter["tags"])) {
+            $tags = $this->tagService->getTags($filter["tags"])->toArray();
+            $filter["tags"] = array_map(function($tags) {
+                return $tags["id"];
+            }, $tags);
+        }
+
         return $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
     }
 
