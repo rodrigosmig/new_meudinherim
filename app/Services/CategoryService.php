@@ -8,10 +8,12 @@ use App\Repositories\Interfaces\CategoryRepositoryInterface;
 class CategoryService
 {
     protected $repository;
+    protected $tagService;
 
-    public function __construct(CategoryRepositoryInterface $repository)
+    public function __construct(CategoryRepositoryInterface $repository, TagService $tagService)
     {
         $this->repository = $repository;
+        $this->tagService = $tagService;
     }
 
     public function create(array $data)
@@ -229,6 +231,13 @@ class CategoryService
 
     public function getTotalOfInvoiceEntriesByCategoryTypeForApi($categoryType, array $filter)
     {
+        if (isset($filter["tags"])) {
+            $tags = $this->tagService->getTags($filter["tags"])->toArray();
+            $filter["tags"] = array_map(function($tags) {
+                return $tags["id"];
+            }, $tags);
+        }
+
         $entries = $this->getTotalOfInvoiceEntriesByCategoryType($categoryType, $filter);
 
         $result = [];

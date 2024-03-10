@@ -102,6 +102,10 @@ class ReportsController extends Controller
                 $filter['account_id'] = $request->account_id;
             }
 
+            if (isset($request->tags) && !empty($request->tags)) {
+                $filter["tags"] = explode(",", $request->get("tags"));
+            }
+
             $data['incomes']    = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::INCOME, $filter);
             $data['expenses']   = $this->accountEntryService->getTotalByCategoryTypeForRangeDate(Category::EXPENSE, $filter);
         }
@@ -127,6 +131,10 @@ class ReportsController extends Controller
                 'from'      => $request->from,
                 'to'        => $request->to,
             ];
+
+            if (isset($request->tags) && !empty($request->tags)) {
+                $filter["tags"] = explode(",", $request->get("tags"));
+            }
            
             $data['data'] = $this->categoryService->getTotalOfInvoiceEntriesByCategoryTypeForApi(Category::EXPENSE, $filter);
         }

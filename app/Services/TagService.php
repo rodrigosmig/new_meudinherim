@@ -109,8 +109,12 @@ class TagService
                 ->first();
     }
 
-    public function getTags()
+    public function getTags(array $tags = [])
     {
-        return Tag::get();
+        if (empty($tags)) {
+            return Tag::get();
+        }
+
+        return Tag::whereIn("name", $tags)->get();
     }
 }

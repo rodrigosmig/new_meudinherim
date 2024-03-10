@@ -3,6 +3,8 @@
 namespace App\Repositories\Core\Eloquent;
 
 use App\Models\Category;
+use App\Models\InvoiceEntry;
+use App\Models\Parcel;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 
@@ -43,15 +45,38 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
 
     public function getInvoiceEntriesByCategoryType($categoryType, array $filter): array
     {
-        $invoice_entry_query = $this->model::getQueryForInvoiceEntryGroupedByCategory()
-            ->where('categories.type', $categoryType)
+        $invoice_entry_query = $this->model::getQueryForInvoiceEntryGroupedByCategory();            
+
+        if (isset($filter["tags"]) && !empty($filter["tags"])) {
+            $invoice_entry_query->join('taggables', function($join)
+            {
+                $join->on('taggables.taggable_id', '=', 'invoice_entries.id');
+                $join->where('taggables.taggable_type','=', InvoiceEntry::class);
+            })
+            ->whereIn("taggables.tag_id", $filter["tags"]);
+        }
+
+        $invoice_entry_query->where('categories.type', $categoryType)
             ->whereBetween('date', [$filter['from'], $filter['to']]);
 
-        return $this->model::getQueryForParcelGroupedByCategory()
-            ->where('categories.type', $categoryType)
+        $parcel_query = $this->model::getQueryForParcelGroupedByCategory();
+
+        if (isset($filter["tags"]) && !empty($filter["tags"])) {
+            $parcel_query->join('taggables', function($join)
+            {
+                $join->on('taggables.taggable_id', '=', 'parcels.id');
+                $join->where('taggables.taggable_type','=', Parcel::class);
+            });
+        }
+        
+            $parcel_query->where('categories.type', $categoryType)
             ->whereBetween('date', [$filter['from'], $filter['to']])
-            ->union($invoice_entry_query)
-            ->get()
-            ->toArray();
+            ->union($invoice_entry_query);
+        
+        if (isset($filter["tags"]) && !empty($filter["tags"])) {
+            $parcel_query->whereIn("taggables.tag_id", $filter["tags"]);
+        }
+            
+        return $parcel_query->get()->toArray();
     }
 }
