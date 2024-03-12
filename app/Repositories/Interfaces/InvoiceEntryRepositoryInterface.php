@@ -10,7 +10,7 @@ interface InvoiceEntryRepositoryInterface
     public function findById($id);
     public function getTotalByCategoryForChart(array $filter, $category_type): array;
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter);
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, array $tags);
     public function getTotalMonthlyByCategory($categoryType, $date): float;
     public function getEntries($invoice);
     public function createInvoiceEntryParcel($entry, array $data);

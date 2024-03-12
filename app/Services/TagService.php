@@ -117,4 +117,16 @@ class TagService
 
         return Tag::whereIn("name", $tags)->get();
     }
+
+    public function getTagsIds(array $tags = [])
+    {
+        $newTags = $this->getTags($tags)->toArray();
+        $newTags = array_filter($newTags, function($tag) use ($tags) {
+            return in_array($tag["name"], $tags);
+        });
+        
+        return array_map(function($tags) {
+            return $tags["id"];
+        }, $newTags);
+    }
 }

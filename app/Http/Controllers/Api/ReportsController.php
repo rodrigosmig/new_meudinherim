@@ -153,6 +153,8 @@ class ReportsController extends Controller
         $to = $request->query('to', '');
         $type = $request->query('type', '');
         $account_id = $request->query('account_id', null);
+        $tags = $request->query('tags', "");
+        $tags = empty($tags) ? [] : explode(",", $request->query('tags', ""));
 
         $entries = [];
 
@@ -161,12 +163,12 @@ class ReportsController extends Controller
         }
 
         if ($type === 'account') {
-            $entries = $this->accountEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id);
+            $entries = $this->accountEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id, $tags);
             return AccountsReportResource::collection($entries);
         } 
         
         if ($type === 'card') {
-            $entries = $this->invoiceEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+            $entries = $this->invoiceEntryService->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $tags);
             return CardReportResource::collection($entries);
         }
 
