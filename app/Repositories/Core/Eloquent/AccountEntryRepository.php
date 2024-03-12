@@ -121,13 +121,23 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
      * @param int $account_id
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id = null)
-    {       
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id = null, array $tags = [])
+    {
+        
         $query = $this->model::with('account')
-                ->with('category')
-                ->where('category_id', $category_id)
-                ->where('date', '>=', $from)
-                ->where('date', '<=', $to);                
+                ->with('category');
+
+        if (!empty($tags)) {
+            $query->join('taggables', function($join)            {
+                $join->on('taggables.taggable_id', '=', 'account_entries.id');
+                $join->where('taggables.taggable_type','=', AccountEntry::class);
+            })
+                ->whereIn("taggables.tag_id", $tags);
+        }
+
+        $query->where('category_id', $category_id)
+            ->where('date', '>=', $from)
+            ->where('date', '<=', $to);                
         
         if ($account_id) {
             $query->where('account_id', $account_id);

@@ -108,11 +108,20 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
      * 
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getParcelsByCategoryAndRangeDate($from, $to, $category_id)
+    public function getParcelsByCategoryAndRangeDate($from, $to, $category_id, $tags)
     {
-        return $this->model::with('invoice.card')
-            ->with('category')
-            ->where('category_id', $category_id)
+        $query = $this->model::with('invoice.card')
+            ->with('category');
+
+            if (!empty($tags)) {
+                $query->join('taggables', function($join)            {
+                    $join->on('taggables.taggable_id', '=', 'parcels.id');
+                    $join->where('taggables.taggable_type','=', Parcel::class);
+                })
+                ->whereIn("taggables.tag_id", $tags);
+            }
+
+            return $query->where('category_id', $category_id)
             ->where('date', '>=', $from)
             ->where('date', '<=', $to)
             ->where('anticipated', false)

@@ -58,11 +58,20 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, array $tags = [])
     {
-        return $this->model::with('invoice.card')
-            ->with('category')
-            ->where('category_id', $category_id)
+        $query = $this->model::with('invoice.card')
+            ->with('category');
+
+        if (!empty($tags)) {
+            $query->join('taggables', function($join)            {
+                $join->on('taggables.taggable_id', '=', 'invoice_entries.id');
+                $join->where('taggables.taggable_type','=', InvoiceEntry::class);
+            })
+            ->whereIn("taggables.tag_id", $tags);
+        }
+
+        return $query->where('category_id', $category_id)
             ->whereBetween('date', [$from, $to])
             ->where('has_parcels', false)
             ->orderBy('date')

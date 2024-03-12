@@ -160,10 +160,7 @@ class AccountEntryService
     public function getTotalByCategoryTypeForRangeDate($categoryType, array $filter): array
     {
         if (isset($filter["tags"]) && !empty($filter["tags"])) {
-            $tags = $this->tagService->getTags($filter["tags"])->toArray();
-            $filter["tags"] = array_map(function($tags) {
-                return $tags["id"];
-            }, $tags);
+            $filter["tags"] = $this->tagService->getTagsIds($filter["tags"]);
         }
 
         return $this->repository->getTotalByCategoryTypeForRangeDate($categoryType, $filter);
@@ -176,9 +173,11 @@ class AccountEntryService
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
      */ 
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id)
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id, $tags)
     {
-        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id);
+        $idTags = $this->tagService->getTagsIds($tags);
+
+        return $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $account_id, $idTags);
     }
 
     /**

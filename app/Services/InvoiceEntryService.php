@@ -223,13 +223,15 @@ class InvoiceEntryService
      * @param array $filter
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id)
+    public function getEntriesByCategoryAndRangeDate($from, $to, $category_id, $tags)
     {
-        $entries = $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id);
+        $idTags = $this->tagService->getTagsIds($tags);
+
+        $entries = $this->repository->getEntriesByCategoryAndRangeDate($from, $to, $category_id, $idTags);
 
         $parcelRepository = app(ParcelRepositoryInterface::class);
 
-        $parcels = $parcelRepository->getParcelsByCategoryAndRangeDate($from, $to, $category_id);
+        $parcels = $parcelRepository->getParcelsByCategoryAndRangeDate($from, $to, $category_id, $idTags);
 
         $result = $entries->concat($parcels);
 
