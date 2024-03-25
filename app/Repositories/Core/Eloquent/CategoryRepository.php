@@ -7,6 +7,7 @@ use App\Models\InvoiceEntry;
 use App\Models\Parcel;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class CategoryRepository extends BaseEloquentRepository implements CategoryRepositoryInterface
 {
@@ -45,15 +46,13 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
 
     public function getInvoiceEntriesByCategoryType($categoryType, array $filter): array
     {
-        $invoice_entry_query = $this->model::getQueryForInvoiceEntryGroupedByCategory();            
+        $invoice_entry_query = $this->model::getQueryForInvoiceEntryGroupedByCategory();
 
         if (isset($filter["tags"]) && !empty($filter["tags"])) {
-            $invoice_entry_query->join('taggables', function($join)
-            {
-                $join->on('taggables.taggable_id', '=', 'invoice_entries.id');
-                $join->where('taggables.taggable_type','=', InvoiceEntry::class);
-            })
-            ->whereIn("taggables.tag_id", $filter["tags"]);
+            $invoice_entry_query->join(DB::raw("(SELECT DISTINCT taggable_id, taggable_type FROM meudinherim.taggables WHERE tag_id IN (" . implode(",", $filter["tags"]) . ")) t"), function($join) {
+                $join->on('t.taggable_id', '=', 'invoice_entries.id');
+                $join->where('t.taggable_type', '=', InvoiceEntry::class);
+            });
         }
 
         $invoice_entry_query->where('categories.type', $categoryType)
@@ -62,20 +61,15 @@ class CategoryRepository extends BaseEloquentRepository implements CategoryRepos
         $parcel_query = $this->model::getQueryForParcelGroupedByCategory();
 
         if (isset($filter["tags"]) && !empty($filter["tags"])) {
-            $parcel_query->join('taggables', function($join)
-            {
-                $join->on('taggables.taggable_id', '=', 'parcels.id');
-                $join->where('taggables.taggable_type','=', Parcel::class);
+            $parcel_query->join(DB::raw("(SELECT DISTINCT taggable_id, taggable_type FROM meudinherim.taggables WHERE tag_id IN (" . implode(",", $filter["tags"]) . ")) t"), function($join) {
+                $join->on('t.taggable_id', '=', 'parcels.id');
+                $join->where('t.taggable_type', '=', Parcel::class);
             });
         }
         
-            $parcel_query->where('categories.type', $categoryType)
-            ->whereBetween('date', [$filter['from'], $filter['to']])
-            ->union($invoice_entry_query);
-        
-        if (isset($filter["tags"]) && !empty($filter["tags"])) {
-            $parcel_query->whereIn("taggables.tag_id", $filter["tags"]);
-        }
+        $parcel_query->where('categories.type', $categoryType)
+        ->whereBetween('date', [$filter['from'], $filter['to']])
+        ->union($invoice_entry_query);
             
         return $parcel_query->get()->toArray();
     }

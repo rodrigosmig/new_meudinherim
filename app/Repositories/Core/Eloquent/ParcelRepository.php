@@ -8,6 +8,7 @@ use App\Models\AccountsScheduling;
 use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\ParcelRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class ParcelRepository extends BaseEloquentRepository implements ParcelRepositoryInterface
 {
@@ -114,11 +115,11 @@ class ParcelRepository extends BaseEloquentRepository implements ParcelRepositor
             ->with('category');
 
             if (!empty($tags)) {
-                $query->join('taggables', function($join)            {
-                    $join->on('taggables.taggable_id', '=', 'parcels.id');
-                    $join->where('taggables.taggable_type','=', Parcel::class);
-                })
-                ->whereIn("taggables.tag_id", $tags);
+                $query->join(DB::raw("(SELECT DISTINCT taggable_id, taggable_type FROM meudinherim.taggables WHERE tag_id IN (" . implode(",", $tags) . ")) t"), function($join) {
+                    $join->on('t.taggable_id', '=', 'parcels.id');
+                    $join->where('t.taggable_type', '=', Parcel::class);
+                });
+
             }
 
             return $query->where('category_id', $category_id)

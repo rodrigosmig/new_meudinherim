@@ -5,6 +5,7 @@ namespace App\Repositories\Core\Eloquent;
 use App\Models\AccountEntry;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\AccountEntryRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class AccountEntryRepository extends BaseEloquentRepository implements AccountEntryRepositoryInterface
 {
@@ -89,12 +90,12 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
             ->join('categories', 'categories.id', '=', 'account_entries.category_id');
             
         if (isset($filter["tags"]) && !empty($filter["tags"])) {
-            $query->join('taggables', function($join)            {
-                $join->on('taggables.taggable_id', '=', 'account_entries.id');
-                $join->where('taggables.taggable_type','=', AccountEntry::class);
+            $query->join(DB::raw("(SELECT DISTINCT taggable_id, taggable_type FROM meudinherim.taggables WHERE tag_id IN (" . implode(",", $filter["tags"]) . ")) t"), function($join) {
+                $join->on('t.taggable_id', '=', 'account_entries.id');
+                $join->where('t.taggable_type', '=', AccountEntry::class);
             });
-        }   
-            
+        }
+   
         $query->where('categories.type', $categoryType)
             ->where('date', '>=', $filter['from'])
             ->where('date', '<=', $filter['to'])
@@ -103,10 +104,6 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
             
         if (isset($filter['account_id'])) {
             $query->where('account_entries.account_id', $filter['account_id']);
-        }
-
-        if (isset($filter["tags"]) && !empty($filter["tags"])) {
-            $query->whereIn("taggables.tag_id", $filter["tags"]);
         }
 
         return $query->get()->toArray();
@@ -128,11 +125,10 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
                 ->with('category');
 
         if (!empty($tags)) {
-            $query->join('taggables', function($join)            {
-                $join->on('taggables.taggable_id', '=', 'account_entries.id');
-                $join->where('taggables.taggable_type','=', AccountEntry::class);
-            })
-                ->whereIn("taggables.tag_id", $tags);
+            $query->join(DB::raw("(SELECT DISTINCT taggable_id, taggable_type FROM meudinherim.taggables WHERE tag_id IN (" . implode(",", $tags) . ")) t"), function($join) {
+                $join->on('t.taggable_id', '=', 'account_entries.id');
+                $join->where('t.taggable_type', '=', AccountEntry::class);
+            });
         }
 
         $query->where('category_id', $category_id)
@@ -142,7 +138,7 @@ class AccountEntryRepository extends BaseEloquentRepository implements AccountEn
         if ($account_id) {
             $query->where('account_id', $account_id);
         }
-                
+        
         return $query->orderBy('date')->get();
     }
 }

@@ -6,6 +6,7 @@ use App\Models\InvoiceEntry;
 use App\Models\Tag;
 use App\Repositories\Core\BaseEloquentRepository;
 use App\Repositories\Interfaces\InvoiceEntryRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEntryRepositoryInterface
 {
@@ -63,12 +64,11 @@ class InvoiceEntryRepository extends BaseEloquentRepository implements InvoiceEn
         $query = $this->model::with('invoice.card')
             ->with('category');
 
-        if (!empty($tags)) {
-            $query->join('taggables', function($join)            {
-                $join->on('taggables.taggable_id', '=', 'invoice_entries.id');
-                $join->where('taggables.taggable_type','=', InvoiceEntry::class);
-            })
-            ->whereIn("taggables.tag_id", $tags);
+        if (!empty($tags)) {            
+            $query->join(DB::raw("(SELECT DISTINCT taggable_id, taggable_type FROM meudinherim.taggables WHERE tag_id IN (" . implode(",", $tags) . ")) t"), function($join) {
+                $join->on('t.taggable_id', '=', 'invoice_entries.id');
+                $join->where('t.taggable_type', '=', InvoiceEntry::class);
+            });
         }
 
         return $query->where('category_id', $category_id)
