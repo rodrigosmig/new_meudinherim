@@ -56,8 +56,6 @@ class ReceivablesCron extends Command
             $all_accounts = $receivables->concat($parcels);
             
             if ($all_accounts->count() > 0) {
-                $user->notify(new AccountReceivableNotification($all_accounts));
-
                 foreach ($all_accounts as $receivable) {
                     $user->notify(new AccountReceivableDatabaseNotification($receivable));
                 }
