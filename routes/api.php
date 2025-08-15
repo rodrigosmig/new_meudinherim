@@ -100,6 +100,7 @@ Route::group([
     Route::get('invoice_entries/{entry_id}/next-parcels', [InvoiceEntryController::class, 'nextParcels']);
     Route::post('invoice_entries/{entry_id}/anticipate-parcels', [InvoiceEntryController::class, 'anticipateParcels']);
 
+    
     //Account entries
     Route::get('accounts/{account_id}/entries', [AccountEntryController::class, 'index']);
     Route::post('account-entries', [AccountEntryController::class, 'store']);

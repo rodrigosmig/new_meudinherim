@@ -57,8 +57,6 @@ class PayablesCron extends Command
             $all_accounts = $payables->concat($parcels);
 
             if ($all_accounts->count() > 0) {
-                $user->notify(new AccountPayableNotification($all_accounts));
-
                 foreach ($all_accounts as $payable) {
                     $user->notify(new AccountPayableDatabaseNotification($payable));
                 }
